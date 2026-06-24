@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolWork — Decentralized AI Microtasking Platform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- HEADER -->
+    <header>
+      <div class="header-top">
+        <div class="logo-section">
+          <div class="logo-dot"></div>
+          <div class="logo-text">SolWork</div>
+        </div>
+        <button id="connect-wallet-btn" class="wallet-btn" onclick="toggleWallet()">
+          <span class="wallet-dot"></span>
+          <span id="wallet-text">Connect Wallet</span>
+        </button>
+      </div>
+      
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-label">Tier:</span>
+          <span id="tier-badge" class="tier-badge tier-bronze">Bronze</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Accuracy:</span>
+          <span id="accuracy-value" class="stat-value text-success">100.0%</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Tasks:</span>
+          <span id="completed-tasks-count" class="stat-value">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN DASHBOARD -->
+    <main id="main-dashboard">
+      
+      <!-- QUALIFICATION BANNER -->
+      <div id="qualification-banner" class="qualification-banner">
+        <div class="qual-header">📚 Account Qualification</div>
+        <div class="qual-body">Complete 10 training microtasks with >90% accuracy to unlock paid work and release your pending balance.</div>
+        <div class="qual-progress-track">
+          <div id="qual-progress-fill" class="qual-progress-fill"></div>
+        </div>
+        <div id="qual-fraction" style="font-size: 0.75rem; color: #c084fc; text-align: right; margin-top: 4px; font-weight: 600;">0/10 tasks</div>
+      </div>
+
+      <!-- BALANCE CARD -->
+      <div class="balance-card">
+        <div class="balance-label">Withdrawable Balance</div>
+        <div id="withdrawable-balance" class="balance-amount">0.00 USDC</div>
+        
+        <div class="balance-row">
+          <div class="pending-col">
+            <span class="pending-label">Pending / Escrowed</span>
+            <span id="pending-balance" class="pending-value">0.00 USDC</span>
+          </div>
+        </div>
+        
+        <button id="cashout-trigger-btn" class="cashout-btn" style="width: 100%;" onclick="openCashoutModal()" disabled>
+          Cash Out Balance
+        </button>
+      </div>
+
+      <!-- PROJECT CATALOG -->
+      <div>
+        <div class="section-header">
+          <span>Active Datasets</span>
+          <span id="campaign-count" class="active-count">3 Campaigns</span>
+        </div>
+
+        <div id="campaigns-grid" class="campaigns-grid">
+          <!-- Campaigns populated dynamically by app.js -->
+        </div>
+      </div>
+
+    </main>
+
+    <!-- WORKSPACE OVERLAY (DYNAMIC PUSH FEED) -->
+    <div id="workspace-overlay" class="workspace-overlay hidden">
+      <div class="workspace-header">
+        <div class="workspace-title-info">
+          <span id="workspace-project-title" class="workspace-title">Dataset Stream</span>
+          <span id="workspace-project-escrow" class="workspace-escrow">Escrow: $0.00 USDC</span>
+        </div>
+        <button class="close-workspace-btn" onclick="closeWorkspace()">&times;</button>
+      </div>
+      
+      <!-- 90-Second Active Lease Timer -->
+      <div class="timer-container">
+        <div id="timer-fill" class="timer-fill"></div>
+      </div>
+
+      <div class="workspace-content">
+        <div class="task-container">
+          <div id="active-task-card" class="task-card">
+            <!-- Dynamic Task Content injected here -->
+          </div>
+        </div>
+
+        <div class="workspace-footer">
+          <button class="action-btn btn-skip" onclick="skipTask()">Skip Task</button>
+          <button id="submit-task-btn" class="action-btn btn-submit" onclick="submitTask()">Submit Answer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CASHOUT MODAL -->
+    <div id="cashout-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span class="modal-title">Cash-Out Funds</span>
+          <button class="modal-close" onclick="closeCashoutModal()">&times;</button>
+        </div>
+
+        <div class="cashout-type-selection">
+          <!-- Option A: Free Daily Batch -->
+          <div id="payout-opt-free" class="cashout-option selected" onclick="selectPayoutOption('free')">
+            <div class="option-row">
+              <span class="option-title">Daily Auto-Batch</span>
+              <span class="option-badge badge-free">Free</span>
+            </div>
+            <span class="option-desc">Processed once every 24 hours. Zero gas or platform fees.</span>
+          </div>
+
+          <!-- Option B: Instant Cash-out -->
+          <div id="payout-opt-instant" class="cashout-option" onclick="selectPayoutOption('instant')">
+            <div class="option-row">
+              <span class="option-title">Instant Cash-out</span>
+              <span class="option-badge badge-instant">Instant</span>
+            </div>
+            <span class="option-desc">Funds released immediately. Includes sub-penny gas + 1.5% processing fee.</span>
+          </div>
+        </div>
+
+        <!-- Calculator widget (only visible for instant choice) -->
+        <div id="withdrawal-calculator" class="withdrawal-calculator" style="display: none;">
+          <div class="calc-title">Instant Fee Breakdown</div>
+          <div class="calc-row">
+            <span>Amount to Withdraw:</span>
+            <span id="calc-withdraw-label" class="calc-val-large">0.00 USDC</span>
+          </div>
+          <input type="range" id="withdrawal-slider" class="slider-input" min="0" max="100" step="1" oninput="updateWithdrawalFeeMath()">
+          <div class="calc-row">
+            <span>Transaction Fee (USDC):</span>
+            <span id="calc-fee-label" class="text-error" style="font-weight: 600;">$0.05</span>
+          </div>
+          <div class="calc-row" style="border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 4px;">
+            <span>Instant Amount Received:</span>
+            <span id="calc-net-receive" class="calc-val-receive">$0.00</span>
+          </div>
+        </div>
+
+        <button class="btn-confirm-cashout" onclick="processCashout()">
+          Confirm Cash-Out
+        </button>
+      </div>
+    </div>
+
+    <!-- HONEYPOT TOAST NOTIFICATION -->
+    <div id="toast-container" class="toast-container">
+      <div id="toast-icon" class="toast-status-icon toast-pass">✓</div>
+      <div class="toast-content">
+        <span id="toast-header" class="toast-header">Honeypot Checked</span>
+        <span id="toast-body" class="toast-body">Your transcription accuracy is verified. Payout added.</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
