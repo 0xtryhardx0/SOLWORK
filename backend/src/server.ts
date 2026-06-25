@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectRedis } from './config/redis';
+import tasksRouter from './routes/tasks';
+import payoutsRouter from './routes/payouts';
 
 dotenv.config();
 
@@ -10,6 +12,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// API Routes
+app.use('/api', tasksRouter);
+app.use('/api/payouts', payoutsRouter);
 
 // Global Health Check Route
 app.get('/health', (req, res) => {
