@@ -38,9 +38,11 @@
 
       <nav class="nav-links">
         <a href="#datasets-section" class="nav-link active">Datasets</a>
-        <a href="#hero-stats-section" class="nav-link">Network Proof</a>
-        <a href="javascript:void(0)" onclick="openCreateCampaignModal()" class="nav-link highlight">+ For AI Labs</a>
-        <a href="https://github.com/0xtryhardx0/SOLWORK" target="_blank" class="nav-link">Rust Architecture</a>
+        <a href="#sandbox-section" class="nav-link">Live Sandbox</a>
+        <a href="#calculator-section" class="nav-link">ROI Calculator</a>
+        <a href="#roadmap-section" class="nav-link">Roadmap & $WORK</a>
+        <a href="javascript:void(0)" onclick="openInvestorModal()" class="nav-link highlight">📑 Investor Deck</a>
+        <a href="javascript:void(0)" onclick="openCreateCampaignModal()" class="nav-link">+ For AI Labs</a>
       </nav>
 
       <div class="nav-actions">
@@ -79,6 +81,9 @@
         <button class="btn-hero-secondary" onclick="openCreateCampaignModal()">
           <span>+ Launch AI Dataset Escrow</span>
         </button>
+        <button class="btn-hero-outline" onclick="openInvestorModal()">
+          <span>📑 View Protocol One-Pager</span>
+        </button>
       </div>
 
       <!-- Live Protocol Metric Ribbons -->
@@ -102,6 +107,279 @@
           <div class="stat-num">99.4%</div>
           <div class="stat-desc">Benchmark Honeypot Accuracy</div>
           <div class="stat-sub">Consensus Proof Quality</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNOLOGY & ECOSYSTEM LOGO RIBBON -->
+  <section class="ecosystem-ribbon">
+    <div class="ribbon-container">
+      <span class="ribbon-title">POWERED BY & COMPATIBLE WITH:</span>
+      <div class="ribbon-badges">
+        <div class="tech-badge"><span class="badge-icon">⚡</span> SOLANA NETWORK</div>
+        <div class="tech-badge"><span class="badge-icon">⚓</span> ANCHOR FRAMEWORK 0.29</div>
+        <div class="tech-badge"><span class="badge-icon">💵</span> SPL USDC (CIRCLE)</div>
+        <div class="tech-badge"><span class="badge-icon">🇳🇬</span> SUPERTEAM NIGERIA</div>
+        <div class="tech-badge"><span class="badge-icon">🦀</span> RUST SBF SMART CONTRACTS</div>
+        <div class="tech-badge"><span class="badge-icon">🤖</span> BITTELL / RLHF DATASETS</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE PROTOCOL SANDBOX (LIVE SIMULATOR FOR INVESTORS & LABS) -->
+  <section class="sandbox-section" id="sandbox-section">
+    <div class="sandbox-container">
+      <div class="sandbox-header-box">
+        <div class="sandbox-tag">LIVE INTERACTIVE PROTOCOL PREVIEW</div>
+        <h2 class="sandbox-title">Test Ground-Truth AI Verification in Real Time</h2>
+        <p class="sandbox-desc">Experience how SolWork’s non-custodial Anchor state machine validates human intelligence and settles micro-escrows in under 400 milliseconds.</p>
+      </div>
+
+      <div class="sandbox-simulator-card">
+        <div class="sandbox-tab-bar">
+          <button id="tab-sb-rlhf" class="sandbox-tab active" onclick="setSandboxModality('rlhf')">
+            💻 Python Code RLHF
+          </button>
+          <button id="tab-sb-audio" class="sandbox-tab" onclick="setSandboxModality('audio')">
+            🎙️ African Audio Transcription
+          </button>
+          <button id="tab-sb-vision" class="sandbox-tab" onclick="setSandboxModality('vision')">
+            🚗 Computer Vision BBox
+          </button>
+        </div>
+
+        <div class="sandbox-display-panel">
+          
+          <!-- Code Preview Mode -->
+          <div id="sandbox-code-preview" class="sandbox-modality-content">
+            <div class="preview-prompt"><strong>Task:</strong> Evaluate concurrent Python web crawler function for thread-safety and race conditions.</div>
+            <div class="code-compare-row">
+              <div class="code-block code-selected">
+                <span class="code-label">Candidate Output A (AsyncIO Gather)</span>
+                <code>async def scrape(urls):<br>&nbsp;&nbsp;async with aiohttp.ClientSession() as s:<br>&nbsp;&nbsp;&nbsp;&nbsp;return await asyncio.gather(*(s.get(u) for u in urls))</code>
+              </div>
+            </div>
+          </div>
+
+          <!-- Audio Preview Mode -->
+          <div id="sandbox-audio-preview" class="sandbox-modality-content" style="display: none;">
+            <div class="preview-prompt"><strong>Task:</strong> Verify Nigerian Pidgin / Accent audio phrase: <em>"Solana speed dey settle transaction in milliseconds."</em></div>
+            <div class="audio-mock-player">
+              <div class="audio-waveform-bars">
+                <span style="height: 12px;"></span><span style="height: 24px;"></span><span style="height: 38px;"></span><span style="height: 18px;"></span><span style="height: 32px;"></span><span style="height: 28px;"></span><span style="height: 42px;"></span><span style="height: 16px;"></span>
+              </div>
+              <span class="audio-time">0:04 / 0:04 &bull; 44.1kHz WAV</span>
+            </div>
+          </div>
+
+          <!-- Vision Preview Mode -->
+          <div id="sandbox-vision-preview" class="sandbox-modality-content" style="display: none;">
+            <div class="preview-prompt"><strong>Task:</strong> Verify 2D bounding box on vehicle obstacle detection for WayDrive Robotics.</div>
+            <div class="vision-mock-canvas">
+              <div class="vision-box-overlay">Vehicle: Confidence 98.6% [x:120, y:85, w:180, h:110]</div>
+            </div>
+          </div>
+
+          <!-- Verification Action Bar -->
+          <div class="sandbox-action-footer">
+            <div class="sandbox-meta-info">
+              <div id="sandbox-status-pill" class="status-pill ready">● Ready for Verification</div>
+              <div id="sandbox-tx-hash" class="tx-status-text">Anchor PDA Escrow: Seed ["campaign", creator, id]</div>
+            </div>
+            <div class="sandbox-btn-group">
+              <span id="sandbox-reward-amount" class="sandbox-reward-tag">+0.50 USDC Reward</span>
+              <button class="btn-run-sandbox" onclick="runSandboxVerification()">
+                ⚡ Verify Task & Trigger Escrow Release
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEB2 VS SOLWORK COMPARISON MATRIX -->
+  <section class="comparison-section">
+    <div class="comparison-container">
+      <div class="section-title-center">
+        <div class="sandbox-tag">THE EFFICIENCY GAP</div>
+        <h2>Why Frontier AI Labs Are Moving to Solana Escrows</h2>
+        <p>Comparing SolWork against legacy Web2 gig and crowdsourcing providers.</p>
+      </div>
+
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature & Metric</th>
+              <th class="col-highlight">SolWork Protocol (Solana)</th>
+              <th>Scale AI / Remotasks</th>
+              <th>Upwork / Traditional B2B</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Payout Latency</strong></td>
+              <td class="col-highlight"><span class="check">✓</span> <strong>&lt; 400ms Sub-Second</strong></td>
+              <td><span class="cross">✕</span> 5 to 14 Days</td>
+              <td><span class="cross">✕</span> 7 to 21 Days</td>
+            </tr>
+            <tr>
+              <td><strong>Platform Take-Rate / Fees</strong></td>
+              <td class="col-highlight"><span class="check">✓</span> <strong>1.5% to 5%</strong> (0% with $WORK)</td>
+              <td><span class="cross">✕</span> 25% to 40%</td>
+              <td><span class="cross">✕</span> 10% to 20%</td>
+            </tr>
+            <tr>
+              <td><strong>African & Emerging Access</strong></td>
+              <td class="col-highlight"><span class="check">✓</span> <strong>Permissionless (Any Wallet)</strong></td>
+              <td><span class="cross">✕</span> Arbitrary PayPal / IP Bans</td>
+              <td><span class="cross">✕</span> Bank Wire Freezes</td>
+            </tr>
+            <tr>
+              <td><strong>Escrow Security</strong></td>
+              <td class="col-highlight"><span class="check">✓</span> <strong>Anchor PDA (Non-Custodial)</strong></td>
+              <td><span class="cross">✕</span> Centralized Company Vault</td>
+              <td><span class="cross">✕</span> Centralized Escrow</td>
+            </tr>
+            <tr>
+              <td><strong>Quality Benchmark</strong></td>
+              <td class="col-highlight"><span class="check">✓</span> <strong>Consensus + Slashing Staking</strong></td>
+              <td>Manual Post-Audit</td>
+              <td>Dispute Resolution Claims</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENTERPRISE AI LAB ESCROW & SAVINGS CALCULATOR -->
+  <section class="calculator-section" id="calculator-section">
+    <div class="calculator-container">
+      <div class="section-title-center">
+        <div class="sandbox-tag">LAB ROI CALCULATOR</div>
+        <h2>Estimate Escrow & Savings vs Web2 Vendors</h2>
+        <p>Calculate exact dataset economics when deploying via SolWork’s Anchor PDA escrows.</p>
+      </div>
+
+      <div class="calc-box-grid">
+        <div class="calc-controls-card">
+          <div class="calc-control-group">
+            <label class="calc-slider-label">
+              <span>Task Modality:</span>
+              <span id="calc-modality-display" class="calc-badge">Python / STEM Code RLHF</span>
+            </label>
+            <div class="calc-modality-selector">
+              <button id="calc-btn-code" class="modality-btn active" onclick="setCalcModality('code')">💻 Code RLHF</button>
+              <button id="calc-btn-audio" class="modality-btn" onclick="setCalcModality('audio')">🎙️ African Audio</button>
+              <button id="calc-btn-vision" class="modality-btn" onclick="setCalcModality('vision')">🚗 Vision BBox</button>
+            </div>
+          </div>
+
+          <div class="calc-control-group">
+            <label class="calc-slider-label">
+              <span>Dataset Volume (Micro-Tasks):</span>
+              <span id="calc-task-count-display" class="highlight-val">10,000 Tasks</span>
+            </label>
+            <input type="range" id="calc-task-slider" class="styled-range" min="1000" max="100000" step="1000" value="10000" oninput="updateLabRoiMath()">
+            <div class="slider-ticks">
+              <span>1k</span>
+              <span>25k</span>
+              <span>50k</span>
+              <span>100k</span>
+            </div>
+          </div>
+
+          <div class="calc-control-group">
+            <label class="calc-slider-label">
+              <span>Worker Payout per Task:</span>
+              <span id="calc-rate-display" class="highlight-val">$0.50 USDC</span>
+            </label>
+            <input type="range" id="calc-rate-slider" class="styled-range" min="0.05" max="2.00" step="0.05" value="0.50" oninput="updateLabRoiMath()">
+            <div class="slider-ticks">
+              <span>$0.05</span>
+              <span>$0.50</span>
+              <span>$1.00</span>
+              <span>$2.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-result-card">
+          <div class="result-header">Protocol Economics Breakdown</div>
+          
+          <div class="comparison-cards-row">
+            <div class="vendor-box web2-vendor">
+              <div class="vendor-name">Scale AI / Traditional</div>
+              <div class="vendor-price" id="calc-web2-price">$7,000</div>
+              <div class="vendor-sub">Includes 40% platform take-rate & FX holds</div>
+              <div class="vendor-delay">⏱️ 14-day worker payout delay</div>
+            </div>
+
+            <div class="vendor-box solwork-vendor">
+              <div class="vendor-tag">SOLWORK ESCROW</div>
+              <div class="vendor-name">SolWork Protocol</div>
+              <div class="vendor-price" id="calc-solwork-price">$5,125</div>
+              <div class="vendor-sub">100% to workers + 2.5% protocol PDA fee</div>
+              <div class="vendor-speed">⚡ &lt; 400ms sub-second settlement</div>
+            </div>
+          </div>
+
+          <div class="savings-banner">
+            <span>🎉 Projected Lab Savings:</span>
+            <strong id="calc-savings-percent">26.8% ($1,875 Saved)</strong>
+          </div>
+
+          <button class="btn-deploy-calculated" onclick="deployCalculatedCampaign()">
+            ⚡ Pre-fill & Launch Escrow Campaign with these Specs &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROTOCOL ROADMAP & $WORK TOKENOMICS -->
+  <section class="roadmap-section" id="roadmap-section">
+    <div class="roadmap-container">
+      <div class="section-title-center">
+        <div class="sandbox-tag">ECOSYSTEM MILESTONES</div>
+        <h2>SolWork Roadmap & Token Utility</h2>
+        <p>Structured progression from Devnet verification to decentralized governance and fee redistribution.</p>
+      </div>
+
+      <div class="roadmap-grid">
+        <div class="roadmap-card active">
+          <div class="phase-badge phase-live">PHASE 1: LIVE NOW</div>
+          <h3>Solana Devnet Architecture</h3>
+          <ul class="roadmap-checklist">
+            <li>✓ Anchor 0.29 PDA Escrow Smart Contract</li>
+            <li>✓ Mobile & Desktop Worker Workspace</li>
+            <li>✓ Employer Campaign Creator & Escrow Deposit</li>
+            <li>✓ Honeypot Consensus Accuracy Verification</li>
+          </ul>
+        </div>
+        <div class="roadmap-card">
+          <div class="phase-badge">PHASE 2: Q4 2026</div>
+          <h3>Genesis Points & Ecosystem Bounties</h3>
+          <ul class="roadmap-checklist">
+            <li>&bull; Superteam Nigeria Community Annotation Pool</li>
+            <li>&bull; Contributor Genesis Points Tournament</li>
+            <li>&bull; First 50,000 Micro-Tasks Verified on Devnet</li>
+            <li>&bull; Partner Pilot with African NLP Labs (Lelapa/Masakhane)</li>
+          </ul>
+        </div>
+        <div class="roadmap-card">
+          <div class="phase-badge">PHASE 3: Q1 2027</div>
+          <h3>Mainnet TGE & Staking Yield ($WORK)</h3>
+          <ul class="roadmap-checklist">
+            <li>&bull; $WORK SPL Token Generation Event (TGE)</li>
+            <li>&bull; Airdrop Conversion for Genesis Point Earners</li>
+            <li>&bull; Worker Staking to Unlock Gold/Expert Tasks</li>
+            <li>&bull; 50% Employer Fee Discounts when Paying in $WORK</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -393,6 +671,62 @@
     <div class="toast-content">
       <span id="toast-header" class="toast-header">Honeypot Checked</span>
       <span id="toast-body" class="toast-body">Your transcription accuracy is verified. Payout added.</span>
+    </div>
+  </div>
+
+  <!-- INVESTOR & ARCHITECTURE ONE-PAGER MODAL -->
+  <div id="investor-modal" class="modal-overlay hidden">
+    <div class="modal-card investor-card" style="max-width: 720px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <div>
+          <span class="modal-title">⚡ SolWork Protocol Executive Brief</span>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Solana Anchor Non-Custodial AI Escrows &bull; Q4 2026</div>
+        </div>
+        <button class="modal-close" onclick="closeInvestorModal()">&times;</button>
+      </div>
+
+      <div class="investor-modal-body">
+        <div class="investor-grid-2">
+          <div class="investor-metric-box">
+            <span class="inv-metric-num">$17.1 Billion</span>
+            <span class="inv-metric-label">AI Data Annotation TAM by 2030</span>
+          </div>
+          <div class="investor-metric-box">
+            <span class="inv-metric-num">60%</span>
+            <span class="inv-metric-label">Africa's Population Under 25 (World's Youngest Workforce)</span>
+          </div>
+        </div>
+
+        <div class="investor-section-block">
+          <h4>🚨 The Core Problem</h4>
+          <p>Frontier AI labs (LLMs, robotics, local dialects) urgently require human ground truth. Yet Web2 platforms (Scale AI, Remotasks, Appen) gouge workers with 30-50% cuts, hold payments for 14 days, and arbitrarily blacklist African bank wires and PayPal accounts.</p>
+        </div>
+
+        <div class="investor-section-block">
+          <h4>💡 The SolWork Solution</h4>
+          <p>A trustless Solana state machine using Anchor 0.29 PDA escrows. AI companies deposit SPL USDC into program vaults; African engineers and STEM annotators complete tasks; deterministic honeypots verify accuracy instantly; and payouts land in user wallets in &lt; 400ms.</p>
+        </div>
+
+        <div class="investor-section-block">
+          <h4>🪙 $WORK Token Value Accrual</h4>
+          <ul class="investor-list">
+            <li><strong>Worker Staking:</strong> Annotators stake $WORK to unlock higher-tier datasets (Python RLHF, Medical AI) with slashing for dishonest labels.</li>
+            <li><strong>Platform Fee Burn / Discount:</strong> AI labs paying in $WORK receive a 50% discount on protocol take-rates.</li>
+            <li><strong>Decentralized Dispute Resolution:</strong> Community stakers review edge-case discrepancies and earn resolution rewards.</li>
+          </ul>
+        </div>
+
+        <div class="investor-contact-footer">
+          <div class="inv-contact-info">
+            <strong>Ready to partner, invest, or deploy an escrow pilot?</strong>
+            <span>Direct Lead Contact: <a href="mailto:xxii.services@gmail.com" style="color: var(--primary);">xxii.services@gmail.com</a></span>
+          </div>
+          <div class="inv-btn-row">
+            <a href="https://github.com/0xtryhardx0/SOLWORK" target="_blank" class="btn-deck-git">View Smart Contract on GitHub &rarr;</a>
+            <button class="btn-deck-close" onclick="closeInvestorModal()">Back to Workspace</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

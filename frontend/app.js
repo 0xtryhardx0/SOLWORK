@@ -807,3 +807,135 @@ function handleCreateCampaign(e) {
   alert(`⚡ Campaign Launched Successfully!\nFunded $${totalBudget.toFixed(2)} USDC into Anchor PDA Escrow.\nDataset "${title}" is now active on the public job board.`);
 }
 
+// 8. INTERACTIVE PROTOCOL SANDBOX LOGIC
+let currentSandboxModality = 'rlhf';
+
+function setSandboxModality(modality) {
+  currentSandboxModality = modality;
+  
+  // Tab buttons
+  document.getElementById('tab-sb-rlhf').classList.toggle('active', modality === 'rlhf');
+  document.getElementById('tab-sb-audio').classList.toggle('active', modality === 'audio');
+  document.getElementById('tab-sb-vision').classList.toggle('active', modality === 'vision');
+  
+  // Content panels
+  document.getElementById('sandbox-code-preview').style.display = modality === 'rlhf' ? 'block' : 'none';
+  document.getElementById('sandbox-audio-preview').style.display = modality === 'audio' ? 'block' : 'none';
+  document.getElementById('sandbox-vision-preview').style.display = modality === 'vision' ? 'block' : 'none';
+  
+  // Reward & PDA tags
+  const rewardTag = document.getElementById('sandbox-reward-amount');
+  const statusPill = document.getElementById('sandbox-status-pill');
+  const txHash = document.getElementById('sandbox-tx-hash');
+  
+  statusPill.className = 'status-pill ready';
+  statusPill.innerHTML = '● Ready for Verification';
+  
+  if (modality === 'rlhf') {
+    rewardTag.innerText = '+0.65 USDC Reward';
+    txHash.innerText = 'Anchor PDA Escrow: Seed ["campaign", DeepLogic, 0x9f]';
+  } else if (modality === 'audio') {
+    rewardTag.innerText = '+0.25 USDC Reward';
+    txHash.innerText = 'Anchor PDA Escrow: Seed ["campaign", AetherVoice, 0x14]';
+  } else {
+    rewardTag.innerText = '+0.15 USDC Reward';
+    txHash.innerText = 'Anchor PDA Escrow: Seed ["campaign", WayDrive, 0x4a]';
+  }
+}
+
+function runSandboxVerification() {
+  const statusPill = document.getElementById('sandbox-status-pill');
+  const txHash = document.getElementById('sandbox-tx-hash');
+  
+  statusPill.className = 'status-pill processing';
+  statusPill.innerHTML = '⚡ Checking Honeypot Consensus...';
+  txHash.innerText = 'Signing Solana instruction: execute_task_payout (CPI SPL Transfer)...';
+  
+  setTimeout(() => {
+    const randomSig = Array.from({length: 44}, () => '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'[Math.floor(Math.random()*58)]).join('');
+    statusPill.className = 'status-pill verified';
+    statusPill.innerHTML = '✓ Consensus Verified (Accuracy 100%)';
+    txHash.innerHTML = `Settled on Solana Devnet: <span style="color: #14f195;">${randomSig.slice(0, 14)}...${randomSig.slice(-6)}</span> (342ms)`;
+    
+    // Increment contributor pending balance
+    let bump = currentSandboxModality === 'rlhf' ? 0.65 : currentSandboxModality === 'audio' ? 0.25 : 0.15;
+    state.withdrawableBalance += bump;
+    state.totalTasksCompleted += 1;
+    updateUI();
+    
+    showHoneypotToast(true, `Verified! +${bump.toFixed(2)} USDC credited to your SolWork balance in 342ms.`);
+  }, 450);
+}
+
+// 9. ENTERPRISE ROI & ESCROW CALCULATOR LOGIC
+let calcModality = 'code';
+
+function setCalcModality(modality) {
+  calcModality = modality;
+  document.getElementById('calc-btn-code').classList.toggle('active', modality === 'code');
+  document.getElementById('calc-btn-audio').classList.toggle('active', modality === 'audio');
+  document.getElementById('calc-btn-vision').classList.toggle('active', modality === 'vision');
+  
+  const label = document.getElementById('calc-modality-display');
+  const rateSlider = document.getElementById('calc-rate-slider');
+  
+  if (modality === 'code') {
+    label.innerText = 'Python / STEM Code RLHF';
+    rateSlider.value = 0.50;
+  } else if (modality === 'audio') {
+    label.innerText = 'Multilingual Audio & Speech';
+    rateSlider.value = 0.20;
+  } else {
+    label.innerText = 'Computer Vision 2D/3D Bounding Box';
+    rateSlider.value = 0.12;
+  }
+  
+  updateLabRoiMath();
+}
+
+function updateLabRoiMath() {
+  const taskCount = parseInt(document.getElementById('calc-task-slider').value) || 10000;
+  const rate = parseFloat(document.getElementById('calc-rate-slider').value) || 0.50;
+  
+  document.getElementById('calc-task-count-display').innerText = `${taskCount.toLocaleString()} Tasks`;
+  document.getElementById('calc-rate-display').innerText = `$${rate.toFixed(2)} USDC`;
+  
+  // SolWork cost = direct worker payout + 2.5% protocol fee
+  const directPayout = taskCount * rate;
+  const solworkTotal = directPayout * 1.025;
+  
+  // Scale AI / Web2 cost = 1.35x base rate + 30% overhead take-rate
+  const web2Total = (taskCount * (rate * 1.25)) * 1.30;
+  const savings = web2Total - solworkTotal;
+  const savingsPercent = ((savings / web2Total) * 100).toFixed(1);
+  
+  document.getElementById('calc-solwork-price').innerText = `$${Math.round(solworkTotal).toLocaleString()}`;
+  document.getElementById('calc-web2-price').innerText = `$${Math.round(web2Total).toLocaleString()}`;
+  document.getElementById('calc-savings-percent').innerText = `${savingsPercent}% ($${Math.round(savings).toLocaleString()} Saved)`;
+}
+
+function deployCalculatedCampaign() {
+  const taskCount = parseInt(document.getElementById('calc-task-slider').value) || 10000;
+  const rate = parseFloat(document.getElementById('calc-rate-slider').value) || 0.50;
+  
+  openCreateCampaignModal();
+  
+  document.getElementById('camp-rate').value = rate.toFixed(2);
+  document.getElementById('camp-count').value = Math.min(taskCount, 50000);
+  document.getElementById('camp-type').value = calcModality === 'code' ? 'rlhf' : calcModality === 'audio' ? 'audio' : 'bbox';
+  
+  calculateCampaignBudget();
+}
+
+// 10. INVESTOR & ARCHITECTURE ONE-PAGER MODAL
+function openInvestorModal() {
+  const modal = document.getElementById('investor-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeInvestorModal() {
+  const modal = document.getElementById('investor-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+
