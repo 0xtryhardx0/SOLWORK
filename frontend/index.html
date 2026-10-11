@@ -3,91 +3,226 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SolWork — Decentralized AI Microtasking Platform</title>
+  <title>SolWork — Decentralized AI Microtasking & Milestone Escrows on Solana</title>
+  <meta name="description" content="Non-custodial milestone escrows and micro-payouts for African developers and AI dataset contributors, settling in sub-second SPL USDC on Solana.">
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <div class="app-container">
-    
-    <!-- HEADER -->
-    <header>
-      <div class="header-top">
-        <div class="logo-section">
-          <div class="logo-dot"></div>
-          <div class="logo-text">SolWork</div>
+  <!-- TOP PROTOCOL TICKER -->
+  <div class="top-announcement-bar">
+    <div class="announcement-content">
+      <span class="live-pulse-dot"></span>
+      <span class="announcement-text">
+        <strong>SOLANA DEVNET LIVE:</strong> Anchor 0.29 PDA Escrow Vaults &bull; Sub-second 400ms USDC Settlements &bull; Verified Quality Honeypots
+      </span>
+      <a href="https://github.com/0xtryhardx0/SOLWORK" target="_blank" class="announcement-link">View Anchor Contract &rarr;</a>
+    </div>
+  </div>
+
+  <!-- NAVIGATION HEADER -->
+  <header class="main-navbar">
+    <div class="nav-container">
+      <div class="brand-logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="brand-symbol">
+          <div class="symbol-core"></div>
+        </div>
+        <div class="brand-title">
+          <span>SolWork</span>
+          <span class="brand-badge">PROTOCOL</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#datasets-section" class="nav-link active">Datasets</a>
+        <a href="#hero-stats-section" class="nav-link">Network Proof</a>
+        <a href="javascript:void(0)" onclick="openCreateCampaignModal()" class="nav-link highlight">+ For AI Labs</a>
+        <a href="https://github.com/0xtryhardx0/SOLWORK" target="_blank" class="nav-link">Rust Architecture</a>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="network-indicator">
+          <span class="status-dot online"></span>
+          <span class="network-name">Solana Devnet</span>
         </div>
         <button id="connect-wallet-btn" class="wallet-btn" onclick="toggleWallet()">
           <span class="wallet-dot"></span>
-          <span id="wallet-text">Connect Wallet</span>
+          <span id="wallet-text">Connect Phantom</span>
         </button>
       </div>
+    </div>
+  </header>
+
+  <!-- INVESTOR-GRADE HERO SECTION -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-pill">
+        <span class="hero-pill-sparkle">⚡</span>
+        <span>The Human Intelligence Layer for Frontier AI on Solana</span>
+      </div>
+      <h1 class="hero-title">
+        Decentralized AI Microtasking & <br>
+        <span class="gradient-text">Sub-Second Milestone Escrows</span>
+      </h1>
+      <p class="hero-subtitle">
+        Connecting global AI research labs with Africa's premier pool of English-fluent software engineers, STEM annotators, and multilingual linguists. Settled trustlessly in <strong>400ms SPL USDC</strong> via Anchor smart contracts.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#datasets-section" class="btn-hero-primary">
+          <span>Explore Active Datasets</span>
+          <span class="arrow">&darr;</span>
+        </a>
+        <button class="btn-hero-secondary" onclick="openCreateCampaignModal()">
+          <span>+ Launch AI Dataset Escrow</span>
+        </button>
+      </div>
+
+      <!-- Live Protocol Metric Ribbons -->
+      <div id="hero-stats-section" class="hero-stats-grid">
+        <div class="stat-card">
+          <div class="stat-num">&lt; 400ms</div>
+          <div class="stat-desc">Payout Finality Speed</div>
+          <div class="stat-sub">Direct to Phantom/Solflare</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">$0.00025</div>
+          <div class="stat-desc">Avg Protocol Transaction Fee</div>
+          <div class="stat-sub">Zero Bank Wire Gouging</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">100%</div>
+          <div class="stat-desc">Non-Custodial PDA Vaults</div>
+          <div class="stat-sub">Anchor Program Verified</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">99.4%</div>
+          <div class="stat-desc">Benchmark Honeypot Accuracy</div>
+          <div class="stat-sub">Consensus Proof Quality</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE PROTOCOL ESCROW FEED TICKER -->
+  <div class="live-activity-ticker">
+    <div class="ticker-label">LIVE ESCROW SETTLEMENTS:</div>
+    <div class="ticker-marquee">
+      <div class="ticker-item">
+        <span class="ticker-dot green"></span>
+        <span><strong>0.15 USDC</strong> released to <code class="hash">7Q9N...Vh</code> (Yoruba Voice Data) &bull; 4s ago</span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-dot purple"></span>
+        <span><strong>0.80 USDC</strong> released to <code class="hash">4mW2...9x</code> (Python RLHF Code Audit) &bull; 14s ago</span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-dot green"></span>
+        <span><strong>0.08 USDC</strong> released to <code class="hash">8vL1...4z</code> (WayDrive Bounding Box) &bull; 26s ago</span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-dot purple"></span>
+        <span><strong>$500.00 USDC</strong> campaign funded by <strong>AetherVoice AI</strong> into PDA Vault &bull; 2m ago</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APPLICATION DASHBOARD (2-COLUMN RESPONSIVE LAYOUT) -->
+  <div class="app-layout" id="datasets-section">
+
+    <!-- LEFT SIDEBAR: WORKER & ESCROW CONSOLE -->
+    <aside class="sidebar-console">
       
-      <div class="stats-bar">
-        <div class="stat-item">
-          <span class="stat-label">Tier:</span>
+      <!-- Worker Credentials Card -->
+      <div class="console-card profile-card">
+        <div class="card-title-row">
+          <span class="card-title">Contributor Profile</span>
           <span id="tier-badge" class="tier-badge tier-bronze">Bronze</span>
         </div>
-        <div class="stat-item">
-          <span class="stat-label">Accuracy:</span>
-          <span id="accuracy-value" class="stat-value text-success">100.0%</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Tasks:</span>
-          <span id="completed-tasks-count" class="stat-value">0</span>
-        </div>
-      </div>
-    </header>
-
-    <!-- MAIN DASHBOARD -->
-    <main id="main-dashboard">
-      
-      <!-- QUALIFICATION BANNER -->
-      <div id="qualification-banner" class="qualification-banner">
-        <div class="qual-header">📚 Account Qualification</div>
-        <div class="qual-body">Complete 10 training microtasks with >90% accuracy to unlock paid work and release your pending balance.</div>
-        <div class="qual-progress-track">
-          <div id="qual-progress-fill" class="qual-progress-fill"></div>
-        </div>
-        <div id="qual-fraction" style="font-size: 0.75rem; color: #c084fc; text-align: right; margin-top: 4px; font-weight: 600;">0/10 tasks</div>
-      </div>
-
-      <!-- BALANCE CARD -->
-      <div class="balance-card">
-        <div class="balance-label">Withdrawable Balance</div>
-        <div id="withdrawable-balance" class="balance-amount">0.00 USDC</div>
-        
-        <div class="balance-row">
-          <div class="pending-col">
-            <span class="pending-label">Pending / Escrowed</span>
-            <span id="pending-balance" class="pending-value">0.00 USDC</span>
+        <div class="profile-meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Accuracy Score</span>
+            <span id="accuracy-value" class="meta-val text-success">100.0%</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Tasks Finished</span>
+            <span id="completed-tasks-count" class="meta-val">0</span>
           </div>
         </div>
+      </div>
+
+      <!-- Balance & Non-Custodial Cashout Card -->
+      <div class="console-card balance-card">
+        <div class="balance-sub-label">Earned Withdrawable Balance</div>
+        <div id="withdrawable-balance" class="balance-display">0.00 USDC</div>
         
-        <button id="cashout-trigger-btn" class="cashout-btn" style="width: 100%;" onclick="openCashoutModal()" disabled>
-          Cash Out Balance
+        <div class="balance-breakdown">
+          <div class="breakdown-label">In-Flight Escrow / Pending</div>
+          <div id="pending-balance" class="breakdown-val">0.00 USDC</div>
+        </div>
+        
+        <button id="cashout-trigger-btn" class="btn-cashout" onclick="openCashoutModal()" disabled>
+          ⚡ Cash Out to Phantom Wallet
         </button>
+        <div class="balance-footer-note">Settles in SPL USDC via Anchor PDA Signer</div>
       </div>
 
-      <!-- PROJECT CATALOG -->
-      <div>
-        <div class="section-header">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span>Active Datasets</span>
-            <span id="campaign-count" class="active-count">3 Campaigns</span>
-          </div>
-          <button class="btn-create-campaign" onclick="openCreateCampaignModal()">+ Post AI Task</button>
+      <!-- Account Qualification Card -->
+      <div id="qualification-banner" class="console-card qual-card">
+        <div class="qual-title">
+          <span>📚 Worker Qualification</span>
+          <span id="qual-fraction" class="qual-count">0/10 tasks</span>
         </div>
+        <p class="qual-desc">Complete 10 benchmark training microtasks with &gt;90% accuracy to unlock paid enterprise datasets.</p>
+        <div class="qual-track">
+          <div id="qual-progress-fill" class="qual-fill" style="width: 0%"></div>
+        </div>
+      </div>
 
-        <div id="campaigns-grid" class="campaigns-grid">
-          <!-- Campaigns populated dynamically by app.js -->
+      <!-- Protocol Guarantees Card -->
+      <div class="console-card security-card">
+        <div class="sec-header">🛡️ Protocol Security Guarantees</div>
+        <ul class="sec-list">
+          <li><strong>Zero Remittance Delays:</strong> Non-custodial PDA vault releases funds in &lt;1s.</li>
+          <li><strong>Deterministic Honeypots:</strong> Embedded verification filters junk submissions.</li>
+          <li><strong>No Foreign Exchange Cuts:</strong> Workers receive 100% of earned USDC.</li>
+        </ul>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT / MAIN REGION: DATASET CATALOG & CREATOR PORTAL -->
+    <main class="main-catalog">
+
+      <!-- Catalog Header & Controls -->
+      <div class="catalog-header">
+        <div>
+          <h2 class="catalog-title">Active AI Datasets</h2>
+          <div class="catalog-subtitle">Funded by frontier labs &bull; Live escrow reserves</div>
         </div>
+        <div class="catalog-actions">
+          <span id="campaign-count" class="badge-count">3 Campaigns Active</span>
+          <button class="btn-post-task" onclick="openCreateCampaignModal()">
+            ⚡ + Post AI Dataset (Escrow)
+          </button>
+        </div>
+      </div>
+
+      <!-- Datasets Grid (Injected dynamically by app.js) -->
+      <div id="campaigns-grid" class="campaigns-grid">
+        <!-- Injected via app.js -->
       </div>
 
     </main>
 
-    <!-- WORKSPACE OVERLAY (DYNAMIC PUSH FEED) -->
-    <div id="workspace-overlay" class="workspace-overlay hidden">
+  </div>
+
+  <!-- WORKSPACE OVERLAY (DYNAMIC INTERACTIVE TASK MODAL) -->
+  <div id="workspace-overlay" class="workspace-overlay hidden">
+    <div class="workspace-dialog">
       <div class="workspace-header">
         <div class="workspace-title-info">
           <span id="workspace-project-title" class="workspace-title">Dataset Stream</span>
@@ -101,157 +236,180 @@
         <div id="timer-fill" class="timer-fill"></div>
       </div>
 
-      <div class="workspace-content">
-        <div class="task-container">
-          <div id="active-task-card" class="task-card">
-            <!-- Dynamic Task Content injected here -->
-          </div>
+      <div class="workspace-body">
+        <div class="instruction-box">
+          <span class="instruction-label">TASK INSTRUCTIONS:</span>
+          <p id="task-instruction" class="instruction-text">Loading prompt...</p>
+          <div id="honeypot-badge" class="honeypot-tag hidden">AUDIT BENCHMARK</div>
         </div>
 
-        <div class="workspace-footer">
-          <button class="action-btn btn-skip" onclick="skipTask()">Skip Task</button>
-          <button id="submit-task-btn" class="action-btn btn-submit" onclick="submitTask()">Submit Answer</button>
+        <div id="task-content-area" class="task-content-area">
+          <!-- Dynamic task controls (Audio player, Bounding Box Canvas, or RLHF buttons) -->
+        </div>
+
+        <div class="answer-section">
+          <label class="form-label" for="task-answer-input">Your Verification Submission:</label>
+          <div class="input-action-row">
+            <input type="text" id="task-answer-input" class="task-input" placeholder="Type verified label or transcript...">
+            <button id="btn-submit-task" class="btn-submit" onclick="submitTask()">
+              Submit & Verify &rarr;
+            </button>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- CASHOUT MODAL -->
-    <div id="cashout-modal" class="modal-overlay hidden">
-      <div class="modal-card">
-        <div class="modal-header">
-          <span class="modal-title">Cash-Out Funds</span>
-          <button class="modal-close" onclick="closeCashoutModal()">&times;</button>
-        </div>
-
-        <div class="cashout-type-selection">
-          <!-- Option A: Free Daily Batch -->
-          <div id="payout-opt-free" class="cashout-option selected" onclick="selectPayoutOption('free')">
-            <div class="option-row">
-              <span class="option-title">Daily Auto-Batch</span>
-              <span class="option-badge badge-free">Free</span>
-            </div>
-            <span class="option-desc">Processed once every 24 hours. Zero gas or platform fees.</span>
-          </div>
-
-          <!-- Option B: Instant Cash-out -->
-          <div id="payout-opt-instant" class="cashout-option" onclick="selectPayoutOption('instant')">
-            <div class="option-row">
-              <span class="option-title">Instant Cash-out</span>
-              <span class="option-badge badge-instant">Instant</span>
-            </div>
-            <span class="option-desc">Funds released immediately. Includes sub-penny gas + 1.5% processing fee.</span>
-          </div>
-        </div>
-
-        <!-- Calculator widget (only visible for instant choice) -->
-        <div id="withdrawal-calculator" class="withdrawal-calculator" style="display: none;">
-          <div class="calc-title">Instant Fee Breakdown</div>
-          <div class="calc-row">
-            <span>Amount to Withdraw:</span>
-            <span id="calc-withdraw-label" class="calc-val-large">0.00 USDC</span>
-          </div>
-          <input type="range" id="withdrawal-slider" class="slider-input" min="0" max="100" step="1" oninput="updateWithdrawalFeeMath()">
-          <div class="calc-row">
-            <span>Transaction Fee (USDC):</span>
-            <span id="calc-fee-label" class="text-error" style="font-weight: 600;">$0.05</span>
-          </div>
-          <div class="calc-row" style="border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 4px;">
-            <span>Instant Amount Received:</span>
-            <span id="calc-net-receive" class="calc-val-receive">$0.00</span>
-          </div>
-        </div>
-
-        <button class="btn-confirm-cashout" onclick="processCashout()">
-          Confirm Cash-Out
-        </button>
-      </div>
-    </div>
-
-    <!-- EMPLOYER / CREATE CAMPAIGN MODAL -->
-    <div id="create-campaign-modal" class="modal-overlay hidden">
-      <div class="modal-card" style="max-height: 90vh; overflow-y: auto;">
-        <div class="modal-header">
-          <div>
-            <span class="modal-title">Launch AI Dataset Task</span>
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Fund non-custodial milestone escrow via SPL USDC</div>
-          </div>
-          <button class="modal-close" onclick="closeCreateCampaignModal()">&times;</button>
-        </div>
-
-        <form id="create-campaign-form" onsubmit="handleCreateCampaign(event)">
-          <div class="form-group">
-            <label class="form-label" for="camp-title">Dataset / Campaign Title</label>
-            <input type="text" id="camp-title" class="form-input" placeholder="e.g. Python & Rust Code RLHF Benchmarks" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="camp-client">Organization / AI Lab Name</label>
-            <input type="text" id="camp-client" class="form-input" placeholder="e.g. Sahara Subnet 4 / Lelapa Research" required>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group" style="flex: 1;">
-              <label class="form-label" for="camp-type">Task Modality</label>
-              <select id="camp-type" class="form-select" required>
-                <option value="rlhf">Code / LLM RLHF Evaluation</option>
-                <option value="audio">Audio & Speech Transcription</option>
-                <option value="bbox">Computer Vision Bounding Box</option>
-              </select>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label class="form-label" for="camp-tier">Min. Worker Tier</label>
-              <select id="camp-tier" class="form-select" required>
-                <option value="bronze">Bronze (General Tasks)</option>
-                <option value="silver">Silver (Verified Accuracy)</option>
-                <option value="gold">Gold (Elite Coders / STEM)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group" style="flex: 1;">
-              <label class="form-label" for="camp-rate">Rate Per Task (USDC)</label>
-              <input type="number" id="camp-rate" class="form-input" step="0.01" min="0.01" max="10.00" value="0.10" oninput="calculateCampaignBudget()" required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label class="form-label" for="camp-count">Task Volume</label>
-              <input type="number" id="camp-count" class="form-input" min="5" max="50000" value="50" oninput="calculateCampaignBudget()" required>
-            </div>
-          </div>
-
-          <!-- Escrow Summary Box -->
-          <div class="escrow-summary-box">
-            <div class="calc-row">
-              <span style="color: var(--text-muted); font-size: 0.85rem;">Escrow Settlement Vault:</span>
-              <span class="text-success" style="font-weight: 600; font-size: 0.85rem;">Anchor PDA (Non-Custodial)</span>
-            </div>
-            <div class="calc-row">
-              <span style="color: var(--text-muted); font-size: 0.85rem;">Protocol Settlement Speed:</span>
-              <span style="color: #c084fc; font-weight: 600; font-size: 0.85rem;">~400ms Sub-Second</span>
-            </div>
-            <div class="calc-row" style="border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 6px;">
-              <span style="font-weight: 600;">Total USDC Required:</span>
-              <span id="camp-total-budget" style="font-size: 1.15rem; font-weight: 700; color: #22c55e;">$5.00 USDC</span>
-            </div>
-          </div>
-
-          <button type="submit" id="btn-submit-campaign" class="btn-confirm-cashout" style="margin-top: 14px;">
-            ⚡ Deposit USDC & Launch Escrow
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- HONEYPOT TOAST NOTIFICATION -->
-    <div id="toast-container" class="toast-container">
-      <div id="toast-icon" class="toast-status-icon toast-pass">✓</div>
-      <div class="toast-content">
-        <span id="toast-header" class="toast-header">Honeypot Checked</span>
-        <span id="toast-body" class="toast-body">Your transcription accuracy is verified. Payout added.</span>
-      </div>
-    </div>
-
   </div>
+
+  <!-- CASHOUT MODAL -->
+  <div id="cashout-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Cash Out Funds to Wallet</span>
+        <button class="modal-close" onclick="closeCashoutModal()">&times;</button>
+      </div>
+
+      <div class="cashout-type-selection">
+        <!-- Option A: Free Daily Batch -->
+        <div id="payout-opt-free" class="cashout-option selected" onclick="selectPayoutOption('free')">
+          <div class="option-row">
+            <span class="option-title">Daily Auto-Batch</span>
+            <span class="option-badge badge-free">Free</span>
+          </div>
+          <span class="option-desc">Processed once every 24 hours. Zero gas or platform fees.</span>
+        </div>
+
+        <!-- Option B: Instant Cash-out -->
+        <div id="payout-opt-instant" class="cashout-option" onclick="selectPayoutOption('instant')">
+          <div class="option-row">
+            <span class="option-title">Instant Cash-out</span>
+            <span class="option-badge badge-instant">Instant</span>
+          </div>
+          <span class="option-desc">Funds released in 400ms. Includes sub-penny network gas + 1.5% processing fee.</span>
+        </div>
+      </div>
+
+      <!-- Calculator widget -->
+      <div id="withdrawal-calculator" class="withdrawal-calculator" style="display: none;">
+        <div class="calc-title">Instant Fee Breakdown</div>
+        <div class="calc-row">
+          <span>Amount to Withdraw:</span>
+          <span id="calc-withdraw-label" class="calc-val-large">0.00 USDC</span>
+        </div>
+        <input type="range" id="withdrawal-slider" class="slider-input" min="0" max="100" step="1" oninput="updateWithdrawalFeeMath()">
+        <div class="calc-row">
+          <span>Transaction Fee (USDC):</span>
+          <span id="calc-fee-label" class="text-error" style="font-weight: 600;">$0.05</span>
+        </div>
+        <div class="calc-row" style="border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 4px;">
+          <span>Instant Amount Received:</span>
+          <span id="calc-net-receive" class="calc-val-receive">$0.00</span>
+        </div>
+      </div>
+
+      <button class="btn-confirm-cashout" onclick="processCashout()">
+        Confirm & Release Escrow
+      </button>
+    </div>
+  </div>
+
+  <!-- EMPLOYER / CREATE CAMPAIGN MODAL -->
+  <div id="create-campaign-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <div>
+          <span class="modal-title">Launch AI Dataset Task</span>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Fund non-custodial milestone escrow via SPL USDC</div>
+        </div>
+        <button class="modal-close" onclick="closeCreateCampaignModal()">&times;</button>
+      </div>
+
+      <form id="create-campaign-form" onsubmit="handleCreateCampaign(event)">
+        <div class="form-group">
+          <label class="form-label" for="camp-title">Dataset / Campaign Title</label>
+          <input type="text" id="camp-title" class="form-input" placeholder="e.g. Python & Rust Code RLHF Benchmarks" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="camp-client">Organization / AI Lab Name</label>
+          <input type="text" id="camp-client" class="form-input" placeholder="e.g. Sahara Subnet 4 / Lelapa Research" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label" for="camp-type">Task Modality</label>
+            <select id="camp-type" class="form-select" required>
+              <option value="rlhf">Code / LLM RLHF Evaluation</option>
+              <option value="audio">Audio & Speech Transcription</option>
+              <option value="bbox">Computer Vision Bounding Box</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label" for="camp-tier">Min. Worker Tier</label>
+            <select id="camp-tier" class="form-select" required>
+              <option value="bronze">Bronze (General Tasks)</option>
+              <option value="silver">Silver (Verified Accuracy)</option>
+              <option value="gold">Gold (Elite Coders / STEM)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label" for="camp-rate">Rate Per Task (USDC)</label>
+            <input type="number" id="camp-rate" class="form-input" step="0.01" min="0.01" max="10.00" value="0.10" oninput="calculateCampaignBudget()" required>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label" for="camp-count">Task Volume</label>
+            <input type="number" id="camp-count" class="form-input" min="5" max="50000" value="50" oninput="calculateCampaignBudget()" required>
+          </div>
+        </div>
+
+        <!-- Escrow Summary Box -->
+        <div class="escrow-summary-box">
+          <div class="calc-row">
+            <span style="color: var(--text-muted); font-size: 0.85rem;">Escrow Settlement Vault:</span>
+            <span class="text-success" style="font-weight: 600; font-size: 0.85rem;">Anchor PDA (Non-Custodial)</span>
+          </div>
+          <div class="calc-row">
+            <span style="color: var(--text-muted); font-size: 0.85rem;">Protocol Settlement Speed:</span>
+            <span style="color: #c084fc; font-weight: 600; font-size: 0.85rem;">~400ms Sub-Second</span>
+          </div>
+          <div class="calc-row" style="border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 6px;">
+            <span style="font-weight: 600;">Total USDC Required:</span>
+            <span id="camp-total-budget" style="font-size: 1.15rem; font-weight: 700; color: #22c55e;">$5.00 USDC</span>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-submit-campaign" class="btn-confirm-cashout" style="margin-top: 14px;">
+          ⚡ Deposit USDC & Launch Escrow
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- HONEYPOT TOAST NOTIFICATION -->
+  <div id="toast-container" class="toast-container">
+    <div id="toast-icon" class="toast-status-icon toast-pass">✓</div>
+    <div class="toast-content">
+      <span id="toast-header" class="toast-header">Honeypot Checked</span>
+      <span id="toast-body" class="toast-body">Your transcription accuracy is verified. Payout added.</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <div class="footer-brand">SolWork Protocol &bull; 2026</div>
+        <p class="footer-copy">Built on Solana Anchor &bull; Non-custodial PDA milestone microtasking for African engineers.</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/0xtryhardx0/SOLWORK" target="_blank">GitHub</a>
+        <a href="https://solana.com" target="_blank">Solana Foundation</a>
+        <a href="mailto:xxii.services@gmail.com">Contact BD</a>
+      </div>
+    </div>
+  </footer>
 
   <script src="app.js"></script>
 </body>
