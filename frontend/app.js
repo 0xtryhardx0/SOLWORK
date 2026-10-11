@@ -700,3 +700,110 @@ function processCashout() {
   closeCashoutModal();
   updateUI();
 }
+
+// 12. EMPLOYER CAMPAIGN CREATION HANDLERS
+function openCreateCampaignModal() {
+  const modal = document.getElementById('create-campaign-modal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    calculateCampaignBudget();
+  }
+}
+
+function closeCreateCampaignModal() {
+  const modal = document.getElementById('create-campaign-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+function calculateCampaignBudget() {
+  const rateInput = document.getElementById('camp-rate');
+  const countInput = document.getElementById('camp-count');
+  const budgetLabel = document.getElementById('camp-total-budget');
+  
+  if (rateInput && countInput && budgetLabel) {
+    const rate = parseFloat(rateInput.value) || 0;
+    const count = parseInt(countInput.value) || 0;
+    const total = (rate * count).toFixed(2);
+    budgetLabel.innerText = `$${total} USDC`;
+  }
+}
+
+function handleCreateCampaign(e) {
+  e.preventDefault();
+  
+  const title = document.getElementById('camp-title').value.trim();
+  const client = document.getElementById('camp-client').value.trim();
+  const type = document.getElementById('camp-type').value;
+  const tier = document.getElementById('camp-tier').value;
+  const rate = parseFloat(document.getElementById('camp-rate').value) || 0.10;
+  const count = parseInt(document.getElementById('camp-count').value) || 50;
+  const totalBudget = rate * count;
+  
+  if (!title || !client) {
+    alert('Please enter a title and organization name.');
+    return;
+  }
+  
+  // Sample task template based on selected modality
+  let tasks = [];
+  if (type === 'rlhf') {
+    tasks = [
+      {
+        instruction: 'Evaluate the following Python function for concurrency safety and memory leaks. Grade 1-5.',
+        modelA: 'def fetch_data():\n    results = []\n    for url in urls:\n        results.append(requests.get(url).text)\n    return results',
+        modelB: 'async def fetch_data(session):\n    tasks = [session.get(url) for url in urls]\n    return await asyncio.gather(*tasks)',
+        isHoneypot: false,
+        correctAnswers: ['modelB', 'model b']
+      }
+    ];
+  } else if (type === 'audio') {
+    tasks = [
+      {
+        instruction: 'Transcribe spoken West African English audio accurately without hallucination.',
+        audioUrl: 'mock-speech-1.wav',
+        transcriptHint: 'Solana settles transactions in four hundred milliseconds',
+        isHoneypot: false,
+        correctAnswers: ['solana settles transactions in four hundred milliseconds']
+      }
+    ];
+  } else {
+    tasks = [
+      {
+        instruction: 'Draw a tight 2D bounding box around the vehicle in the frame.',
+        imageBg: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=480',
+        isHoneypot: false,
+        correctCoordinates: { x: 120, y: 100, w: 150, h: 180 }
+      }
+    ];
+  }
+  
+  const newCampaign = {
+    id: `camp-${Date.now()}`,
+    title: title,
+    client: client,
+    totalPool: totalBudget,
+    remainingPool: totalBudget,
+    rate: rate,
+    requiredTier: tier,
+    type: type,
+    tasks: tasks
+  };
+  
+  // Add campaign to global list and re-render
+  campaigns.unshift(newCampaign);
+  renderCampaigns();
+  
+  // Update count in header
+  const countElem = document.getElementById('campaign-count');
+  if (countElem) {
+    countElem.innerText = `${campaigns.length} Campaigns`;
+  }
+  
+  closeCreateCampaignModal();
+  document.getElementById('create-campaign-form').reset();
+  
+  alert(`⚡ Campaign Launched Successfully!\nFunded $${totalBudget.toFixed(2)} USDC into Anchor PDA Escrow.\nDataset "${title}" is now active on the public job board.`);
+}
+

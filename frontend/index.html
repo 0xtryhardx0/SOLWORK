@@ -72,8 +72,11 @@
       <!-- PROJECT CATALOG -->
       <div>
         <div class="section-header">
-          <span>Active Datasets</span>
-          <span id="campaign-count" class="active-count">3 Campaigns</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>Active Datasets</span>
+            <span id="campaign-count" class="active-count">3 Campaigns</span>
+          </div>
+          <button class="btn-create-campaign" onclick="openCreateCampaignModal()">+ Post AI Task</button>
         </div>
 
         <div id="campaigns-grid" class="campaigns-grid">
@@ -161,6 +164,81 @@
         <button class="btn-confirm-cashout" onclick="processCashout()">
           Confirm Cash-Out
         </button>
+      </div>
+    </div>
+
+    <!-- EMPLOYER / CREATE CAMPAIGN MODAL -->
+    <div id="create-campaign-modal" class="modal-overlay hidden">
+      <div class="modal-card" style="max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header">
+          <div>
+            <span class="modal-title">Launch AI Dataset Task</span>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Fund non-custodial milestone escrow via SPL USDC</div>
+          </div>
+          <button class="modal-close" onclick="closeCreateCampaignModal()">&times;</button>
+        </div>
+
+        <form id="create-campaign-form" onsubmit="handleCreateCampaign(event)">
+          <div class="form-group">
+            <label class="form-label" for="camp-title">Dataset / Campaign Title</label>
+            <input type="text" id="camp-title" class="form-input" placeholder="e.g. Python & Rust Code RLHF Benchmarks" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="camp-client">Organization / AI Lab Name</label>
+            <input type="text" id="camp-client" class="form-input" placeholder="e.g. Sahara Subnet 4 / Lelapa Research" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="camp-type">Task Modality</label>
+              <select id="camp-type" class="form-select" required>
+                <option value="rlhf">Code / LLM RLHF Evaluation</option>
+                <option value="audio">Audio & Speech Transcription</option>
+                <option value="bbox">Computer Vision Bounding Box</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="camp-tier">Min. Worker Tier</label>
+              <select id="camp-tier" class="form-select" required>
+                <option value="bronze">Bronze (General Tasks)</option>
+                <option value="silver">Silver (Verified Accuracy)</option>
+                <option value="gold">Gold (Elite Coders / STEM)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="camp-rate">Rate Per Task (USDC)</label>
+              <input type="number" id="camp-rate" class="form-input" step="0.01" min="0.01" max="10.00" value="0.10" oninput="calculateCampaignBudget()" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="camp-count">Task Volume</label>
+              <input type="number" id="camp-count" class="form-input" min="5" max="50000" value="50" oninput="calculateCampaignBudget()" required>
+            </div>
+          </div>
+
+          <!-- Escrow Summary Box -->
+          <div class="escrow-summary-box">
+            <div class="calc-row">
+              <span style="color: var(--text-muted); font-size: 0.85rem;">Escrow Settlement Vault:</span>
+              <span class="text-success" style="font-weight: 600; font-size: 0.85rem;">Anchor PDA (Non-Custodial)</span>
+            </div>
+            <div class="calc-row">
+              <span style="color: var(--text-muted); font-size: 0.85rem;">Protocol Settlement Speed:</span>
+              <span style="color: #c084fc; font-weight: 600; font-size: 0.85rem;">~400ms Sub-Second</span>
+            </div>
+            <div class="calc-row" style="border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 6px;">
+              <span style="font-weight: 600;">Total USDC Required:</span>
+              <span id="camp-total-budget" style="font-size: 1.15rem; font-weight: 700; color: #22c55e;">$5.00 USDC</span>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-campaign" class="btn-confirm-cashout" style="margin-top: 14px;">
+            ⚡ Deposit USDC & Launch Escrow
+          </button>
+        </form>
       </div>
     </div>
 
