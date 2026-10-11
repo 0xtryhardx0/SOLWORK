@@ -26,7 +26,7 @@
   <!-- NAVIGATION HEADER -->
   <header class="main-navbar">
     <div class="nav-container">
-      <div class="brand-logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+      <div class="brand-logo" onclick="switchView('landing')">
         <div class="brand-symbol">
           <div class="symbol-core"></div>
         </div>
@@ -36,21 +36,33 @@
         </div>
       </div>
 
-      <nav class="nav-links">
-        <a href="#datasets-section" class="nav-link active">Datasets</a>
-        <a href="#sandbox-section" class="nav-link">Live Sandbox</a>
-        <a href="#calculator-section" class="nav-link">ROI Calculator</a>
-        <a href="#roadmap-section" class="nav-link">Roadmap & $WORK</a>
-        <a href="javascript:void(0)" onclick="openInvestorModal()" class="nav-link highlight">📑 Investor Deck</a>
-        <a href="javascript:void(0)" onclick="openCreateCampaignModal()" class="nav-link">+ For AI Labs</a>
+      <!-- PORTAL VIEW SWITCHER TABS -->
+      <nav class="portal-nav-switcher">
+        <button id="nav-tab-landing" class="portal-tab-btn active" onclick="switchView('landing')">
+          <span class="tab-icon">🌐</span>
+          <span>Overview</span>
+        </button>
+        <button id="nav-tab-workspace" class="portal-tab-btn" onclick="switchView('workspace')">
+          <span class="tab-icon">🛠️</span>
+          <span>Task Workstation</span>
+          <span class="nav-pill-badge">Earn</span>
+        </button>
+        <button id="nav-tab-client" class="portal-tab-btn" onclick="switchView('client')">
+          <span class="tab-icon">🏢</span>
+          <span>Clients Area</span>
+          <span class="nav-pill-badge enterprise">AI Labs</span>
+        </button>
       </nav>
 
       <div class="nav-actions">
+        <button class="nav-deck-btn" onclick="openInvestorModal()">
+          <span>📑 Deck</span>
+        </button>
         <div class="network-indicator">
           <span class="status-dot online"></span>
           <span class="network-name">Solana Devnet</span>
         </div>
-        <button id="connect-wallet-btn" class="wallet-btn" onclick="toggleWallet()">
+        <button id="connect-wallet-btn" class="wallet-btn" onclick="openAuthModal()">
           <span class="wallet-dot"></span>
           <span id="wallet-text">Connect Phantom</span>
         </button>
@@ -58,33 +70,36 @@
     </div>
   </header>
 
-  <!-- INVESTOR-GRADE HERO SECTION -->
-  <section class="hero-section">
-    <div class="hero-container">
-      <div class="hero-pill">
-        <span class="hero-pill-sparkle">⚡</span>
-        <span>The Human Intelligence Layer for Frontier AI on Solana</span>
-      </div>
-      <h1 class="hero-title">
-        Decentralized AI Microtasking & <br>
-        <span class="gradient-text">Sub-Second Milestone Escrows</span>
-      </h1>
-      <p class="hero-subtitle">
-        Connecting global AI research labs with Africa's premier pool of English-fluent software engineers, STEM annotators, and multilingual linguists. Settled trustlessly in <strong>400ms SPL USDC</strong> via Anchor smart contracts.
-      </p>
+  <!-- ================= VIEW 1: PROTOCOL LANDING PAGE ================= -->
+  <div id="view-landing" class="portal-view">
 
-      <div class="hero-cta-group">
-        <a href="#datasets-section" class="btn-hero-primary">
-          <span>Explore Active Datasets</span>
-          <span class="arrow">&darr;</span>
-        </a>
-        <button class="btn-hero-secondary" onclick="openCreateCampaignModal()">
-          <span>+ Launch AI Dataset Escrow</span>
-        </button>
-        <button class="btn-hero-outline" onclick="openInvestorModal()">
-          <span>📑 View Protocol One-Pager</span>
-        </button>
-      </div>
+    <!-- INVESTOR-GRADE HERO SECTION -->
+    <section class="hero-section">
+      <div class="hero-container">
+        <div class="hero-pill">
+          <span class="hero-pill-sparkle">⚡</span>
+          <span>The Human Intelligence Layer for Frontier AI on Solana</span>
+        </div>
+        <h1 class="hero-title">
+          Decentralized AI Microtasking & <br>
+          <span class="gradient-text">Sub-Second Milestone Escrows</span>
+        </h1>
+        <p class="hero-subtitle">
+          Connecting global AI research labs with Africa's premier pool of English-fluent software engineers, STEM annotators, and multilingual linguists. Settled trustlessly in <strong>400ms SPL USDC</strong> via Anchor smart contracts.
+        </p>
+
+        <div class="hero-cta-group">
+          <button class="btn-hero-primary" onclick="switchView('workspace')">
+            <span>🛠️ Enter Task Workstation</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="btn-hero-secondary" onclick="switchView('client')">
+            <span>🏢 Enter Clients Area</span>
+          </button>
+          <button class="btn-hero-outline" onclick="openInvestorModal()">
+            <span>📑 View Protocol One-Pager</span>
+          </button>
+        </div>
 
       <!-- Live Protocol Metric Ribbons -->
       <div id="hero-stats-section" class="hero-stats-grid">
@@ -385,6 +400,74 @@
     </div>
   </section>
 
+  <!-- DUAL-PORTAL ACCESS GATEWAY SECTION -->
+  <section class="gateway-section">
+    <div class="gateway-container">
+      <div class="section-title-center">
+        <div class="sandbox-tag">PORTAL SELECTION</div>
+        <h2>Choose Your Operating Environment</h2>
+        <p>Built for two distinct ecosystem participants: African AI annotators and global frontier labs.</p>
+      </div>
+
+      <div class="gateway-cards-grid">
+        <!-- Worker Gateway Card -->
+        <div class="gateway-card gateway-worker" onclick="switchView('workspace')">
+          <div class="gateway-badge">FOR WORKERS & ANNOTATORS</div>
+          <div class="gateway-icon">🛠️</div>
+          <h3>Task Workstation</h3>
+          <p>Complete benchmark AI tasks in Python RLHF, multilingual speech, and computer vision. Pass honeypots and withdraw instant SPL USDC to your Phantom wallet with sub-second settlement.</p>
+          <ul class="gateway-perks">
+            <li>✓ 400ms Sub-Second Solana Payouts</li>
+            <li>✓ 100% Non-Custodial PDA Escrows</li>
+            <li>✓ Tier-based Progression (Bronze to Gold)</li>
+          </ul>
+          <button class="btn-gateway-action btn-gateway-worker">
+            Launch Task Workstation &rarr;
+          </button>
+        </div>
+
+        <!-- Client Gateway Card -->
+        <div class="gateway-card gateway-client" onclick="switchView('client')">
+          <div class="gateway-badge enterprise">FOR AI LABS & ENTERPRISE</div>
+          <div class="gateway-icon">🏢</div>
+          <h3>Clients Area</h3>
+          <p>Fund non-custodial Anchor escrow vaults, set custom honeypot & consensus quality parameters, track verification progress in real time, and extract cryptographically verified ground-truth data.</p>
+          <ul class="gateway-perks">
+            <li>✓ Custom Quality Parameters (Honeypot % & Consensus)</li>
+            <li>✓ 25%–70% Cost Reductions vs Scale AI</li>
+            <li>✓ Clean Verified Dataset Dispatch (JSONL/Parquet)</li>
+          </ul>
+          <button class="btn-gateway-action btn-gateway-client">
+            Enter Clients Area &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div> <!-- END VIEW 1: LANDING PAGE -->
+
+
+<!-- ================= VIEW 2: WORKER TASK WORKSTATION ================= -->
+<div id="view-workspace" class="portal-view" style="display: none;">
+
+  <!-- WORKSPACE BANNER & MODALITY FILTER -->
+  <section class="workspace-portal-header">
+    <div class="workspace-header-container">
+      <div class="ws-header-left">
+        <div class="portal-sub-tag">CONTRIBUTOR HUB &bull; SOLANA DEVNET</div>
+        <h2>🛠️ Worker Task Workstation</h2>
+        <p>Select an active dataset stream, verify microtasks under consensus, and withdraw earned USDC directly to your Phantom wallet.</p>
+      </div>
+      <div class="workspace-modality-filters">
+        <button id="ws-filter-all" class="ws-filter-btn active" onclick="filterWorkspaceModality('all')">All Datasets</button>
+        <button id="ws-filter-rlhf" class="ws-filter-btn" onclick="filterWorkspaceModality('rlhf')">💻 Code RLHF</button>
+        <button id="ws-filter-audio" class="ws-filter-btn" onclick="filterWorkspaceModality('audio')">🎙️ African Audio</button>
+        <button id="ws-filter-bbox" class="ws-filter-btn" onclick="filterWorkspaceModality('bbox')">🚗 Vision BBox</button>
+      </div>
+    </div>
+  </section>
+
   <!-- LIVE PROTOCOL ESCROW FEED TICKER -->
   <div class="live-activity-ticker">
     <div class="ticker-label">LIVE ESCROW SETTLEMENTS:</div>
@@ -408,7 +491,7 @@
     </div>
   </div>
 
-  <!-- MAIN APPLICATION DASHBOARD (2-COLUMN RESPONSIVE LAYOUT) -->
+  <!-- WORKER DASHBOARD (2-COLUMN RESPONSIVE LAYOUT) -->
   <div class="app-layout" id="datasets-section">
 
     <!-- LEFT SIDEBAR: WORKER & ESCROW CONSOLE -->
@@ -472,7 +555,7 @@
 
     </aside>
 
-    <!-- RIGHT / MAIN REGION: DATASET CATALOG & CREATOR PORTAL -->
+    <!-- RIGHT / MAIN REGION: DATASET CATALOG -->
     <main class="main-catalog">
 
       <!-- Catalog Header & Controls -->
@@ -483,8 +566,8 @@
         </div>
         <div class="catalog-actions">
           <span id="campaign-count" class="badge-count">3 Campaigns Active</span>
-          <button class="btn-post-task" onclick="openCreateCampaignModal()">
-            ⚡ + Post AI Dataset (Escrow)
+          <button class="btn-post-task" onclick="switchView('client')">
+            🏢 Switch to Clients Area &rarr;
           </button>
         </div>
       </div>
@@ -497,6 +580,269 @@
     </main>
 
   </div>
+</div> <!-- END VIEW 2: WORKSPACE -->
+
+
+<!-- ================= VIEW 3: ENTERPRISE CLIENTS AREA ================= -->
+<div id="view-client" class="portal-view" style="display: none;">
+
+  <!-- CLIENT PORTAL HEADER & METRICS -->
+  <section class="client-portal-header">
+    <div class="client-header-container">
+      <div class="client-title-box">
+        <div class="portal-sub-tag enterprise">ENTERPRISE CLIENT SUITE &bull; ANCHOR PROTOCOL</div>
+        <h2>🏢 Enterprise AI Labs & Clients Portal</h2>
+        <p>Deposit non-custodial SPL USDC escrows, set deterministic honeypot parameters, monitor annotation completion in real time, and extract verified training datasets.</p>
+      </div>
+
+      <div class="client-top-metrics">
+        <div class="client-stat-pill">
+          <span class="pill-label">Total Escrow Vaults</span>
+          <span class="pill-val">$19,500 USDC</span>
+        </div>
+        <div class="client-stat-pill">
+          <span class="pill-label">Tasks Consensus-Verified</span>
+          <span class="pill-val">2,842</span>
+        </div>
+        <div class="client-stat-pill">
+          <span class="pill-label">Honeypot Quality Consensus</span>
+          <span class="pill-val text-success">99.4%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="client-portal-content">
+    <div class="client-container">
+
+      <!-- CLIENT SUBNAV TABS -->
+      <div class="client-subnav-bar">
+        <button id="client-subtab-create" class="client-nav-btn active" onclick="switchClientTab('create')">
+          <span>🚀 Launch & Escrow Dataset</span>
+        </button>
+        <button id="client-subtab-monitor" class="client-nav-btn" onclick="switchClientTab('monitor')">
+          <span>📊 Live Campaigns & Progress</span>
+          <span id="client-campaigns-counter" class="counter-badge">3 Active</span>
+        </button>
+        <button id="client-subtab-dispatch" class="client-nav-btn" onclick="switchClientTab('dispatch')">
+          <span>📦 Extract & Dispatch Data</span>
+        </button>
+      </div>
+
+      <!-- SUBTAB 1: CAMPAIGN CREATOR WITH CUSTOM PARAMETERS -->
+      <div id="client-tab-create-panel" class="client-tab-panel">
+        <div class="client-card">
+          <div class="card-header-row">
+            <div>
+              <h3 class="card-title-lg">Deploy Non-Custodial Dataset Escrow</h3>
+              <p class="card-subtitle-sm">Lock SPL USDC into an Anchor PDA state machine. Funds are released strictly upon ground-truth consensus verification.</p>
+            </div>
+            <span class="pda-badge">Anchor 0.29 PDA Vault</span>
+          </div>
+
+          <form id="client-create-campaign-form" onsubmit="handleClientCreateCampaign(event)">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Dataset / Campaign Title</label>
+                <input type="text" id="client-camp-title" class="form-input" placeholder="e.g. African Dialect Audio Speech Corpus" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">AI Organization / Research Lab</label>
+                <input type="text" id="client-camp-org" class="form-input" placeholder="e.g. Sahara Subnet 4 / Masakhane NLP" required>
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label class="form-label">Modality</label>
+                <select id="client-camp-type" class="form-select" required>
+                  <option value="rlhf">Code / LLM RLHF Evaluation</option>
+                  <option value="audio">African Audio & Speech Transcription</option>
+                  <option value="bbox">Computer Vision Bounding Box</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Min. Contributor Tier</label>
+                <select id="client-camp-tier" class="form-select" required>
+                  <option value="bronze">Bronze (General Tasks)</option>
+                  <option value="silver" selected>Silver (Verified Accuracy &gt; 95%)</option>
+                  <option value="gold">Gold (Elite Coders / STEM Degrees)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Rate Per Task (USDC)</label>
+                <input type="number" id="client-camp-rate" class="form-input" step="0.01" min="0.01" max="10.00" value="0.25" oninput="calculateClientBudget()" required>
+              </div>
+            </div>
+
+            <!-- CUSTOM QUALITY & EVALUATION PARAMETERS (AS REQUESTED) -->
+            <div class="custom-parameters-section">
+              <div class="param-section-title">
+                <span>⚙️ Quality Control & Consensus Parameters</span>
+                <span class="param-badge">Enforced On-Chain</span>
+              </div>
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label class="form-label">Deterministic Honeypot Ratio</label>
+                  <select id="client-param-honeypot" class="form-select">
+                    <option value="10">10% Random Verification Audits</option>
+                    <option value="15" selected>15% High-Precision Audits</option>
+                    <option value="20">20% Frontier Research Audits</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Consensus Quorum Threshold</label>
+                  <select id="client-param-quorum" class="form-select">
+                    <option value="90">90% Majority Agreement</option>
+                    <option value="95" selected>95% High-Confidence Quorum</option>
+                    <option value="99">99% Unanimous Slashing Quorum</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Target Delivery Format</label>
+                  <select id="client-param-format" class="form-select">
+                    <option value="jsonl">JSONL (OpenAI / Anthropic Fine-tuning)</option>
+                    <option value="parquet">Apache Parquet (PyTorch / HuggingFace)</option>
+                    <option value="csv">Standard CSV with WAV URLs</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Custom Annotation Constraints / Rubric Prompt</label>
+                <textarea id="client-param-guidelines" class="form-textarea" rows="2" placeholder="e.g. Reject audio clips with clipping > -1dB. Transcribe Nigerian Pidgin phonetically without Anglophone normalization."></textarea>
+              </div>
+            </div>
+
+            <div class="form-row-budget">
+              <div class="form-group" style="flex: 1;">
+                <label class="form-label">Task Volume (Total Tasks)</label>
+                <input type="number" id="client-camp-count" class="form-input" min="10" max="100000" value="200" oninput="calculateClientBudget()" required>
+              </div>
+              <div class="client-escrow-summary-box">
+                <div class="escrow-summary-title">Anchor PDA Escrow Deposit Required:</div>
+                <div class="escrow-math-row">
+                  <span>Worker Payout Pool:</span>
+                  <strong id="client-worker-pool">$50.00 USDC</strong>
+                </div>
+                <div class="escrow-math-row">
+                  <span>Protocol Take-Rate (2.5%):</span>
+                  <span id="client-protocol-fee">$1.25 USDC</span>
+                </div>
+                <div class="escrow-math-row highlight">
+                  <span>Total Escrow Deposit:</span>
+                  <strong id="client-total-escrow" class="text-success">$51.25 USDC</strong>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-client-deploy-escrow" class="btn-confirm-cashout" style="margin-top: 20px;">
+              ⚡ Sign Solana Transaction & Deposit Escrow
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- SUBTAB 2: CAMPAIGN PROGRESS MONITOR & SUBMISSION STREAM -->
+      <div id="client-tab-monitor-panel" class="client-tab-panel" style="display: none;">
+        <div class="client-card">
+          <div class="card-header-row">
+            <div>
+              <h3 class="card-title-lg">Active Escrow Campaigns & Real-Time Progress</h3>
+              <p class="card-subtitle-sm">Track milestone completion, remaining PDA escrow vaults, and quality consensus in real time.</p>
+            </div>
+            <button class="btn-refresh-data" onclick="renderClientMonitorCampaigns()">🔄 Refresh On-Chain State</button>
+          </div>
+
+          <!-- Dynamic Active Campaigns List -->
+          <div id="client-active-campaigns-list" class="client-campaigns-list">
+            <!-- Injected via app.js -->
+          </div>
+
+          <!-- Real-Time Verified Submissions Audit Log -->
+          <div class="audit-log-section">
+            <div class="audit-log-title">
+              <span>⚡ Live Consensus Submissions Stream (Lagos &bull; Nairobi &bull; Kigali)</span>
+              <span class="pulse-indicator">● LIVE</span>
+            </div>
+            <div id="client-submissions-stream" class="audit-stream-list">
+              <!-- Injected via app.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 3: DATA EXTRACTION & DISPATCH -->
+      <div id="client-tab-dispatch-panel" class="client-tab-panel" style="display: none;">
+        <div class="client-card">
+          <div class="card-header-row">
+            <div>
+              <h3 class="card-title-lg">Verified Ground-Truth Dataset Extraction & Dispatch</h3>
+              <p class="card-subtitle-sm">Request our data engineering team to cryptographically package and transmit your consensus-verified training dataset directly to your engineering team.</p>
+            </div>
+            <span class="pda-badge verified">Zero Noise Guarantee</span>
+          </div>
+
+          <div class="dispatch-grid-2">
+            <!-- Option A: Request Official Team Dispatch -->
+            <div class="dispatch-box">
+              <div class="dispatch-icon">📬</div>
+              <h4>Request Verified Dataset Dispatch</h4>
+              <p>Because mission-critical AI training requires audited data integrity, our team extracts the Anchor-verified submissions, runs cryptographic deduplication, and securely dispatches the final dataset package.</p>
+              
+              <form id="dispatch-request-form" onsubmit="handleRequestDataDispatch(event)" style="margin-top: 14px;">
+                <div class="form-group">
+                  <label class="form-label">Recipient Lab Email / Webhook</label>
+                  <input type="email" id="dispatch-email" class="form-input" placeholder="e.g. data-lead@sahara.ai or engineering@masakhane.io" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Select Campaign to Extract</label>
+                  <select id="dispatch-campaign-select" class="form-select" required>
+                    <option value="audio-transcribe">English Accents Speech Labeling (1,480 / 2,000 Verified)</option>
+                    <option value="rlhf-coding">Coding LLM Assistant Response Rating (1,150 / 1,500 Verified)</option>
+                    <option value="bbox-bounding">Autonomous Vehicle Obstacle Boxing (212 / 500 Verified)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Target Format</label>
+                  <select id="dispatch-format-select" class="form-select">
+                    <option value="jsonl">Cleaned JSONL (Prompt / Completion)</option>
+                    <option value="parquet">Apache Parquet Format</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn-confirm-cashout" style="margin-top: 10px;">
+                  🚀 Request Dataset Dispatch via xxii.services@gmail.com
+                </button>
+              </form>
+            </div>
+
+            <!-- Option B: Instant Offline Inspection Sample -->
+            <div class="dispatch-box">
+              <div class="dispatch-icon">💾</div>
+              <h4>Instant Sample Download (JSONL)</h4>
+              <p>Download an immediate offline sample batch of verified contributor submissions formatted for direct input into PyTorch / Hugging Face tokenizers.</p>
+              
+              <div class="sample-preview-box">
+                <span class="code-label">JSONL Schema Preview</span>
+                <code>{"id": "task-781", "modality": "audio", "transcript": "Solana settles transactions in 400 milliseconds", "consensus_accuracy": 1.0, "pda_tx": "5k2p...w9Yq"}</code>
+              </div>
+
+              <button class="btn-hero-outline" style="width: 100%; justify-content: center; margin-top: 20px;" onclick="downloadSampleJsonl()">
+                ⬇️ Download Verified Sample (JSONL)
+              </button>
+              
+              <div class="dispatch-security-note">
+                🔒 Cryptographically signed by SolWork Anchor Escrow PDA Program Authority.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div> <!-- END VIEW 3: CLIENT PORTAL -->
 
   <!-- WORKSPACE OVERLAY (DYNAMIC INTERACTIVE TASK MODAL) -->
   <div id="workspace-overlay" class="workspace-overlay hidden">
@@ -725,6 +1071,60 @@
             <a href="https://github.com/0xtryhardx0/SOLWORK" target="_blank" class="btn-deck-git">View Smart Contract on GitHub &rarr;</a>
             <button class="btn-deck-close" onclick="closeInvestorModal()">Back to Workspace</button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEB3 PHANTOM AUTH & ROLE SELECTION MODAL -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-card auth-modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div>
+          <span class="modal-title">🔑 Solana Web3 Authentication</span>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Sign in securely using Phantom or Devnet Wallet</div>
+        </div>
+        <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      </div>
+
+      <div class="auth-modal-body">
+        <div class="auth-wallet-preview">
+          <div class="auth-phantom-badge">
+            <span class="phantom-icon">👻</span>
+            <div class="phantom-info">
+              <strong id="auth-status-title">Phantom Wallet Detected</strong>
+              <span id="auth-status-sub" style="font-size: 0.75rem; color: var(--text-secondary);">Ready to sign cryptographic session message</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="role-selector-box" style="margin-top: 18px;">
+          <label class="form-label">Choose Your Operating Role / Portal:</label>
+          <div class="role-options-grid">
+            <div id="role-opt-worker" class="role-option-card selected" onclick="selectAuthRole('worker')">
+              <div class="role-icon">🛠️</div>
+              <div class="role-info">
+                <strong>Contributor / Annotator</strong>
+                <p>Complete AI tasks, pass honeypots, and withdraw instant SPL USDC.</p>
+              </div>
+            </div>
+            <div id="role-opt-client" class="role-option-card" onclick="selectAuthRole('client')">
+              <div class="role-icon">🏢</div>
+              <div class="role-info">
+                <strong>AI Lab / Enterprise Client</strong>
+                <p>Fund Anchor PDA escrows, set custom parameters, and extract ground truth.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-action-buttons" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+          <button id="btn-phantom-sign" class="btn-confirm-cashout" onclick="handleWalletSignIn()">
+            ⚡ Sign In with Phantom Wallet
+          </button>
+          <button class="btn-demo-wallet" onclick="handleDemoSignIn()">
+            🚀 1-Click Devnet Demo Keypair (No Extension Needed)
+          </button>
         </div>
       </div>
     </div>

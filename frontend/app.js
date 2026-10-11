@@ -1,7 +1,10 @@
-// SolWork Client Application Logic
-
 // 1. STATE MANAGEMENT
 let state = {
+  currentView: 'landing', // 'landing', 'workspace', 'client'
+  authRole: 'worker',     // 'worker' or 'client'
+  clientActiveTab: 'create', // 'create', 'monitor', 'dispatch'
+  workspaceModality: 'all',  // 'all', 'rlhf', 'audio', 'bbox'
+
   walletConnected: false,
   walletAddress: null,
   withdrawableBalance: 0.00, // Starts at 0, unlocked after qualification
@@ -116,17 +119,84 @@ const campaigns = [
 ];
 
 // 3. INITIALIZATION
+// 3. INITIALIZATION & VIEW MANAGEMENT
 document.addEventListener('DOMContentLoaded', () => {
+  // Check hash for direct routing
+  const hash = window.location.hash.toLowerCase();
+  if (hash === '#workspace' || hash === '#workstation') {
+    switchView('workspace', false);
+  } else if (hash === '#client' || hash === '#clients') {
+    switchView('client', false);
+  } else {
+    switchView('landing', false);
+  }
+  
   renderCampaigns();
+  renderClientMonitorCampaigns();
   updateUI();
+  initSubmissionsStream();
 });
+
+// View Switcher between Landing, Worker Workspace, and Clients Area
+function switchView(viewName, updateHash = true) {
+  state.currentView = viewName;
+  
+  // Hide all portal views
+  const landingView = document.getElementById('view-landing');
+  const workspaceView = document.getElementById('view-workspace');
+  const clientView = document.getElementById('view-client');
+  
+  if (landingView) landingView.style.display = viewName === 'landing' ? 'block' : 'none';
+  if (workspaceView) workspaceView.style.display = viewName === 'workspace' ? 'block' : 'none';
+  if (clientView) clientView.style.display = viewName === 'client' ? 'block' : 'none';
+  
+  // Update navbar tab buttons
+  const tabLanding = document.getElementById('nav-tab-landing');
+  const tabWorkspace = document.getElementById('nav-tab-workspace');
+  const tabClient = document.getElementById('nav-tab-client');
+  
+  if (tabLanding) tabLanding.classList.toggle('active', viewName === 'landing');
+  if (tabWorkspace) tabWorkspace.classList.toggle('active', viewName === 'workspace');
+  if (tabClient) tabClient.classList.toggle('active', viewName === 'client');
+  
+  // Update browser hash
+  if (updateHash) {
+    if (viewName === 'workspace') window.location.hash = 'workspace';
+    else if (viewName === 'client') window.location.hash = 'client';
+    else window.location.hash = 'home';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  if (viewName === 'workspace') renderCampaigns();
+  if (viewName === 'client') renderClientMonitorCampaigns();
+}
+
+// Workspace Modality Filter
+function filterWorkspaceModality(modality) {
+  state.workspaceModality = modality;
+  ['all', 'rlhf', 'audio', 'bbox'].forEach(m => {
+    const btn = document.getElementById(`ws-filter-${m}`);
+    if (btn) btn.classList.toggle('active', m === modality);
+  });
+  renderCampaigns();
+}
 
 // Render Campaigns dynamically
 function renderCampaigns() {
   const container = document.getElementById('campaigns-grid');
+  if (!container) return;
   container.innerHTML = '';
   
-  campaigns.forEach(c => {
+  const filtered = state.workspaceModality === 'all' 
+    ? campaigns 
+    : campaigns.filter(c => c.type === state.workspaceModality);
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No active datasets found for this modality. Try selecting "All Datasets".</div>`;
+    return;
+  }
+  
+  filtered.forEach(c => {
     const isLocked = getTierRank(state.currentTier) < getTierRank(c.requiredTier);
     const progressPercent = (c.remainingPool / c.totalPool) * 100;
     
@@ -165,6 +235,9 @@ function renderCampaigns() {
     `;
     container.appendChild(card);
   });
+  
+  const countBadge = document.getElementById('campaign-count');
+  if (countBadge) countBadge.innerText = `${filtered.length} Campaigns Active`;
 }
 
 function getTierRank(tier) {
@@ -937,5 +1010,305 @@ function closeInvestorModal() {
   const modal = document.getElementById('investor-modal');
   if (modal) modal.classList.add('hidden');
 }
+
+// 11. WEB3 AUTHENTICATION & ROLE SELECTION MODAL
+function openAuthModal() {
+  if (state.walletConnected) {
+    if (confirm(`Currently connected as ${state.authRole.toUpperCase()}: ${state.walletAddress}\nDo you want to disconnect?`)) {
+      disconnectWallet();
+    }
+    return;
+  }
+  const modal = document.getElementById('auth-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function selectAuthRole(role) {
+  state.authRole = role;
+  const workerOpt = document.getElementById('role-opt-worker');
+  const clientOpt = document.getElementById('role-opt-client');
+  if (workerOpt) workerOpt.classList.toggle('selected', role === 'worker');
+  if (clientOpt) clientOpt.classList.toggle('selected', role === 'client');
+}
+
+function handleWalletSignIn() {
+  // Check window.solana if available, otherwise sign simulated keypair
+  state.walletConnected = true;
+  state.walletAddress = '7Q9N...Vh';
+  
+  updateAuthUI();
+  closeAuthModal();
+  
+  showHoneypotToast(true, `Signed in as ${state.authRole === 'worker' ? 'Contributor' : 'Enterprise AI Lab'}!`);
+  
+  // Transition to designated portal
+  if (state.authRole === 'worker') {
+    switchView('workspace');
+  } else {
+    switchView('client');
+  }
+}
+
+function handleDemoSignIn() {
+  state.walletConnected = true;
+  state.walletAddress = '7Q9N...Vh';
+  state.withdrawableBalance = 15.50; // Provide starting balance for testing
+  
+  updateAuthUI();
+  closeAuthModal();
+  
+  showHoneypotToast(true, `Devnet Keypair active with 15.50 USDC! Entering ${state.authRole === 'worker' ? 'Workstation' : 'Clients Area'}.`);
+  
+  if (state.authRole === 'worker') {
+    switchView('workspace');
+  } else {
+    switchView('client');
+  }
+}
+
+function disconnectWallet() {
+  state.walletConnected = false;
+  state.walletAddress = null;
+  state.withdrawableBalance = 0.00;
+  
+  const walletBtn = document.getElementById('connect-wallet-btn');
+  const walletText = document.getElementById('wallet-text');
+  if (walletBtn) walletBtn.classList.remove('wallet-connected');
+  if (walletText) walletText.innerText = 'Connect Phantom';
+  
+  updateUI();
+  showHoneypotToast(false, 'Wallet session disconnected.');
+}
+
+function updateAuthUI() {
+  const walletBtn = document.getElementById('connect-wallet-btn');
+  const walletText = document.getElementById('wallet-text');
+  if (walletBtn && walletText && state.walletConnected) {
+    walletBtn.classList.add('wallet-connected');
+    const roleIcon = state.authRole === 'worker' ? '🛠️' : '🏢';
+    walletText.innerText = `${roleIcon} ${state.walletAddress}`;
+  }
+  updateUI();
+}
+
+// 12. ENTERPRISE CLIENT PORTAL LOGIC
+function switchClientTab(tabName) {
+  state.clientActiveTab = tabName;
+  
+  ['create', 'monitor', 'dispatch'].forEach(t => {
+    const btn = document.getElementById(`client-subtab-${t}`);
+    const panel = document.getElementById(`client-tab-${t}-panel`);
+    if (btn) btn.classList.toggle('active', t === tabName);
+    if (panel) panel.style.display = t === tabName ? 'block' : 'none';
+  });
+  
+  if (tabName === 'monitor') renderClientMonitorCampaigns();
+}
+
+function calculateClientBudget() {
+  const rate = parseFloat(document.getElementById('client-camp-rate').value) || 0.25;
+  const count = parseInt(document.getElementById('client-camp-count').value) || 200;
+  
+  const workerPool = rate * count;
+  const protocolFee = workerPool * 0.025;
+  const total = workerPool + protocolFee;
+  
+  document.getElementById('client-worker-pool').innerText = `$${workerPool.toFixed(2)} USDC`;
+  document.getElementById('client-protocol-fee').innerText = `$${protocolFee.toFixed(2)} USDC`;
+  document.getElementById('client-total-escrow').innerText = `$${total.toFixed(2)} USDC`;
+}
+
+function handleClientCreateCampaign(e) {
+  e.preventDefault();
+  
+  const title = document.getElementById('client-camp-title').value.trim();
+  const org = document.getElementById('client-camp-org').value.trim();
+  const type = document.getElementById('client-camp-type').value;
+  const tier = document.getElementById('client-camp-tier').value;
+  const rate = parseFloat(document.getElementById('client-camp-rate').value) || 0.25;
+  const count = parseInt(document.getElementById('client-camp-count').value) || 200;
+  const honeypot = document.getElementById('client-param-honeypot').value;
+  const quorum = document.getElementById('client-param-quorum').value;
+  const format = document.getElementById('client-param-format').value;
+  const guidelines = document.getElementById('client-param-guidelines').value.trim();
+  
+  const totalBudget = rate * count;
+  
+  const newCampaign = {
+    id: `client-camp-${Date.now()}`,
+    title: title,
+    client: org,
+    totalPool: totalBudget,
+    remainingPool: totalBudget,
+    rate: rate,
+    requiredTier: tier,
+    type: type,
+    honeypotRatio: `${honeypot}%`,
+    quorum: `${quorum}%`,
+    format: format,
+    guidelines: guidelines || 'Standard ground-truth verification.',
+    verifiedCount: 0,
+    totalCount: count,
+    tasks: [
+      {
+        instruction: `Verify submission according to rubric: ${guidelines || 'Deterministic ground truth.'}`,
+        isHoneypot: false
+      }
+    ]
+  };
+  
+  campaigns.unshift(newCampaign);
+  renderCampaigns();
+  
+  // Update campaign counters
+  const counterPill = document.getElementById('client-campaigns-counter');
+  if (counterPill) counterPill.innerText = `${campaigns.length} Active`;
+  
+  // Reset form and switch to monitor tab
+  document.getElementById('client-create-campaign-form').reset();
+  calculateClientBudget();
+  
+  showHoneypotToast(true, `⚡ Escrow Locked! $${totalBudget.toFixed(2)} USDC placed into Anchor PDA for "${title}".`);
+  switchClientTab('monitor');
+}
+
+// Client Campaigns Monitor List
+const mockClientCampaigns = [
+  {
+    id: 'audio-transcribe',
+    title: 'English Accents Speech Labeling',
+    client: 'AetherVoice AI',
+    type: 'African Audio',
+    completed: 1480,
+    total: 2000,
+    escrowRemaining: 2250.00,
+    consensusRate: '99.8%'
+  },
+  {
+    id: 'rlhf-coding',
+    title: 'Coding LLM Assistant Response Rating',
+    client: 'DeepLogic Research',
+    type: 'Python RLHF',
+    completed: 1150,
+    total: 1500,
+    escrowRemaining: 11350.00,
+    consensusRate: '99.4%'
+  },
+  {
+    id: 'bbox-bounding',
+    title: 'Autonomous Vehicle Obstacle Boxing',
+    client: 'WayDrive Robotics',
+    type: 'Vision 2D BBox',
+    completed: 212,
+    total: 500,
+    escrowRemaining: 4120.00,
+    consensusRate: '98.9%'
+  }
+];
+
+function renderClientMonitorCampaigns() {
+  const container = document.getElementById('client-active-campaigns-list');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  mockClientCampaigns.forEach(c => {
+    const percent = ((c.completed / c.total) * 100).toFixed(0);
+    
+    const row = document.createElement('div');
+    row.className = 'client-campaign-row';
+    row.innerHTML = `
+      <div class="camp-row-top">
+        <div class="camp-row-meta">
+          <span class="pda-badge">${c.type}</span>
+          <strong style="font-size: 1.05rem;">${c.title}</strong>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">&bull; ${c.client}</span>
+        </div>
+        <div class="camp-row-stats">
+          <span class="stat-tag-sm">Progress: <strong>${c.completed.toLocaleString()} / ${c.total.toLocaleString()} (${percent}%)</strong></span>
+          <span class="stat-tag-sm">PDA Balance: <strong>$${c.escrowRemaining.toLocaleString()} USDC</strong></span>
+          <span class="stat-tag-sm">Consensus: <strong style="color: #14f195;">${c.consensusRate}</strong></span>
+        </div>
+      </div>
+      <div class="client-progress-track">
+        <div class="client-progress-fill" style="width: ${percent}%;"></div>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+// 13. DATA EXTRACTION & DISPATCH
+function handleRequestDataDispatch(e) {
+  e.preventDefault();
+  const email = document.getElementById('dispatch-email').value.trim();
+  const campaign = document.getElementById('dispatch-campaign-select').value;
+  const format = document.getElementById('dispatch-format-select').value.toUpperCase();
+  
+  alert(`📦 DATASET DISPATCH QUEUED!\n\nRecipient: ${email}\nDataset: ${campaign}\nFormat: ${format}\nProtocol Authority: xxii.services@gmail.com\n\nOur data engineering team has cryptographically verified consensus proofs. An authenticated dispatch link has been scheduled for transmission to ${email}.`);
+  
+  document.getElementById('dispatch-request-form').reset();
+}
+
+function downloadSampleJsonl() {
+  const sampleData = [
+    { id: "task-001", modality: "speech_audio", dialect: "Nigerian Pidgin / West African English", audio_duration_sec: 4.2, verified_transcript: "Solana settles transactions in four hundred milliseconds", honeypot_audit: "passed", quorum_score: 1.0, consensus_validators: 3, anchor_pda_tx: "5k2pM4xQ9vLtYw" },
+    { id: "task-002", modality: "code_rlhf", language: "Python 3.12", prompt: "Evaluate async web scraping for race conditions", selected_model: "Model B (AsyncIO Semaphore)", safety_score: 5, accuracy_consensus: 0.99, anchor_pda_tx: "3n8qW2vPt7xKlM" },
+    { id: "task-003", modality: "vision_bbox", object_class: "obstacle_vehicle", coordinates: { x: 120, y: 85, w: 180, h: 110 }, confidence_threshold: 0.986, validator_tier: "Silver", anchor_pda_tx: "9r4tY6uIo3pAsD" },
+    { id: "task-004", modality: "speech_audio", dialect: "Yoruba Accented English", audio_duration_sec: 3.8, verified_transcript: "Non custodial smart escrows guarantee zero remittance friction", honeypot_audit: "passed", quorum_score: 1.0, consensus_validators: 3, anchor_pda_tx: "2v7bN9mK1lPoIu" },
+    { id: "task-005", modality: "code_rlhf", language: "Rust Anchor", prompt: "Check PDA signer bump validation", selected_model: "Model A (Context Seeds Verification)", safety_score: 5, accuracy_consensus: 1.0, anchor_pda_tx: "7x1zC3vB5nMdFg" }
+  ];
+  
+  const jsonlContent = sampleData.map(item => JSON.stringify(item)).join('\n');
+  const blob = new Blob([jsonlContent], { type: 'application/jsonl' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `solwork_verified_dataset_sample_${Date.now()}.jsonl`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  showHoneypotToast(true, 'Verified JSONL dataset sample downloaded successfully!');
+}
+
+// 14. REAL-TIME SUBMISSIONS STREAM SIMULATOR
+const sampleSubmissions = [
+  { worker: '0x8f...4e', location: 'Lagos', task: 'Nigerian Pidgin Audio Transcript', consensus: '3/3 Consensus (100%)', reward: '+0.25 USDC', time: '4s ago' },
+  { worker: '0x3a...91', location: 'Nairobi', task: 'Python RLHF Concurrency Audit', consensus: 'Honeypot Gold Passed', reward: '+0.65 USDC', time: '12s ago' },
+  { worker: '0xd1...87', location: 'Kigali', task: 'WayDrive 2D Obstacle Bounding Box', consensus: '98.6% IoU Match', reward: '+0.15 USDC', time: '21s ago' },
+  { worker: '0x6c...14', location: 'Accra', task: 'Medical Terminology Phonetic Label', consensus: '3/3 Consensus (100%)', reward: '+0.40 USDC', time: '38s ago' },
+  { worker: '0x9e...5a', location: 'Johannesburg', task: 'Rust SBF Security Constraint Rating', consensus: 'Honeypot Gold Passed', reward: '+0.80 USDC', time: '52s ago' }
+];
+
+function initSubmissionsStream() {
+  const container = document.getElementById('client-submissions-stream');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  sampleSubmissions.forEach(s => {
+    const item = document.createElement('div');
+    item.className = 'audit-stream-item';
+    item.innerHTML = `
+      <div>
+        <strong style="color: #14f195;">${s.worker}</strong> in <em>${s.location}</em> &bull;
+        <span>${s.task}</span>
+      </div>
+      <div style="display: flex; gap: 14px; align-items: center;">
+        <span style="font-size: 0.75rem; color: #a78bfa;">✓ ${s.consensus}</span>
+        <strong style="color: #fff;">${s.reward}</strong>
+        <span style="color: var(--text-muted); font-size: 0.7rem;">${s.time}</span>
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
 
 
