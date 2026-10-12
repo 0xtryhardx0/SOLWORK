@@ -3258,7 +3258,364 @@ body {
     right: 16px;
     bottom: 16px;
   }
+  .bento-showcase-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .bento-globe-card {
+    grid-row: span 1 !important;
+  }
 }
+
+/* ==========================================================================
+   ACETERNITY METEORS & CONFETTI ENGINE
+   ========================================================================== */
+#confetti-canvas.bg-confetti-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.meteors-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.meteor {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 9999px;
+  background-color: #cbd5e1;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+  transform: rotate(215deg);
+  animation: meteor-fall linear infinite;
+  opacity: 0;
+}
+
+.meteor::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 70px;
+  height: 1.5px;
+  background: linear-gradient(90deg, #14f195, #9945ff, transparent);
+}
+
+@keyframes meteor-fall {
+  0% { transform: rotate(215deg) translateX(0); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: rotate(215deg) translateX(-500px); opacity: 0; }
+}
+
+/* ==========================================================================
+   ACETERNITY BORDER BEAM
+   ========================================================================== */
+.border-beam {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.border-beam::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(20, 241, 149, 0.4) 50%, rgba(153, 69, 255, 0.5) 75%, transparent 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: border-beam-spin 6s linear infinite;
+}
+
+@keyframes border-beam-spin {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ==========================================================================
+   INTERACTIVE BENTO SHOWCASE GRID
+   ========================================================================== */
+.bento-showcase-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 20px;
+  max-width: 1120px;
+  margin: 44px auto 0;
+  text-align: left;
+}
+
+.bento-card {
+  background: rgba(10, 14, 28, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  padding: 24px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8);
+  transition: var(--transition-smooth);
+}
+.bento-card:hover {
+  border-color: rgba(20, 241, 149, 0.35);
+  box-shadow: 0 25px 50px -12px rgba(20, 241, 149, 0.12);
+}
+
+.bento-globe-card {
+  grid-row: span 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bento-header {
+  margin-bottom: 12px;
+}
+.bento-tag {
+  display: inline-block;
+  background: rgba(153, 69, 255, 0.15);
+  border: 1px solid rgba(153, 69, 255, 0.35);
+  color: #d8b4fe;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.bento-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.bento-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+/* 3D GLOBE CANVAS & HUD */
+.globe-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 310px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 0.7), transparent 70%);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 14px;
+}
+.hero-globe-canvas {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+.hero-globe-canvas:active {
+  cursor: grabbing;
+}
+.globe-hud-overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  background: rgba(6, 8, 18, 0.9);
+  border: 1px solid rgba(20, 241, 149, 0.4);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: #e2e8f0;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 16px rgba(20, 241, 149, 0.2);
+  transition: all 0.2s ease;
+}
+.hud-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 6px var(--primary);
+}
+.globe-drag-hint {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 400MS OSCILLOSCOPE */
+.oscilloscope-wrapper {
+  margin-top: 10px;
+}
+.oscilloscope-canvas {
+  width: 100%;
+  height: 85px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.oscilloscope-metric-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 0 4px;
+}
+.osc-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.osc-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.osc-val {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+/* HONEYPOT INTERACTIVE SIMULATOR */
+.bento-interactive-body {
+  margin-top: 8px;
+}
+.honeypot-simulator-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.honeypot-hud-status {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.honeypot-btn-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.btn-test-action {
+  padding: 9px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+.btn-bad-data {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+.btn-bad-data:hover {
+  background: rgba(239, 68, 68, 0.25);
+  transform: translateY(-1px);
+}
+.btn-good-data {
+  background: rgba(20, 241, 149, 0.12);
+  border: 1px solid rgba(20, 241, 149, 0.35);
+  color: #86efac;
+}
+.btn-good-data:hover {
+  background: rgba(20, 241, 149, 0.25);
+  transform: translateY(-1px);
+}
+.honeypot-result-banner {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+  line-height: 1.4;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+.honeypot-result-banner.failed {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fecaca;
+}
+.honeypot-result-banner.passed {
+  background: rgba(20, 241, 149, 0.15);
+  border-color: rgba(20, 241, 149, 0.4);
+  color: #bbf7d0;
+}
+
+/* STREAM COUNTER */
+.stream-counter-box {
+  margin-top: 12px;
+}
+.stream-amount-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.stream-currency {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-mono);
+}
+.stream-live-counter {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+.stream-unit {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #c084fc;
+}
+.stream-rate-badge {
+  font-size: 0.72rem;
+  color: var(--primary);
+  font-family: var(--font-mono);
+  margin: 4px 0 12px;
+}
+.stream-live-nodes {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.node-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: #cbd5e1;
+}
+
 
 
 

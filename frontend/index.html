@@ -12,8 +12,9 @@
 </head>
 <body>
 
-  <!-- KINETIC NEURAL CANVAS & ACETERNTIY AURORA GLOWS -->
+  <!-- KINETIC NEURAL CANVAS, CONFETTI ENGINE & ACETERNITY AURORA GLOWS -->
   <canvas id="neural-canvas" class="bg-neural-canvas"></canvas>
+  <canvas id="confetti-canvas" class="bg-confetti-canvas"></canvas>
   <div class="aurora-glow-1"></div>
   <div class="aurora-glow-2"></div>
   <div class="retro-grid-mesh"></div>
@@ -92,12 +93,24 @@
 
     <!-- INVESTOR-GRADE HERO SECTION -->
     <section class="hero-section">
+      <!-- ACETERNITY METEORS BACKGROUND -->
+      <div class="meteors-container">
+        <span class="meteor" style="top: -20px; left: 10%; animation-delay: 0.2s; animation-duration: 3.2s;"></span>
+        <span class="meteor" style="top: -20px; left: 25%; animation-delay: 1.1s; animation-duration: 2.8s;"></span>
+        <span class="meteor" style="top: -20px; left: 45%; animation-delay: 0.6s; animation-duration: 3.5s;"></span>
+        <span class="meteor" style="top: -20px; left: 65%; animation-delay: 1.8s; animation-duration: 2.6s;"></span>
+        <span class="meteor" style="top: -20px; left: 80%; animation-delay: 0.9s; animation-duration: 3.8s;"></span>
+        <span class="meteor" style="top: -20px; left: 92%; animation-delay: 2.2s; animation-duration: 3.0s;"></span>
+        <span class="meteor" style="top: -20px; left: 35%; animation-delay: 2.7s; animation-duration: 3.4s;"></span>
+        <span class="meteor" style="top: -20px; left: 55%; animation-delay: 1.4s; animation-duration: 2.9s;"></span>
+      </div>
+
       <div class="hero-container">
         <div class="hero-pill">
           <span class="hero-pill-sparkle">⚡</span>
           <span>The Human Intelligence Layer for Frontier AI on Solana</span>
         </div>
-        <h1 class="hero-title">
+        <h1 class="hero-title" id="hero-main-heading" onmouseover="scrambleTitle(this)">
           Decentralized AI Microtasking & <br>
           <span class="gradient-text">Sub-Second Milestone Escrows</span>
         </h1>
@@ -118,31 +131,96 @@
           </button>
         </div>
 
-      <!-- Live Protocol Metric Ribbons -->
-      <div id="hero-stats-section" class="hero-stats-grid">
-        <div class="stat-card">
-          <div class="stat-num">&lt; 400ms</div>
-          <div class="stat-desc">Payout Finality Speed</div>
-          <div class="stat-sub">Direct to Phantom/Solflare</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">$0.00025</div>
-          <div class="stat-desc">Avg Protocol Transaction Fee</div>
-          <div class="stat-sub">Zero Bank Wire Gouging</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">100%</div>
-          <div class="stat-desc">Non-Custodial PDA Vaults</div>
-          <div class="stat-sub">Anchor Program Verified</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">99.4%</div>
-          <div class="stat-desc">Benchmark Honeypot Accuracy</div>
-          <div class="stat-sub">Consensus Proof Quality</div>
+        <!-- INTERACTIVE ACETERNITY BENTO SHOWCASE GRID -->
+        <div class="bento-showcase-grid">
+          <!-- Bento Card 1: 3D Holographic Global Escrow Globe (Spans 2 columns on desktop) -->
+          <div class="bento-card bento-globe-card border-beam tilt-card">
+            <div class="bento-header">
+              <div class="bento-tag">LIVE INTERACTIVE NETWORK</div>
+              <h3 class="bento-title">Decentralized Escrow Arc Topology</h3>
+              <p class="bento-desc">Drag to rotate 3D mesh. Hover nodes to inspect live Anchor PDA vaults connecting global AI labs to African developer clusters.</p>
+            </div>
+            <div class="globe-canvas-wrapper">
+              <canvas id="hero-globe-canvas" class="hero-globe-canvas"></canvas>
+              <div id="globe-node-hud" class="globe-hud-overlay">
+                <span class="hud-indicator pulse"></span>
+                <strong id="hud-city-name">Lagos Contributor Hub</strong> &bull;
+                <span id="hud-city-stat" style="color: var(--primary);">1,420 Active Wallets (400ms USDC)</span>
+              </div>
+              <div class="globe-drag-hint">⇄ Drag to rotate 3D globe</div>
+            </div>
+          </div>
+
+          <!-- Bento Card 2: 400ms Sub-Second Oscilloscope (Solana Block Heartbeat) -->
+          <div class="bento-card bento-heartbeat-card border-beam tilt-card">
+            <div class="bento-header">
+              <div class="bento-tag">REAL-TIME CONSENSUS</div>
+              <h3 class="bento-title">Sub-Second Finality Wave</h3>
+              <p class="bento-desc">400ms block cadence settling micro-escrows without banking delays.</p>
+            </div>
+            <div class="oscilloscope-wrapper">
+              <canvas id="block-oscilloscope-canvas" class="oscilloscope-canvas"></canvas>
+              <div class="oscilloscope-metric-row">
+                <div class="osc-stat"><span class="osc-label">Finality Speed</span><strong class="osc-val text-success">388ms</strong></div>
+                <div class="osc-stat"><span class="osc-label">Devnet Slot</span><strong id="osc-slot-val" class="osc-val">#312,849,201</strong></div>
+                <div class="osc-stat"><span class="osc-label">Avg Gas Fee</span><strong class="osc-val" style="color: #c084fc;">$0.00025</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Card 3: Interactive Honeypot Defense Simulator -->
+          <div class="bento-card bento-honeypot-card border-beam tilt-card">
+            <div class="bento-header">
+              <div class="bento-tag">QUALITY ORACLE</div>
+              <h3 class="bento-title">Consensus Honeypot Barrier</h3>
+              <p class="bento-desc">Test how on-chain quorum validators catch spam and unlock rewards.</p>
+            </div>
+            <div class="bento-interactive-body">
+              <div class="honeypot-simulator-box">
+                <div class="honeypot-hud-status" id="honeypot-hud-status">
+                  <span class="status-dot online"></span>
+                  <span id="honeypot-status-text">Consensus Quorum Standing By</span>
+                </div>
+                <div class="honeypot-btn-group">
+                  <button class="btn-test-action btn-bad-data" onclick="simulateHoneypotTest(false)">
+                    ⚠️ Test Sybil / Bad Data
+                  </button>
+                  <button class="btn-test-action btn-good-data" onclick="simulateHoneypotTest(true)">
+                    ✨ Test Ground Truth Consensus
+                  </button>
+                </div>
+                <div id="honeypot-result-banner" class="honeypot-result-banner neutral">
+                  Click a test vector above to trigger Anchor 0.29 PDA validation.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Card 4: Non-Custodial USDC Remittance Stream Ticker -->
+          <div class="bento-card bento-stream-card border-beam tilt-card">
+            <div class="bento-header">
+              <div class="bento-tag">CAPITAL VELOCITY</div>
+              <h3 class="bento-title">Live SPL Remittance Stream</h3>
+              <p class="bento-desc">Micro-escrow payouts continually settling across the Superteam ecosystem.</p>
+            </div>
+            <div class="stream-counter-box">
+              <div class="stream-amount-row">
+                <span class="stream-currency">$</span>
+                <span id="stream-live-counter" class="stream-live-counter">142,850.40</span>
+                <span class="stream-unit">USDC</span>
+              </div>
+              <div class="stream-rate-badge">● Streaming ~12.5 USDC / minute</div>
+              <div class="stream-live-nodes">
+                <span class="node-chip">🇳🇬 Lagos +0.65</span>
+                <span class="node-chip">🇰🇪 Nairobi +0.25</span>
+                <span class="node-chip">🇷🇼 Kigali +0.15</span>
+                <span class="node-chip">🇬🇭 Accra +0.40</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
   <!-- TECHNOLOGY & ECOSYSTEM LOGO RIBBON -->
   <section class="ecosystem-ribbon">

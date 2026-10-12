@@ -142,6 +142,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initAudioHaptics();
   initCommandPalette();
   initRpcTerminal();
+
+  // INTERACTIVE BENTO SHOWCASE & PARTICLES
+  initHeroGlobe();
+  initBlockOscilloscope();
+  initLiveStreamTicker();
+  initConfettiEngine();
 });
 
 // View Switcher between Landing, Worker Workspace, and Clients Area
@@ -945,6 +951,8 @@ function runSandboxVerification() {
     state.totalTasksCompleted += 1;
     updateUI();
     
+    if (typeof triggerConfetti === 'function') triggerConfetti();
+    if (typeof playSfx === 'function') playSfx('escrow');
     showHoneypotToast(true, `Verified! +${bump.toFixed(2)} USDC credited to your SolWork balance in 342ms.`);
   }, 450);
 }
@@ -1791,3 +1799,483 @@ function clearTerminalLogs() {
     container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.72rem;">Terminal buffer flushed. Waiting for next Solana RPC event...</div>`;
   }
 }
+
+// ============================================================================
+// 20. 3D HOLOGRAPHIC GLOBE & SOLANA ESCROW TOPOLOGY ENGINE
+// ============================================================================
+let globeState = {
+  canvas: null,
+  ctx: null,
+  rotY: 0.8,
+  rotX: 0.2,
+  targetRotY: 0.8,
+  targetRotX: 0.2,
+  isDragging: false,
+  lastMouseX: 0,
+  lastMouseY: 0,
+  hoveredCity: null,
+  radius: 95,
+  arcs: [
+    { from: 'sf', to: 'lagos', progress: 0.15, speed: 0.008 },
+    { from: 'ny', to: 'nairobi', progress: 0.55, speed: 0.009 },
+    { from: 'london', to: 'kigali', progress: 0.35, speed: 0.007 },
+    { from: 'sf', to: 'accra', progress: 0.85, speed: 0.010 }
+  ],
+  cities: {
+    sf: { name: 'San Francisco AI Lab', stat: 'Sahara AI PDA Vault ($25,000)', lat: 37.77, lon: -122.4, color: '#38bdf8' },
+    ny: { name: 'New York AI Lab', stat: 'Allora Foundation Escrow ($18,500)', lat: 40.71, lon: -74.0, color: '#38bdf8' },
+    london: { name: 'London Research Lab', stat: 'Masakhane AI Anchor PDA ($12,000)', lat: 51.5, lon: -0.12, color: '#38bdf8' },
+    lagos: { name: 'Lagos Contributor Hub', stat: '1,420 Active Wallets (400ms USDC)', lat: 6.5, lon: 3.3, color: '#14f195' },
+    nairobi: { name: 'Nairobi Swahili NLP Hub', stat: '890 Verified RLHF Annotators', lat: -1.29, lon: 36.8, color: '#14f195' },
+    kigali: { name: 'Kigali Robotics Vision Hub', stat: '640 2D/3D Bounding Box Workers', lat: -1.94, lon: 30.06, color: '#14f195' },
+    accra: { name: 'Accra Code Verification Hub', stat: '510 Rust/Python Consensus Auditors', lat: 5.6, lon: -0.18, color: '#14f195' }
+  }
+};
+
+function latLonToVec3(lat, lon, r) {
+  const phi = (lat * Math.PI) / 180;
+  const theta = (lon * Math.PI) / 180;
+  return {
+    x: r * Math.cos(phi) * Math.sin(theta),
+    y: -r * Math.sin(phi),
+    z: r * Math.cos(phi) * Math.cos(theta)
+  };
+}
+
+function rotateVec3(v, rotX, rotY) {
+  // Rotate around Y
+  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+  const x1 = v.x * cosY + v.z * sinY;
+  const z1 = -v.x * sinY + v.z * cosY;
+  // Rotate around X
+  const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+  const y2 = v.y * cosX - z1 * sinX;
+  const z2 = v.y * sinX + z1 * cosX;
+  return { x: x1, y: y2, z: z2 };
+}
+
+function initHeroGlobe() {
+  globeState.canvas = document.getElementById('hero-globe-canvas');
+  if (!globeState.canvas) return;
+  globeState.ctx = globeState.canvas.getContext('2d');
+
+  function resize() {
+    const rect = globeState.canvas.getBoundingClientRect();
+    globeState.canvas.width = rect.width || 420;
+    globeState.canvas.height = rect.height || 310;
+    globeState.radius = Math.min(globeState.canvas.width, globeState.canvas.height) * 0.35;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Drag listeners
+  globeState.canvas.addEventListener('mousedown', (e) => {
+    globeState.isDragging = true;
+    globeState.lastMouseX = e.clientX;
+    globeState.lastMouseY = e.clientY;
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (globeState.isDragging) {
+      const dx = e.clientX - globeState.lastMouseX;
+      const dy = e.clientY - globeState.lastMouseY;
+      globeState.targetRotY += dx * 0.008;
+      globeState.targetRotX += dy * 0.008;
+      globeState.targetRotX = Math.max(-0.8, Math.min(0.8, globeState.targetRotX));
+      globeState.lastMouseX = e.clientX;
+      globeState.lastMouseY = e.clientY;
+    }
+  });
+
+  window.addEventListener('mouseup', () => {
+    globeState.isDragging = false;
+  });
+
+  // Touch support
+  globeState.canvas.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      globeState.isDragging = true;
+      globeState.lastMouseX = e.touches[0].clientX;
+      globeState.lastMouseY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (globeState.isDragging && e.touches.length === 1) {
+      const dx = e.touches[0].clientX - globeState.lastMouseX;
+      const dy = e.touches[0].clientY - globeState.lastMouseY;
+      globeState.targetRotY += dx * 0.008;
+      globeState.targetRotX += dy * 0.008;
+      globeState.targetRotX = Math.max(-0.8, Math.min(0.8, globeState.targetRotX));
+      globeState.lastMouseX = e.touches[0].clientX;
+      globeState.lastMouseY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    globeState.isDragging = false;
+  });
+
+  function render() {
+    const { ctx, canvas, radius, cities, arcs } = globeState;
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Smooth inertia rotation
+    if (!globeState.isDragging) {
+      globeState.targetRotY += 0.0025; // Continuous subtle spin
+    }
+    globeState.rotY += (globeState.targetRotY - globeState.rotY) * 0.1;
+    globeState.rotX += (globeState.targetRotX - globeState.rotX) * 0.1;
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    // 1. Draw Globe Atmosphere Ring
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    const radGlow = ctx.createRadialGradient(cx, cy, radius * 0.4, cx, cy, radius * 1.15);
+    radGlow.addColorStop(0, 'rgba(20, 241, 149, 0.03)');
+    radGlow.addColorStop(0.7, 'rgba(153, 69, 255, 0.05)');
+    radGlow.addColorStop(1, 'transparent');
+    ctx.fillStyle = radGlow;
+    ctx.fill();
+    ctx.restore();
+
+    // 2. Draw Latitude & Longitude Wireframe Rings
+    ctx.lineWidth = 0.8;
+    for (let lat = -60; lat <= 60; lat += 30) {
+      ctx.beginPath();
+      let first = true;
+      for (let lon = 0; lon <= 360; lon += 10) {
+        const p = latLonToVec3(lat, lon, radius);
+        const r = rotateVec3(p, globeState.rotX, globeState.rotY);
+        if (first) {
+          ctx.moveTo(cx + r.x, cy + r.y);
+          first = false;
+        } else {
+          ctx.lineTo(cx + r.x, cy + r.y);
+        }
+      }
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.stroke();
+    }
+
+    // 3. Draw Connecting Escrow Arcs & Traveling Photons
+    arcs.forEach(arc => {
+      const cityA = cities[arc.from];
+      const cityB = cities[arc.to];
+      if (!cityA || !cityB) return;
+
+      const pA = latLonToVec3(cityA.lat, cityA.lon, radius);
+      const pB = latLonToVec3(cityB.lat, cityB.lon, radius);
+
+      // Arc midpoint elevated above surface
+      const mid = {
+        x: (pA.x + pB.x) / 2,
+        y: (pA.y + pB.y) / 2,
+        z: (pA.z + pB.z) / 2
+      };
+      const midLen = Math.sqrt(mid.x * mid.x + mid.y * mid.y + mid.z * mid.z) || 1;
+      const elevatedR = radius * 1.35;
+      const pMid = {
+        x: (mid.x / midLen) * elevatedR,
+        y: (mid.y / midLen) * elevatedR,
+        z: (mid.z / midLen) * elevatedR
+      };
+
+      const rA = rotateVec3(pA, globeState.rotX, globeState.rotY);
+      const rMid = rotateVec3(pMid, globeState.rotX, globeState.rotY);
+      const rB = rotateVec3(pB, globeState.rotX, globeState.rotY);
+
+      // Draw quadratic bezier curve
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(cx + rA.x, cy + rA.y);
+      ctx.quadraticCurveTo(cx + rMid.x, cy + rMid.y, cx + rB.x, cy + rB.y);
+      ctx.strokeStyle = 'rgba(153, 69, 255, 0.35)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Traveling photon
+      arc.progress = (arc.progress + arc.speed) % 1.0;
+      const t = arc.progress;
+      // Bezier interpolation
+      const ptX = (1 - t) * (1 - t) * rA.x + 2 * (1 - t) * t * rMid.x + t * t * rB.x;
+      const ptY = (1 - t) * (1 - t) * rA.y + 2 * (1 - t) * t * rMid.y + t * t * rB.y;
+
+      ctx.beginPath();
+      ctx.arc(cx + ptX, cy + ptY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#14f195';
+      ctx.shadowColor = '#14f195';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // 4. Draw City Hub Nodes
+    Object.keys(cities).forEach(key => {
+      const city = cities[key];
+      const p = latLonToVec3(city.lat, city.lon, radius);
+      const r = rotateVec3(p, globeState.rotX, globeState.rotY);
+
+      // Only draw with full opacity if on visible hemisphere
+      const isVisible = r.z > -10;
+      const alpha = isVisible ? 1 : 0.2;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx + r.x, cy + r.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = city.color;
+      ctx.globalAlpha = alpha;
+      ctx.shadowColor = city.color;
+      ctx.shadowBlur = 10;
+      ctx.fill();
+
+      // Pulsing outer beacon for African nodes
+      if (isVisible && city.color === '#14f195') {
+        ctx.beginPath();
+        ctx.arc(cx + r.x, cy + r.y, 7 + Math.sin(Date.now() * 0.005) * 2, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(20, 241, 149, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.restore();
+    });
+
+    requestAnimationFrame(render);
+  }
+  render();
+}
+
+// ============================================================================
+// 21. 400MS SOLANA BLOCK CADENCE OSCILLOSCOPE
+// ============================================================================
+let oscState = {
+  canvas: null,
+  ctx: null,
+  points: new Array(120).fill(40),
+  step: 0,
+  slotVal: 312849201
+};
+
+function initBlockOscilloscope() {
+  oscState.canvas = document.getElementById('block-oscilloscope-canvas');
+  if (!oscState.canvas) return;
+  oscState.ctx = oscState.canvas.getContext('2d');
+
+  function resize() {
+    const rect = oscState.canvas.getBoundingClientRect();
+    oscState.canvas.width = rect.width || 340;
+    oscState.canvas.height = rect.height || 85;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function animateOsc() {
+    const { ctx, canvas, points } = oscState;
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    oscState.step++;
+    points.shift();
+
+    // High amplitude spike every ~400ms (every 24 frames)
+    let newY = canvas.height / 2;
+    if (oscState.step % 26 === 0) {
+      newY -= (Math.random() * 26 + 18);
+      // Increment slot counter display
+      oscState.slotVal += 1;
+      const slotEl = document.getElementById('osc-slot-val');
+      if (slotEl) slotEl.innerText = `#${oscState.slotVal.toLocaleString()}`;
+    } else if (oscState.step % 26 === 1) {
+      newY += 16;
+    } else {
+      newY += (Math.random() - 0.5) * 6;
+    }
+    points.push(newY);
+
+    // Draw wave path
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(0, points[0]);
+    const dx = canvas.width / (points.length - 1);
+    for (let i = 1; i < points.length; i++) {
+      ctx.lineTo(i * dx, points[i]);
+    }
+    const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    grad.addColorStop(0, '#9945ff');
+    grad.addColorStop(0.5, '#14f195');
+    grad.addColorStop(1, '#9945ff');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.8;
+    ctx.shadowColor = '#14f195';
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.restore();
+
+    requestAnimationFrame(animateOsc);
+  }
+  animateOsc();
+}
+
+// ============================================================================
+// 22. INTERACTIVE HONEYPOT DEFENSE SIMULATOR
+// ============================================================================
+function simulateHoneypotTest(isGood) {
+  const statusEl = document.getElementById('honeypot-hud-status');
+  const banner = document.getElementById('honeypot-result-banner');
+  if (!banner) return;
+
+  if (isGood) {
+    if (typeof playSfx === 'function') {
+      playSfx('success');
+      playSfx('escrow');
+    }
+    if (typeof triggerConfetti === 'function') triggerConfetti();
+
+    banner.className = 'honeypot-result-banner passed';
+    banner.innerHTML = `<strong>✅ 3/3 QUORUM CONSENSUS MATCH:</strong> Anchor PDA Escrow released <strong>+0.65 USDC</strong> via CPI SPL Transfer in <strong>388ms</strong>. Contributor accuracy logged at 100%.`;
+    if (statusEl) {
+      statusEl.innerHTML = `<span class="status-dot online"></span><span style="color: #14f195;">Verified Ground Truth Quorum Confirmed</span>`;
+    }
+  } else {
+    if (typeof playSfx === 'function') playSfx('click');
+    banner.className = 'honeypot-result-banner failed';
+    banner.innerHTML = `<strong>⚠️ HONEYPOT TRAP TRIGGERED:</strong> Anchor Oracle caught low-effort / AI hallucination pattern (Quorum IoU 0.14 &bull; Threshold 0.95). <strong>0.00 USDC released</strong>. Sybil attempt blocked.`;
+    if (statusEl) {
+      statusEl.innerHTML = `<span class="status-dot" style="background: #ef4444; box-shadow: 0 0 6px #ef4444;"></span><span style="color: #fca5a5;">Consensus Quorum: Trap Caught & Quarantined</span>`;
+    }
+  }
+}
+
+// ============================================================================
+// 23. LIVE SPL REMITTANCE STREAM TICKER
+// ============================================================================
+let liveStreamTotal = 142850.40;
+function initLiveStreamTicker() {
+  const counterEl = document.getElementById('stream-live-counter');
+  if (!counterEl) return;
+
+  setInterval(() => {
+    const bump = (Math.random() * 0.5 + 0.1);
+    liveStreamTotal += bump;
+    counterEl.innerText = liveStreamTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }, 950);
+}
+
+// ============================================================================
+// 24. MATRIX CYBER TEXT SCRAMBLER EFFECT
+// ============================================================================
+const cipherChars = '!<>-_\\/[]{}—=+*^?#________';
+function scrambleTitle(el) {
+  if (!el || el.dataset.scrambling === 'true') return;
+  el.dataset.scrambling = 'true';
+  const originalHTML = el.innerHTML;
+  const originalText = el.innerText;
+  let iteration = 0;
+  const interval = setInterval(() => {
+    el.innerText = originalText
+      .split('')
+      .map((letter, index) => {
+        if (index < iteration) return originalText[index];
+        return cipherChars[Math.floor(Math.random() * cipherChars.length)];
+      })
+      .join('');
+
+    if (iteration >= originalText.length) {
+      clearInterval(interval);
+      el.innerHTML = originalHTML; // restore gradients/tags
+      el.dataset.scrambling = 'false';
+    }
+    iteration += 1.5;
+  }, 25);
+}
+
+// ============================================================================
+// 25. CANVASES CONFETTI ENGINE (ZERO EXTERNAL DEPENDENCIES)
+// ============================================================================
+let confettiState = {
+  canvas: null,
+  ctx: null,
+  particles: [],
+  animating: false
+};
+
+function initConfettiEngine() {
+  confettiState.canvas = document.getElementById('confetti-canvas');
+  if (!confettiState.canvas) return;
+  confettiState.ctx = confettiState.canvas.getContext('2d');
+
+  function resize() {
+    confettiState.canvas.width = window.innerWidth;
+    confettiState.canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+}
+
+function triggerConfetti() {
+  if (!confettiState.canvas || !confettiState.ctx) return;
+  const count = 75;
+  const colors = ['#14f195', '#9945ff', '#38bdf8', '#fbbf24', '#ffffff', '#a855f7'];
+
+  for (let i = 0; i < count; i++) {
+    confettiState.particles.push({
+      x: window.innerWidth / 2 + (Math.random() - 0.5) * 120,
+      y: window.innerHeight * 0.35 + (Math.random() - 0.5) * 80,
+      vx: (Math.random() - 0.5) * 14,
+      vy: (Math.random() - 0.5) * 12 - 5,
+      size: Math.random() * 8 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 10,
+      opacity: 1
+    });
+  }
+
+  if (!confettiState.animating) {
+    confettiState.animating = true;
+    animateConfetti();
+  }
+}
+
+function animateConfetti() {
+  const { ctx, canvas, particles } = confettiState;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.35; // gravity
+    p.vx *= 0.98; // drag
+    p.rotation += p.rotSpeed;
+    p.opacity -= 0.009;
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate((p.rotation * Math.PI) / 180);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = Math.max(0, p.opacity);
+    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+    ctx.restore();
+
+    if (p.opacity <= 0 || p.y > canvas.height) {
+      particles.splice(i, 1);
+    }
+  }
+
+  if (particles.length > 0) {
+    requestAnimationFrame(animateConfetti);
+  } else {
+    confettiState.animating = false;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
