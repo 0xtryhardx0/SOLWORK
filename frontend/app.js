@@ -135,10 +135,18 @@ document.addEventListener('DOMContentLoaded', () => {
   renderClientMonitorCampaigns();
   updateUI();
   initSubmissionsStream();
+
+  // 6 PILLARS OF ASTONISHING AESTHETICS INITIALIZATION
+  initNeuralCanvas();
+  initTiltCards();
+  initAudioHaptics();
+  initCommandPalette();
+  initRpcTerminal();
 });
 
 // View Switcher between Landing, Worker Workspace, and Clients Area
 function switchView(viewName, updateHash = true) {
+  if (updateHash && typeof playSfx === 'function') playSfx('click');
   state.currentView = viewName;
   
   // Hide all portal views
@@ -173,6 +181,7 @@ function switchView(viewName, updateHash = true) {
 
 // Workspace Modality Filter
 function filterWorkspaceModality(modality) {
+  if (typeof playSfx === 'function') playSfx('click');
   state.workspaceModality = modality;
   ['all', 'rlhf', 'audio', 'bbox'].forEach(m => {
     const btn = document.getElementById(`ws-filter-${m}`);
@@ -1013,6 +1022,7 @@ function closeInvestorModal() {
 
 // 11. WEB3 AUTHENTICATION & ROLE SELECTION MODAL
 function openAuthModal() {
+  if (typeof playSfx === 'function') playSfx('click');
   if (state.walletConnected) {
     if (confirm(`Currently connected as ${state.authRole.toUpperCase()}: ${state.walletAddress}\nDo you want to disconnect?`)) {
       disconnectWallet();
@@ -1024,11 +1034,13 @@ function openAuthModal() {
 }
 
 function closeAuthModal() {
+  if (typeof playSfx === 'function') playSfx('click');
   const modal = document.getElementById('auth-modal');
   if (modal) modal.classList.add('hidden');
 }
 
 function selectAuthRole(role) {
+  if (typeof playSfx === 'function') playSfx('click');
   state.authRole = role;
   const workerOpt = document.getElementById('role-opt-worker');
   const clientOpt = document.getElementById('role-opt-client');
@@ -1041,6 +1053,7 @@ function handleWalletSignIn() {
   state.walletConnected = true;
   state.walletAddress = '7Q9N...Vh';
   
+  if (typeof playSfx === 'function') playSfx('connect');
   updateAuthUI();
   closeAuthModal();
   
@@ -1059,6 +1072,7 @@ function handleDemoSignIn() {
   state.walletAddress = '7Q9N...Vh';
   state.withdrawableBalance = 15.50; // Provide starting balance for testing
   
+  if (typeof playSfx === 'function') playSfx('connect');
   updateAuthUI();
   closeAuthModal();
   
@@ -1072,6 +1086,7 @@ function handleDemoSignIn() {
 }
 
 function disconnectWallet() {
+  if (typeof playSfx === 'function') playSfx('click');
   state.walletConnected = false;
   state.walletAddress = null;
   state.withdrawableBalance = 0.00;
@@ -1310,5 +1325,469 @@ function initSubmissionsStream() {
   });
 }
 
+// ============================================================================
+// 15. PILLAR 1: 60FPS KINETIC NEURAL CONSTELLATION CANVAS
+// ============================================================================
+let neuralCanvasState = {
+  canvas: null,
+  ctx: null,
+  particles: [],
+  mouse: { x: null, y: null, radius: 140 },
+  animId: null
+};
 
+function initNeuralCanvas() {
+  neuralCanvasState.canvas = document.getElementById('neural-canvas');
+  if (!neuralCanvasState.canvas) return;
+  neuralCanvasState.ctx = neuralCanvasState.canvas.getContext('2d');
+  
+  function resize() {
+    neuralCanvasState.canvas.width = window.innerWidth;
+    neuralCanvasState.canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  
+  window.addEventListener('mousemove', (e) => {
+    neuralCanvasState.mouse.x = e.clientX;
+    neuralCanvasState.mouse.y = e.clientY;
+  });
+  
+  window.addEventListener('mouseout', () => {
+    neuralCanvasState.mouse.x = null;
+    neuralCanvasState.mouse.y = null;
+  });
+  
+  // Create particles
+  const count = Math.min(Math.floor(window.innerWidth / 22), 65);
+  neuralCanvasState.particles = [];
+  for (let i = 0; i < count; i++) {
+    neuralCanvasState.particles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.65,
+      vy: (Math.random() - 0.5) * 0.65,
+      radius: Math.random() * 2 + 1.2,
+      color: Math.random() > 0.45 ? 'rgba(20, 241, 149, ' : 'rgba(153, 69, 255, '
+    });
+  }
+  
+  function animate() {
+    const { ctx, canvas, particles, mouse } = neuralCanvasState;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+      
+      // Draw node dot
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + '0.65)';
+      ctx.fill();
+      
+      // Distance to cursor
+      if (mouse.x !== null) {
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mouse.radius) {
+          const alpha = (1 - dist / mouse.radius) * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = `rgba(20, 241, 149, ${alpha})`;
+          ctx.lineWidth = 1.1;
+          ctx.stroke();
+        }
+      }
+      
+      // Mutual node links
+      for (let j = i + 1; j < particles.length; j++) {
+        const p2 = particles[j];
+        const dx = p.x - p2.x;
+        const dy = p.y - p2.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 110) {
+          const alpha = (1 - dist / 110) * 0.22;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.strokeStyle = `rgba(153, 69, 255, ${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+    
+    neuralCanvasState.animId = requestAnimationFrame(animate);
+  }
+  animate();
+}
 
+// ============================================================================
+// 16. PILLAR 2: ACETERNITY 3D CARD TILT & SPOTLIGHT GLARE
+// ============================================================================
+function initTiltCards() {
+  const cards = document.querySelectorAll('.tilt-card, .stat-card, .campaign-card, .console-card, .beam-node-card');
+  cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = -((y - centerY) / centerY) * 6;
+      const rotateY = ((x - centerX) / centerX) * 6;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-4px) scale3d(1.01, 1.01, 1.01)`;
+      card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+      card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px) scale3d(1, 1, 1)';
+    });
+  });
+}
+
+// ============================================================================
+// 17. PILLAR 3: WEB AUDIO API SYNTHESIZER MICRO-HAPTICS
+// ============================================================================
+let audioCtx = null;
+let sfxEnabled = true;
+
+function initAudioHaptics() {
+  const saved = localStorage.getItem('solwork_sfx');
+  if (saved !== null) {
+    sfxEnabled = saved === 'true';
+  }
+  updateSfxIcon();
+}
+
+function updateSfxIcon() {
+  const icon = document.getElementById('sfx-icon');
+  if (icon) {
+    icon.innerText = sfxEnabled ? '🔊' : '🔇';
+  }
+}
+
+function toggleSfx() {
+  sfxEnabled = !sfxEnabled;
+  localStorage.setItem('solwork_sfx', sfxEnabled.toString());
+  updateSfxIcon();
+  if (sfxEnabled) {
+    playSfx('click');
+    showHoneypotToast(true, 'Synthesizer micro-haptics unmuted.');
+  } else {
+    showHoneypotToast(false, 'Audio micro-haptics muted.');
+  }
+}
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass();
+    }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function playSfx(type = 'click') {
+  if (!sfxEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  
+  const now = ctx.currentTime;
+  
+  if (type === 'click') {
+    // Crisp tactile click
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, now);
+    osc.frequency.exponentialRampToValueAtTime(320, now + 0.04);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.045);
+  } else if (type === 'success') {
+    // Dual bell chime
+    [587.33, 880].forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+      gain.gain.setValueAtTime(0.1, now + idx * 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.22);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.07);
+      osc.stop(now + idx * 0.07 + 0.23);
+    });
+  } else if (type === 'connect') {
+    // Solana 3-note ascending chord
+    [440, 554.37, 659.25].forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+      gain.gain.setValueAtTime(0.12, now + idx * 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.06);
+      osc.stop(now + idx * 0.06 + 0.36);
+    });
+  } else if (type === 'escrow') {
+    // Sub-second Anchor escrow settlement warp
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+    osc.frequency.exponentialRampToValueAtTime(440, now + 0.22);
+    gain.gain.setValueAtTime(0.09, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.25);
+  }
+}
+
+// ============================================================================
+// 18. PILLAR 4: SPOTLIGHT COMMAND PALETTE (RAYCAST / LINEAR STYLE ⌘K)
+// ============================================================================
+const commandPaletteItems = [
+  { id: 'view-workstation', title: 'Open Task Workstation', desc: 'Browse AI microtasks and earn USDC', icon: '🛠️', badge: 'Earn', group: 'Navigation', action: () => switchView('workspace') },
+  { id: 'view-client', title: 'Open Clients Area', desc: 'Enterprise data dispatch & campaign creation', icon: '🏢', badge: 'AI Labs', group: 'Navigation', action: () => switchView('client') },
+  { id: 'view-overview', title: 'Protocol Overview & Architecture', desc: 'SolWork value proposition and benchmarks', icon: '🌐', badge: 'Home', group: 'Navigation', action: () => switchView('landing') },
+  { id: 'mod-rlhf', title: 'Filter: RLHF Coding Datasets', desc: 'Python, Rust, and TypeScript logic evaluation', icon: '💻', badge: '0.65 USDC', group: 'Modality', action: () => { switchView('workspace'); filterWorkspaceModality('rlhf'); } },
+  { id: 'mod-audio', title: 'Filter: Audio Speech Labeling', desc: 'African regional accents & dialect transcription', icon: '🎙️', badge: '0.15 USDC', group: 'Modality', action: () => { switchView('workspace'); filterWorkspaceModality('audio'); } },
+  { id: 'mod-bbox', title: 'Filter: 2D Bounding Boxes', desc: 'Autonomous driving & robotics object annotation', icon: '🎯', badge: '0.08 USDC', group: 'Modality', action: () => { switchView('workspace'); filterWorkspaceModality('bbox'); } },
+  { id: 'connect-wallet', title: 'Connect Solana Wallet', desc: 'Authenticate via Phantom or Devnet keypair', icon: '👻', badge: 'Web3', group: 'Protocol', action: () => openAuthModal() },
+  { id: 'open-cashout', title: 'Instant Cashout / Claims', desc: 'Withdraw earned USDC via zero-fee Anchor escrow', icon: '💸', badge: 'Treasury', group: 'Protocol', action: () => openCashoutModal() },
+  { id: 'view-deck', title: 'View Protocol One-Pager & Deck', desc: 'Problem, solution, unit economics & Solana synergy', icon: '📑', badge: 'Pitch', group: 'Protocol', action: () => openInvestorModal() },
+  { id: 'open-terminal', title: 'Toggle On-Chain RPC Terminal', desc: 'Real-time Anchor PDA instruction stream', icon: '📟', badge: 'Devnet', group: 'Developer', action: () => toggleTerminalDrawer() },
+  { id: 'toggle-sfx', title: 'Toggle Audio Micro-Haptics', desc: 'Mute or unmute Web Audio synthesizer sound effects', icon: '🔊', badge: 'Haptics', group: 'Developer', action: () => toggleSfx() }
+];
+
+let paletteActiveIndex = 0;
+let filteredPaletteItems = [...commandPaletteItems];
+
+function initCommandPalette() {
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      const palette = document.getElementById('command-palette');
+      if (palette && !palette.classList.contains('hidden')) {
+        closeCommandPalette();
+      } else {
+        openCommandPalette();
+      }
+    }
+  });
+}
+
+function openCommandPalette() {
+  playSfx('click');
+  const palette = document.getElementById('command-palette');
+  const input = document.getElementById('palette-search-input');
+  if (palette) {
+    palette.classList.remove('hidden');
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
+    filterPaletteCommands();
+  }
+}
+
+function closeCommandPalette() {
+  playSfx('click');
+  const palette = document.getElementById('command-palette');
+  if (palette) {
+    palette.classList.add('hidden');
+  }
+}
+
+function handlePaletteBackdropClick(e) {
+  if (e.target.id === 'command-palette') {
+    closeCommandPalette();
+  }
+}
+
+function filterPaletteCommands() {
+  const query = (document.getElementById('palette-search-input')?.value || '').toLowerCase().trim();
+  if (!query) {
+    filteredPaletteItems = [...commandPaletteItems];
+  } else {
+    filteredPaletteItems = commandPaletteItems.filter(item => 
+      item.title.toLowerCase().includes(query) || 
+      item.desc.toLowerCase().includes(query) ||
+      item.group.toLowerCase().includes(query) ||
+      item.badge.toLowerCase().includes(query)
+    );
+  }
+  paletteActiveIndex = 0;
+  renderPaletteCommands();
+}
+
+function renderPaletteCommands() {
+  const container = document.getElementById('palette-results-list');
+  if (!container) return;
+  
+  if (filteredPaletteItems.length === 0) {
+    container.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem;">No matching commands found. Try "workspace", "client", "rlhf", or "wallet".</div>`;
+    return;
+  }
+  
+  let html = '';
+  let currentGroup = '';
+  
+  filteredPaletteItems.forEach((item, idx) => {
+    if (item.group !== currentGroup) {
+      currentGroup = item.group;
+      html += `<div class="palette-group-title">${currentGroup}</div>`;
+    }
+    
+    const isActive = idx === paletteActiveIndex ? 'active' : '';
+    html += `
+      <div class="palette-item ${isActive}" onclick="executePaletteCommand(${idx})">
+        <div class="palette-item-left">
+          <span class="palette-item-icon">${item.icon}</span>
+          <div class="palette-item-content">
+            <span class="palette-item-title">${item.title}</span>
+            <span class="palette-item-desc">${item.desc}</span>
+          </div>
+        </div>
+        <span class="palette-item-badge">${item.badge}</span>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function handlePaletteKeydown(e) {
+  if (e.key === 'Escape') {
+    closeCommandPalette();
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (filteredPaletteItems.length > 0) {
+      paletteActiveIndex = (paletteActiveIndex + 1) % filteredPaletteItems.length;
+      renderPaletteCommands();
+      playSfx('click');
+    }
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (filteredPaletteItems.length > 0) {
+      paletteActiveIndex = (paletteActiveIndex - 1 + filteredPaletteItems.length) % filteredPaletteItems.length;
+      renderPaletteCommands();
+      playSfx('click');
+    }
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (filteredPaletteItems[paletteActiveIndex]) {
+      executePaletteCommand(paletteActiveIndex);
+    }
+  }
+}
+
+function executePaletteCommand(index) {
+  const item = filteredPaletteItems[index];
+  if (item && item.action) {
+    closeCommandPalette();
+    item.action();
+  }
+}
+
+// ============================================================================
+// 19. PILLAR 5 & 6: ON-CHAIN ANCHOR RPC TERMINAL DRAWER
+// ============================================================================
+let currentDevnetSlot = 312849201;
+let terminalInterval = null;
+
+const rpcEventsPool = [
+  { type: 'pda', tag: 'PDA_ESCROW', msg: 'Anchor::init_campaign_escrow [seed: "campaign", creator: 0x8f...4e, vault: $2,500 USDC]' },
+  { type: 'tx', tag: 'SUBMIT_TX', msg: 'Anchor::verify_task_submission [worker: 0x3a...91, task: "Python RLHF Concurrency"]' },
+  { type: 'quorum', tag: 'QUORUM_OK', msg: 'ConsensusEngine::quorum_reached [votes: 3/3, consensus_score: 1.00]' },
+  { type: 'audit', tag: 'HONEYPOT', msg: 'HoneypotOracle::validate_trap [seed_hash: 0x7c...fa, result: PASSED (100%)]' },
+  { type: 'tx', tag: 'CPI_RELEASE', msg: 'Anchor::release_pda_escrow_cpi [transfer: 0.65 USDC -> 0x3a...91, latency: 388ms]' },
+  { type: 'pda', tag: 'PDA_UPDATE', msg: 'Anchor::update_worker_reputation [account: 0x3a...91, tier: GOLD, accuracy: 100%]' },
+  { type: 'tx', tag: 'SUBMIT_TX', msg: 'Anchor::verify_task_submission [worker: 0xd1...87, task: "WayDrive 2D Obstacle Box"]' },
+  { type: 'audit', tag: 'IOU_AUDIT', msg: 'VisionConsensus::compute_iou [iou_score: 0.986, threshold: 0.95 -> ACCEPTED]' },
+  { type: 'tx', tag: 'CPI_RELEASE', msg: 'Anchor::release_pda_escrow_cpi [transfer: 0.15 USDC -> 0xd1...87, latency: 412ms]' }
+];
+
+function initRpcTerminal() {
+  rpcEventsPool.slice(0, 4).forEach(e => appendTerminalLog(e));
+  
+  if (!terminalInterval) {
+    terminalInterval = setInterval(() => {
+      currentDevnetSlot += Math.floor(Math.random() * 3) + 1;
+      const btn = document.getElementById('terminal-trigger-btn');
+      if (btn) {
+        const textSpan = btn.querySelector('.terminal-btn-text');
+        if (textSpan) {
+          textSpan.innerText = `⚡ Devnet Slot #${currentDevnetSlot.toLocaleString()} \u2022 Anchor 0.29 Logs`;
+        }
+      }
+      
+      const randEvent = rpcEventsPool[Math.floor(Math.random() * rpcEventsPool.length)];
+      appendTerminalLog(randEvent);
+    }, 3600);
+  }
+}
+
+function appendTerminalLog(event) {
+  const container = document.getElementById('terminal-log-stream');
+  if (!container) return;
+  
+  const d = new Date();
+  const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}.${String(Math.floor(d.getMilliseconds()/10)).padStart(2,'0')}`;
+  const mockSig = Array.from({length: 10}, () => 'abcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random()*36)]).join('');
+  
+  const line = document.createElement('div');
+  line.className = 'term-log-entry';
+  line.innerHTML = `
+    <span class="term-time">[${timeStr}]</span>
+    <span class="term-type ${event.type}">[${event.tag}]</span>
+    <span class="term-msg">${event.msg}</span>
+    <span class="term-tx">sig: 5${mockSig}...</span>
+  `;
+  
+  container.appendChild(line);
+  container.scrollTop = container.scrollHeight;
+}
+
+function toggleTerminalDrawer() {
+  playSfx('click');
+  const drawer = document.getElementById('terminal-drawer');
+  const chevron = document.querySelector('.terminal-chevron');
+  if (drawer) {
+    const isHidden = drawer.classList.contains('hidden');
+    drawer.classList.toggle('hidden');
+    if (chevron) chevron.innerText = isHidden ? '▼' : '▲';
+  }
+}
+
+function clearTerminalLogs() {
+  playSfx('click');
+  const container = document.getElementById('terminal-log-stream');
+  if (container) {
+    container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.72rem;">Terminal buffer flushed. Waiting for next Solana RPC event...</div>`;
+  }
+}

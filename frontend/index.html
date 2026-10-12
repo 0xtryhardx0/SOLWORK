@@ -12,6 +12,12 @@
 </head>
 <body>
 
+  <!-- KINETIC NEURAL CANVAS & ACETERNTIY AURORA GLOWS -->
+  <canvas id="neural-canvas" class="bg-neural-canvas"></canvas>
+  <div class="aurora-glow-1"></div>
+  <div class="aurora-glow-2"></div>
+  <div class="retro-grid-mesh"></div>
+
   <!-- TOP PROTOCOL TICKER -->
   <div class="top-announcement-bar">
     <div class="announcement-content">
@@ -55,6 +61,17 @@
       </nav>
 
       <div class="nav-actions">
+        <!-- Spotlight Command Palette (⌘K) -->
+        <button class="nav-cmd-btn" onclick="openCommandPalette()" title="Press ⌘K or Ctrl+K for Spotlight Actions">
+          <span class="cmd-icon">⌘K</span>
+          <span class="cmd-text">Quick Actions</span>
+        </button>
+        
+        <!-- Synthetic Audio Feedback Toggle -->
+        <button id="sfx-toggle-btn" class="nav-sfx-btn" onclick="toggleSfx()" title="Toggle Web Audio Haptic Feedback">
+          <span id="sfx-icon">🔊</span>
+        </button>
+
         <button class="nav-deck-btn" onclick="openInvestorModal()">
           <span>📑 Deck</span>
         </button>
@@ -138,6 +155,58 @@
         <div class="tech-badge"><span class="badge-icon">🇳🇬</span> SUPERTEAM NIGERIA</div>
         <div class="tech-badge"><span class="badge-icon">🦀</span> RUST SBF SMART CONTRACTS</div>
         <div class="tech-badge"><span class="badge-icon">🤖</span> BITTELL / RLHF DATASETS</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAGIC UI STYLE ANIMATED BEAM FLOW (THE SOLANA ANCHOR PIPELINE) -->
+  <section class="beam-pipeline-section">
+    <div class="beam-pipeline-container">
+      <div class="section-title-center">
+        <div class="sandbox-tag">ARCHITECTURE FLOW</div>
+        <h2>The Trustless Human-to-AI Pipeline</h2>
+        <p>How non-custodial Anchor 0.29 PDA escrows connect frontier research labs with African human intelligence in real time.</p>
+      </div>
+
+      <div class="beam-nodes-wrapper">
+        <!-- Node 1: AI Research Labs -->
+        <div class="beam-node-card node-lab tilt-card" onclick="switchView('client')">
+          <div class="node-icon-glow">🤖</div>
+          <div class="node-title">Frontier AI Labs</div>
+          <div class="node-desc">Sahara AI &bull; Allora &bull; Masakhane</div>
+          <div class="node-status-pill">USDC Deposits & Parameters</div>
+        </div>
+
+        <!-- Beam Connector 1 -->
+        <div class="beam-flow-line">
+          <div class="beam-track"></div>
+          <div class="beam-particle particle-1"></div>
+          <div class="beam-label">&lt;400ms Sub-Second CPI</div>
+        </div>
+
+        <!-- Node 2: SolWork Anchor Smart Contract -->
+        <div class="beam-node-card node-core tilt-card">
+          <div class="node-core-ring"></div>
+          <div class="node-icon-glow">⚓</div>
+          <div class="node-title">SolWork Anchor PDA</div>
+          <div class="node-desc">Non-Custodial Milestone Vaults</div>
+          <div class="node-status-pill text-success">Consensus Honeypot Quorum</div>
+        </div>
+
+        <!-- Beam Connector 2 -->
+        <div class="beam-flow-line">
+          <div class="beam-track"></div>
+          <div class="beam-particle particle-2"></div>
+          <div class="beam-label">Instant SPL Release</div>
+        </div>
+
+        <!-- Node 3: African Contributor Workforce -->
+        <div class="beam-node-card node-workforce tilt-card" onclick="switchView('workspace')">
+          <div class="node-icon-glow">🌍</div>
+          <div class="node-title">African STEM Talent</div>
+          <div class="node-desc">Lagos &bull; Nairobi &bull; Kigali &bull; Accra</div>
+          <div class="node-status-pill">Phantom / Solflare Wallets</div>
+        </div>
       </div>
     </div>
   </section>
@@ -1127,6 +1196,46 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- SPOTLIGHT COMMAND PALETTE (RAYCAST / LINEAR STYLE) -->
+  <div id="command-palette" class="modal-overlay hidden" onclick="handlePaletteBackdropClick(event)">
+    <div class="palette-card">
+      <div class="palette-search-row">
+        <span class="palette-search-icon">🔍</span>
+        <input type="text" id="palette-search-input" class="palette-input" placeholder="Type a command or action... (e.g. workspace, client, rlhf, audio, cashout, deck)" oninput="filterPaletteCommands()" onkeydown="handlePaletteKeydown(event)">
+        <span class="palette-esc-badge" onclick="closeCommandPalette()">ESC</span>
+      </div>
+      <div id="palette-results-list" class="palette-results">
+        <!-- Rendered via JS -->
+      </div>
+      <div class="palette-footer">
+        <span>Use <kbd>↑</kbd> <kbd>↓</kbd> to navigate &bull; <kbd>Enter</kbd> to execute &bull; <kbd>ESC</kbd> to close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING ON-CHAIN TERMINAL DRAWER & BADGE -->
+  <div id="terminal-trigger-btn" class="terminal-floating-badge" onclick="toggleTerminalDrawer()">
+    <span class="terminal-dot pulse"></span>
+    <span class="terminal-btn-text">⚡ Devnet Slot #312,849,201 &bull; Anchor 0.29 Logs</span>
+    <span class="terminal-chevron">▲</span>
+  </div>
+
+  <div id="terminal-drawer" class="terminal-drawer hidden">
+    <div class="terminal-drawer-header">
+      <div class="terminal-header-title">
+        <span class="term-icon">📟</span>
+        <span>Solana Anchor On-Chain State Machine &bull; Real-Time RPC Feed</span>
+      </div>
+      <div class="terminal-header-actions">
+        <button class="term-btn" onclick="clearTerminalLogs()">Clear</button>
+        <button class="term-btn-close" onclick="toggleTerminalDrawer()">&times;</button>
+      </div>
+    </div>
+    <div id="terminal-log-stream" class="terminal-drawer-body">
+      <!-- Live logs stream injected via JS -->
     </div>
   </div>
 
