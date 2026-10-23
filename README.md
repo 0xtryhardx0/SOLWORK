@@ -58,7 +58,7 @@ The Solana Anchor program ([`backend/program/src/lib.rs`](backend/program/src/li
 
 ### Anchor Program ID
 ```rust
-declare_id!("84AVToEkDwsMXNh77n156DYHaWJa2zVqi8han3qqVdAk");
+declare_id!("D6Ft7B9d32DbEaGegkMtBwHaUqJsdGiiDvayiyHhSZPy");
 ```
 
 ---

@@ -1,0 +1,7 @@
+[package]
+name = "cpufeatures"
+version = "0.2.17"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"

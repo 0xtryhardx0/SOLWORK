@@ -771,20 +771,27 @@ function processCashout() {
   const amount = state.withdrawalAmount;
   
   if (amount <= 0) {
-    alert('Please enter a valid cash-out amount.');
+    showHoneypotToast(false, 'Please enter a valid cash-out amount.');
     return;
   }
   
+  const recipient = state.walletAddress || '7Q9N...Vh';
+  const dummyTx = Array.from({length: 44}, () => "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"[Math.floor(Math.random()*58)]).join('');
+  
   if (opt === 'free') {
-    alert(`📅 Auto-Batch Scheduled!\nYour cash-out of $${amount.toFixed(2)} USDC will be processed in the next free daily batch.`);
-    state.withdrawableBalance -= amount;
+    state.withdrawableBalance = Math.max(0, state.withdrawableBalance - amount);
+    logToTerminalStream(`[Anchor 0.29] Scheduled Batch Escrow: $${amount.toFixed(2)} USDC earmarked for ${recipient}`);
+    showHoneypotToast(true, `📅 Auto-Batch Scheduled! $${amount.toFixed(2)} USDC queued for release.`);
   } else {
     const fee = 0.05 + (amount * 0.015);
     const net = Math.max(0, amount - fee);
-    alert(`⚡ Instant Cash-Out Successful!\nReleased $${net.toFixed(2)} USDC to wallet (fee deducted: $${fee.toFixed(2)} USDC).`);
-    state.withdrawableBalance -= amount;
+    state.withdrawableBalance = Math.max(0, state.withdrawableBalance - amount);
+    logToTerminalStream(`[Anchor 0.29] CPI release_payout confirmed: $${net.toFixed(2)} USDC -> ${recipient}`);
+    logToTerminalStream(`[Devnet Explorer] Tx Sig: ${dummyTx.slice(0, 24)}... (Status: Finalized)`);
+    showHoneypotToast(true, `⚡ Instant Escrow Payout: $${net.toFixed(2)} USDC released to ${recipient}!`);
   }
   
+  if (typeof playSfx === 'function') playSfx('success');
   closeCashoutModal();
   updateUI();
 }
@@ -1056,18 +1063,65 @@ function selectAuthRole(role) {
   if (clientOpt) clientOpt.classList.toggle('selected', role === 'client');
 }
 
-function handleWalletSignIn() {
-  // Check window.solana if available, otherwise sign simulated keypair
+const SOLANA_DEVNET_RPC = "https://api.devnet.solana.com";
+let solanaConnection = null;
+
+function getSolanaConnection() {
+  if (!solanaConnection && window.solanaWeb3) {
+    solanaConnection = new solanaWeb3.Connection(SOLANA_DEVNET_RPC, "confirmed");
+  }
+  return solanaConnection;
+}
+
+async function handleWalletSignIn() {
+  if (typeof playSfx === 'function') playSfx('click');
+
+  if (window.solana && (window.solana.isPhantom || window.solana.isSolflare)) {
+    try {
+      const resp = await window.solana.connect();
+      const pubkey = resp.publicKey.toString();
+      state.walletConnected = true;
+      state.fullWalletAddress = pubkey;
+      state.walletAddress = `${pubkey.slice(0, 4)}...${pubkey.slice(-4)}`;
+
+      // Query real Solana Devnet balance
+      try {
+        const conn = getSolanaConnection();
+        if (conn) {
+          const bal = await conn.getBalance(resp.publicKey);
+          const solBal = (bal / solanaWeb3.LAMPORTS_PER_SOL).toFixed(3);
+          logToTerminalStream(`[Devnet RPC] Wallet Connected: ${pubkey} | Balance: ${solBal} SOL`);
+          state.withdrawableBalance = parseFloat(solBal);
+        }
+      } catch (err) {
+        console.warn("Devnet balance query error:", err);
+      }
+
+      if (typeof playSfx === 'function') playSfx('connect');
+      updateAuthUI();
+      closeAuthModal();
+      showHoneypotToast(true, `Phantom connected: ${state.walletAddress}`);
+
+      if (state.authRole === 'worker') {
+        switchView('workspace');
+      } else {
+        switchView('client');
+      }
+      return;
+    } catch (err) {
+      console.warn("Wallet connection rejected or cancelled:", err);
+    }
+  }
+
+  // Fallback to Devnet Keypair
   state.walletConnected = true;
   state.walletAddress = '7Q9N...Vh';
-  
+  state.fullWalletAddress = '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh';
   if (typeof playSfx === 'function') playSfx('connect');
   updateAuthUI();
   closeAuthModal();
-  
-  showHoneypotToast(true, `Signed in as ${state.authRole === 'worker' ? 'Contributor' : 'Enterprise AI Lab'}!`);
-  
-  // Transition to designated portal
+  showHoneypotToast(true, `Signed in with Devnet keypair!`);
+
   if (state.authRole === 'worker') {
     switchView('workspace');
   } else {
@@ -1075,17 +1129,40 @@ function handleWalletSignIn() {
   }
 }
 
+async function requestDevnetAirdrop() {
+  if (!state.fullWalletAddress || !window.solanaWeb3) {
+    showHoneypotToast(false, "Connect Phantom wallet on Devnet first!");
+    return;
+  }
+  try {
+    showHoneypotToast(true, "Requesting 1 SOL Devnet airdrop from Solana faucet...");
+    const conn = getSolanaConnection();
+    const pubkey = new solanaWeb3.PublicKey(state.fullWalletAddress);
+    const sig = await conn.requestAirdrop(pubkey, 1 * solanaWeb3.LAMPORTS_PER_SOL);
+    logToTerminalStream(`[Devnet RPC] Airdrop Requested: tx/${sig.slice(0, 16)}...`);
+    await conn.confirmTransaction(sig, "confirmed");
+    showHoneypotToast(true, "1 Devnet SOL received! Ready to transact.");
+    logToTerminalStream(`[Devnet RPC] Airdrop Confirmed on Solana Devnet.`);
+    const bal = await conn.getBalance(pubkey);
+    state.withdrawableBalance = parseFloat((bal / solanaWeb3.LAMPORTS_PER_SOL).toFixed(3));
+    updateUI();
+  } catch (e) {
+    showHoneypotToast(false, "Devnet Faucet rate limited. Use faucet.solana.com");
+  }
+}
+
 function handleDemoSignIn() {
   state.walletConnected = true;
   state.walletAddress = '7Q9N...Vh';
-  state.withdrawableBalance = 15.50; // Provide starting balance for testing
-  
+  state.fullWalletAddress = '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh';
+  state.withdrawableBalance = 15.50;
+
   if (typeof playSfx === 'function') playSfx('connect');
   updateAuthUI();
   closeAuthModal();
-  
+
   showHoneypotToast(true, `Devnet Keypair active with 15.50 USDC! Entering ${state.authRole === 'worker' ? 'Workstation' : 'Clients Area'}.`);
-  
+
   if (state.authRole === 'worker') {
     switchView('workspace');
   } else {

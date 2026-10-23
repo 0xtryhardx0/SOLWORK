@@ -16,5 +16,15 @@ default = []
 [dependencies]
 anchor-lang = "0.29.0"
 anchor-spl = "0.29.0"
-solana-program = "1.18.0"
-# Prevent dependency mismatch by specifying lock versions if needed
+solana-program = "=1.18.26"
+borsh = "=1.2.1"
+indexmap = "=2.2.6"
+hashbrown = "=0.14.5"
+blake3 = "=1.5.0"
+cpufeatures = "=0.2.17"
+zeroize_derive = "=1.4.2"
+jobserver = "=0.1.32"
+crypto-common = "=0.1.6"
+
+[patch.crates-io]
+cpufeatures = { path = "./cpufeatures_mock" }

@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-declare_id!("84AVToEkDwsMXNh77n156DYHaWJa2zVqi8han3qqVdAk");
+declare_id!("D6Ft7B9d32DbEaGegkMtBwHaUqJsdGiiDvayiyHhSZPy");
 
 #[program]
 pub mod solwork {
