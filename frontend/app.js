@@ -131,6 +131,15 @@ document.addEventListener('DOMContentLoaded', () => {
     switchView('landing', false);
   }
   
+  // Restore persisted session from SQL/localStorage if present
+  try {
+    const saved = localStorage.getItem('solwork_user_session');
+    if (saved) {
+      const u = JSON.parse(saved);
+      applyUserSession(u);
+    }
+  } catch {}
+
   renderCampaigns();
   renderClientMonitorCampaigns();
   updateUI();
@@ -643,6 +652,33 @@ function submitTask() {
   // Update Balances
   state.totalTasksCompleted++;
   state.pendingBalance += campaign.rate;
+
+  // Persist submission and stats to SQL Backend / Local registry
+  if (state.fullWalletAddress) {
+    fetch(`${API_BASE_URL}/tasks/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        workerAddress: state.fullWalletAddress,
+        taskId: task.id || `task_${state.activeTaskIndex}`,
+        campaignId: campaign.id,
+        answer: answer
+      })
+    }).then(res => res.json()).then(data => {
+      if (data && data.user) {
+        applyUserSession(data.user);
+      }
+    }).catch(err => {
+      console.warn("Offline or static host, updating local user registry:", err);
+      if (state.userEmail) {
+        const u = getOrCreateLocalUser(state.userEmail, state.authRole);
+        u.tasks_completed = state.totalTasksCompleted;
+        u.balance = parseFloat((u.balance + (isCorrect ? campaign.rate : 0)).toFixed(2));
+        u.accuracy = parseFloat(state.accuracy.toFixed(1));
+        applyUserSession(u);
+      }
+    });
+  }
   
   // Qualification Check
   if (!state.isQualified) {
@@ -1073,6 +1109,133 @@ function getSolanaConnection() {
   return solanaConnection;
 }
 
+const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:3000/api'
+  : '/api';
+
+// Helper: Deterministic Base58 mock wallet generator for email sign-in fallback
+function generateEmbeddedWalletAddress(seedStr) {
+  let hash = 0;
+  for (let i = 0; i < seedStr.length; i++) {
+    hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
+    hash |= 0;
+  }
+  const base58Chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  let addr = 'Sol';
+  for (let i = 0; i < 41; i++) {
+    const idx = Math.abs(Math.sin(hash + i) * 100000) % base58Chars.length;
+    addr += base58Chars[Math.floor(idx)];
+  }
+  return addr;
+}
+
+function getLocalUsersRegistry() {
+  try {
+    const data = localStorage.getItem('solwork_sql_users_mock');
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalUsersRegistry(users) {
+  try {
+    localStorage.setItem('solwork_sql_users_mock', JSON.stringify(users));
+  } catch {}
+}
+
+function getOrCreateLocalUser(email, role) {
+  const users = getLocalUsersRegistry();
+  const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  if (existing) {
+    existing.last_login = new Date().toISOString();
+    saveLocalUsersRegistry(users);
+    return existing;
+  }
+
+  const embeddedWallet = generateEmbeddedWalletAddress(email);
+  const newUser = {
+    id: users.length + 1,
+    email: email.toLowerCase(),
+    wallet_address: embeddedWallet,
+    role: role || 'worker',
+    balance: 0.00,
+    accuracy: 100.0,
+    tasks_completed: 0,
+    created_at: new Date().toISOString(),
+    last_login: new Date().toISOString()
+  };
+  users.unshift(newUser);
+  saveLocalUsersRegistry(users);
+  return newUser;
+}
+
+function applyUserSession(user) {
+  state.walletConnected = true;
+  state.userEmail = user.email || null;
+  state.fullWalletAddress = user.wallet_address;
+  state.walletAddress = `${user.wallet_address.slice(0, 4)}...${user.wallet_address.slice(-4)}`;
+  state.authRole = user.role || state.authRole;
+  state.withdrawableBalance = parseFloat(user.balance || 0);
+  state.accuracy = parseFloat(user.accuracy || 100.0);
+  state.totalTasksCompleted = parseInt(user.tasks_completed || 0);
+
+  localStorage.setItem('solwork_user_session', JSON.stringify(user));
+  updateAuthUI();
+  updateUI();
+}
+
+async function handleEmailSignIn() {
+  if (typeof playSfx === 'function') playSfx('click');
+  const emailInput = document.getElementById('auth-email-input');
+  if (!emailInput || !emailInput.value.trim()) {
+    showHoneypotToast(false, 'Please enter a valid email address.');
+    return;
+  }
+
+  const email = emailInput.value.trim().toLowerCase();
+  if (!email.includes('@') || !email.includes('.')) {
+    showHoneypotToast(false, 'Please enter a valid email format.');
+    return;
+  }
+
+  const role = state.authRole || 'worker';
+  const btn = document.getElementById('btn-email-sign');
+  if (btn) btn.innerText = 'Connecting...';
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/email-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, role })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      applyUserSession(data.user);
+      if (typeof playSfx === 'function') playSfx('connect');
+      closeAuthModal();
+      showHoneypotToast(true, `Logged in as ${email}! Embedded Solana wallet synchronized.`);
+      if (role === 'worker') switchView('workspace');
+      else switchView('client');
+      return;
+    }
+  } catch (err) {
+    console.warn("Backend server not responding, using offline synchronized SQL store:", err);
+  } finally {
+    if (btn) btn.innerText = 'Continue ➔';
+  }
+
+  // Fallback for static Vercel preview or standalone hosting
+  const localUser = getOrCreateLocalUser(email, role);
+  applyUserSession(localUser);
+  if (typeof playSfx === 'function') playSfx('connect');
+  closeAuthModal();
+  showHoneypotToast(true, `Logged in as ${email}! (Embedded Solana Wallet: ${state.walletAddress})`);
+  if (role === 'worker') switchView('workspace');
+  else switchView('client');
+}
+
 async function handleWalletSignIn() {
   if (typeof playSfx === 'function') playSfx('click');
 
@@ -1080,9 +1243,23 @@ async function handleWalletSignIn() {
     try {
       const resp = await window.solana.connect();
       const pubkey = resp.publicKey.toString();
-      state.walletConnected = true;
-      state.fullWalletAddress = pubkey;
-      state.walletAddress = `${pubkey.slice(0, 4)}...${pubkey.slice(-4)}`;
+      
+      // Query backend for user profile or create
+      try {
+        const res = await fetch(`${API_BASE_URL}/auth/wallet-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ walletAddress: pubkey, role: state.authRole })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          applyUserSession(data.user);
+        } else {
+          applyUserSession({ wallet_address: pubkey, role: state.authRole, balance: 0.00, accuracy: 100.0, tasks_completed: 0 });
+        }
+      } catch {
+        applyUserSession({ wallet_address: pubkey, role: state.authRole, balance: 0.00, accuracy: 100.0, tasks_completed: 0 });
+      }
 
       // Query real Solana Devnet balance
       try {
@@ -1091,14 +1268,12 @@ async function handleWalletSignIn() {
           const bal = await conn.getBalance(resp.publicKey);
           const solBal = (bal / solanaWeb3.LAMPORTS_PER_SOL).toFixed(3);
           logToTerminalStream(`[Devnet RPC] Wallet Connected: ${pubkey} | Balance: ${solBal} SOL`);
-          state.withdrawableBalance = parseFloat(solBal);
         }
       } catch (err) {
         console.warn("Devnet balance query error:", err);
       }
 
       if (typeof playSfx === 'function') playSfx('connect');
-      updateAuthUI();
       closeAuthModal();
       showHoneypotToast(true, `Phantom connected: ${state.walletAddress}`);
 
@@ -1114,11 +1289,16 @@ async function handleWalletSignIn() {
   }
 
   // Fallback to Devnet Keypair
-  state.walletConnected = true;
-  state.walletAddress = '7Q9N...Vh';
-  state.fullWalletAddress = '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh';
+  applyUserSession({
+    email: 'devnet_tester@solwork.fun',
+    wallet_address: '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh',
+    role: state.authRole,
+    balance: 15.50,
+    accuracy: 99.2,
+    tasks_completed: 48
+  });
+
   if (typeof playSfx === 'function') playSfx('connect');
-  updateAuthUI();
   closeAuthModal();
   showHoneypotToast(true, `Signed in with Devnet keypair!`);
 
@@ -1152,16 +1332,19 @@ async function requestDevnetAirdrop() {
 }
 
 function handleDemoSignIn() {
-  state.walletConnected = true;
-  state.walletAddress = '7Q9N...Vh';
-  state.fullWalletAddress = '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh';
-  state.withdrawableBalance = 15.50;
+  applyUserSession({
+    email: 'guest_demo@solwork.fun',
+    wallet_address: '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh',
+    role: state.authRole,
+    balance: 15.50,
+    accuracy: 99.2,
+    tasks_completed: 48
+  });
 
   if (typeof playSfx === 'function') playSfx('connect');
-  updateAuthUI();
   closeAuthModal();
 
-  showHoneypotToast(true, `Devnet Keypair active with 15.50 USDC! Entering ${state.authRole === 'worker' ? 'Workstation' : 'Clients Area'}.`);
+  showHoneypotToast(true, `Demo Keypair active with 15.50 USDC! Entering ${state.authRole === 'worker' ? 'Workstation' : 'Clients Area'}.`);
 
   if (state.authRole === 'worker') {
     switchView('workspace');
@@ -1174,15 +1357,19 @@ function disconnectWallet() {
   if (typeof playSfx === 'function') playSfx('click');
   state.walletConnected = false;
   state.walletAddress = null;
+  state.fullWalletAddress = null;
+  state.userEmail = null;
   state.withdrawableBalance = 0.00;
   
+  localStorage.removeItem('solwork_user_session');
+
   const walletBtn = document.getElementById('connect-wallet-btn');
   const walletText = document.getElementById('wallet-text');
   if (walletBtn) walletBtn.classList.remove('wallet-connected');
-  if (walletText) walletText.innerText = 'Connect Phantom';
+  if (walletText) walletText.innerText = 'Connect Wallet / Email';
   
   updateUI();
-  showHoneypotToast(false, 'Wallet session disconnected.');
+  showHoneypotToast(false, 'Session disconnected.');
 }
 
 function updateAuthUI() {
@@ -1191,16 +1378,21 @@ function updateAuthUI() {
   if (walletBtn && walletText && state.walletConnected) {
     walletBtn.classList.add('wallet-connected');
     const roleIcon = state.authRole === 'worker' ? '🛠️' : '🏢';
-    walletText.innerText = `${roleIcon} ${state.walletAddress}`;
+    if (state.userEmail) {
+      const emailShort = state.userEmail.length > 18 ? `${state.userEmail.slice(0, 15)}...` : state.userEmail;
+      walletText.innerText = `✉️ ${emailShort}`;
+    } else {
+      walletText.innerText = `${roleIcon} ${state.walletAddress}`;
+    }
   }
   updateUI();
 }
 
-// 12. ENTERPRISE CLIENT PORTAL LOGIC
+// 12. ENTERPRISE CLIENT PORTAL LOGIC & SQL USER REGISTRY
 function switchClientTab(tabName) {
   state.clientActiveTab = tabName;
   
-  ['create', 'monitor', 'dispatch'].forEach(t => {
+  ['create', 'monitor', 'dispatch', 'users'].forEach(t => {
     const btn = document.getElementById(`client-subtab-${t}`);
     const panel = document.getElementById(`client-tab-${t}-panel`);
     if (btn) btn.classList.toggle('active', t === tabName);
@@ -1208,6 +1400,98 @@ function switchClientTab(tabName) {
   });
   
   if (tabName === 'monitor') renderClientMonitorCampaigns();
+  if (tabName === 'users') fetchAndRenderSqlUsers();
+}
+
+async function fetchAndRenderSqlUsers() {
+  const tableBody = document.getElementById('sql-users-table-body');
+  if (!tableBody) return;
+
+  tableBody.innerHTML = '<tr><td colspan="7" style="padding: 24px; text-align: center; color: var(--text-muted);">Fetching records from SQLite database...</td></tr>';
+
+  let users = [];
+  let stats = null;
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/users`);
+    if (res.ok) {
+      const data = await res.json();
+      users = data.users || [];
+      stats = data.stats || null;
+    }
+  } catch (err) {
+    console.warn("Could not query backend SQL server directly, falling back to local registry:", err);
+  }
+
+  if (users.length === 0) {
+    // Fallback to local stored registry with demo records
+    const localUsers = getLocalUsersRegistry();
+    const demoUsers = [
+      { id: 1, email: 'demo@solwork.fun', wallet_address: '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh', role: 'worker', balance: 15.50, accuracy: 99.2, tasks_completed: 48, last_login: new Date().toISOString() },
+      { id: 2, email: 'kofi.mensah@ghana-ai.org', wallet_address: '4xKmYQnd87aBvBncDkL9M2N1PqRSTuVwXyZ34aBcDeFg', role: 'worker', balance: 42.15, accuracy: 98.4, tasks_completed: 184, last_login: new Date().toISOString() },
+      { id: 3, email: 'zainab.ann@lagos.tech', wallet_address: '9zLpQwerty1234567890abcdefABCDEF1234567890', role: 'worker', balance: 28.75, accuracy: 96.8, tasks_completed: 95, last_login: new Date().toISOString() },
+      { id: 4, email: 'eval-lead@sahara.ai', wallet_address: '3MocK54Signature8472947194721947192847291827', role: 'client', balance: 2500.00, accuracy: 100.0, tasks_completed: 0, last_login: new Date().toISOString() }
+    ];
+    users = [...localUsers, ...demoUsers];
+    const totalBal = users.reduce((acc, u) => acc + (parseFloat(u.balance) || 0), 0);
+    const totalTasks = users.reduce((acc, u) => acc + (parseInt(u.tasks_completed) || 0), 0);
+    const avgAcc = (users.reduce((acc, u) => acc + (parseFloat(u.accuracy) || 100), 0) / (users.length || 1)).toFixed(1);
+    stats = {
+      totalUsers: users.length,
+      totalBalance: totalBal.toFixed(2),
+      totalTasksCompleted: totalTasks,
+      avgAccuracy: avgAcc
+    };
+  }
+
+  // Update Summary Metrics
+  const totalUsersEl = document.getElementById('sql-total-users');
+  const totalTasksEl = document.getElementById('sql-total-tasks');
+  const totalBalEl = document.getElementById('sql-total-balance');
+  const avgAccEl = document.getElementById('sql-avg-accuracy');
+  const counterBadge = document.getElementById('sql-users-count-badge');
+
+  if (totalUsersEl) totalUsersEl.innerText = stats ? stats.totalUsers : users.length;
+  if (totalTasksEl) totalTasksEl.innerText = stats ? stats.totalTasksCompleted : '--';
+  if (totalBalEl) totalBalEl.innerText = `$${stats ? Number(stats.totalBalance).toFixed(2) : '0.00'} USDC`;
+  if (avgAccEl) avgAccEl.innerText = `${stats ? Number(stats.avgAccuracy).toFixed(1) : '100'}%`;
+  if (counterBadge) counterBadge.innerText = `${users.length} Users`;
+
+  // Render Rows
+  tableBody.innerHTML = users.map(u => {
+    const roleBadge = u.role === 'client' 
+      ? '<span style="background: rgba(168,85,247,0.15); color: #c084fc; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🏢 AI Client</span>'
+      : '<span style="background: rgba(56,189,248,0.15); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🛠️ Contributor</span>';
+    
+    const shortWallet = u.wallet_address ? `${u.wallet_address.slice(0, 6)}...${u.wallet_address.slice(-6)}` : 'N/A';
+    const timeFormatted = u.last_login ? new Date(u.last_login).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recently';
+
+    return `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.2s;" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background='transparent'">
+        <td style="padding: 14px 16px; font-weight: 600; color: #fff;">
+          ${u.email || 'Anonymous Wallet'}
+        </td>
+        <td style="padding: 14px 16px; font-family: monospace; color: #94a3b8;">
+          <span title="${u.wallet_address}">${shortWallet}</span>
+        </td>
+        <td style="padding: 14px 16px;">
+          ${roleBadge}
+        </td>
+        <td style="padding: 14px 16px; font-weight: 600; color: #38bdf8;">
+          ${u.tasks_completed || 0}
+        </td>
+        <td style="padding: 14px 16px; font-weight: 600; color: ${u.accuracy >= 95 ? '#10b981' : '#f59e0b'};">
+          ${Number(u.accuracy || 100).toFixed(1)}%
+        </td>
+        <td style="padding: 14px 16px; font-weight: 700; color: #10b981;">
+          $${Number(u.balance || 0).toFixed(2)}
+        </td>
+        <td style="padding: 14px 16px; color: var(--text-muted); font-size: 0.78rem;">
+          ${timeFormatted}
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 function calculateClientBudget() {

@@ -774,6 +774,10 @@
         <button id="client-subtab-dispatch" class="client-nav-btn" onclick="switchClientTab('dispatch')">
           <span>📦 Extract & Dispatch Data</span>
         </button>
+        <button id="client-subtab-users" class="client-nav-btn" onclick="switchClientTab('users')">
+          <span>👥 Contributor Directory (SQL)</span>
+          <span id="sql-users-count-badge" class="counter-badge" style="background: rgba(16,185,129,0.2); color: #10b981;">Live</span>
+        </button>
       </div>
 
       <!-- SUBTAB 1: CAMPAIGN CREATOR WITH CUSTOM PARAMETERS -->
@@ -981,7 +985,64 @@
               <div class="dispatch-security-note">
                 🔒 Cryptographically signed by SolWork Anchor Escrow PDA Program Authority.
               </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 4: LIVE SQL USER & CONTRIBUTOR DIRECTORY -->
+      <div id="client-tab-users-panel" class="client-tab-panel" style="display: none;">
+        <div class="client-card">
+          <div class="card-header-row" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3 class="card-title-lg">🗄️ Live SQL User & Contributor Registry</h3>
+              <p class="card-subtitle-sm">Real-time individual profiles from backend SQLite database. Every email login, embedded Solana wallet, completed task, and balance is tracked individually.</p>
             </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-hero-outline" style="padding: 8px 16px; font-size: 0.82rem;" onclick="fetchAndRenderSqlUsers()">
+                🔄 Refresh SQL Ledger
+              </button>
+            </div>
+          </div>
+
+          <!-- SUMMARY METRICS -->
+          <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px;">
+            <div class="metric-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;">
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Registered Testers / Workers</div>
+              <div id="sql-total-users" style="font-size: 1.8rem; font-weight: 700; color: #fff; margin-top: 4px;">--</div>
+            </div>
+            <div class="metric-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;">
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Total Tasks Completed</div>
+              <div id="sql-total-tasks" style="font-size: 1.8rem; font-weight: 700; color: #38bdf8; margin-top: 4px;">--</div>
+            </div>
+            <div class="metric-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;">
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Total Verified Balance</div>
+              <div id="sql-total-balance" style="font-size: 1.8rem; font-weight: 700; color: #10b981; margin-top: 4px;">-- USDC</div>
+            </div>
+            <div class="metric-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;">
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Avg Contributor Accuracy</div>
+              <div id="sql-avg-accuracy" style="font-size: 1.8rem; font-weight: 700; color: #a855f7; margin-top: 4px;">--%</div>
+            </div>
+          </div>
+
+          <!-- USERS TABLE -->
+          <div class="table-responsive" style="overflow-x: auto; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
+            <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+              <thead>
+                <tr style="background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary);">
+                  <th style="padding: 12px 16px;">User Email / Identity</th>
+                  <th style="padding: 12px 16px;">Embedded Solana Wallet</th>
+                  <th style="padding: 12px 16px;">Role</th>
+                  <th style="padding: 12px 16px;">Tasks Done</th>
+                  <th style="padding: 12px 16px;">Accuracy</th>
+                  <th style="padding: 12px 16px;">Balance (USDC)</th>
+                  <th style="padding: 12px 16px;">Last Active</th>
+                </tr>
+              </thead>
+              <tbody id="sql-users-table-body">
+                <tr>
+                  <td colspan="7" style="padding: 24px; text-align: center; color: var(--text-muted);">Loading SQL records...</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -1223,29 +1284,20 @@
     </div>
   </div>
 
-  <!-- WEB3 PHANTOM AUTH & ROLE SELECTION MODAL -->
+  <!-- WEB3 & EMAIL AUTH & ROLE SELECTION MODAL -->
   <div id="auth-modal" class="modal-overlay hidden">
-    <div class="modal-card auth-modal-card" style="max-width: 520px;">
+    <div class="modal-card auth-modal-card" style="max-width: 540px;">
       <div class="modal-header">
         <div>
-          <span class="modal-title">🔑 Solana Web3 Authentication</span>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Sign in securely using Phantom or Devnet Wallet</div>
+          <span class="modal-title">🔑 Sign In to SolPlay Protocol</span>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Log in via Email (instant embedded Solana wallet) or connect Phantom</div>
         </div>
         <button class="modal-close" onclick="closeAuthModal()">&times;</button>
       </div>
 
       <div class="auth-modal-body">
-        <div class="auth-wallet-preview">
-          <div class="auth-phantom-badge">
-            <span class="phantom-icon">👻</span>
-            <div class="phantom-info">
-              <strong id="auth-status-title">Phantom Wallet Detected</strong>
-              <span id="auth-status-sub" style="font-size: 0.75rem; color: var(--text-secondary);">Ready to sign cryptographic session message</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="role-selector-box" style="margin-top: 18px;">
+        <!-- ROLE SELECTOR FIRST -->
+        <div class="role-selector-box" style="margin-top: 6px;">
           <label class="form-label">Choose Your Operating Role / Portal:</label>
           <div class="role-options-grid">
             <div id="role-opt-worker" class="role-option-card selected" onclick="selectAuthRole('worker')">
@@ -1259,18 +1311,41 @@
               <div class="role-icon">🏢</div>
               <div class="role-info">
                 <strong>AI Lab / Enterprise Client</strong>
-                <p>Fund Anchor PDA escrows, set custom parameters, and extract ground truth.</p>
+                <p>Fund Anchor PDA escrows, set custom parameters, and monitor testers.</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="auth-action-buttons" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-          <button id="btn-phantom-sign" class="btn-confirm-cashout" onclick="handleWalletSignIn()">
-            ⚡ Sign In with Phantom Wallet
+        <!-- EMAIL AUTH SECTION (PRIMARY FOR TESTERS) -->
+        <div class="auth-email-section" style="margin-top: 18px; padding: 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label class="form-label" style="margin: 0; font-weight: 600;">✉️ Tester / Contributor Email Login</label>
+            <span style="font-size: 0.72rem; color: #10b981; background: rgba(16,185,129,0.12); padding: 2px 8px; border-radius: 999px;">Auto-embedded Solana Keypair</span>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 6px;">
+            <input type="email" id="auth-email-input" class="form-input" placeholder="tester@example.com" style="flex: 1; padding: 11px 14px; border-radius: 8px; font-size: 0.9rem;" onkeydown="if(event.key==='Enter') handleEmailSignIn()">
+            <button type="button" id="btn-email-sign" class="btn-confirm-cashout" style="padding: 11px 18px; white-space: nowrap; font-size: 0.85rem;" onclick="handleEmailSignIn()">
+              Continue ➔
+            </button>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">
+            💡 No crypto knowledge or browser extensions needed. Your individual tasks & earnings persist to our live SQL database.
+          </div>
+        </div>
+
+        <div class="auth-divider" style="display: flex; align-items: center; margin: 18px 0; text-align: center; color: var(--text-muted); font-size: 0.75rem;">
+          <span style="flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1);"></span>
+          <span style="padding: 0 10px; font-size: 0.7rem; letter-spacing: 0.5px;">OR CONNECT EXTERNAL SOLANA WALLET</span>
+          <span style="flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1);"></span>
+        </div>
+
+        <div class="auth-action-buttons" style="display: flex; flex-direction: column; gap: 10px;">
+          <button id="btn-phantom-sign" class="btn-confirm-cashout" style="background: linear-gradient(135deg, #ab9ff2 0%, #4e44ce 100%);" onclick="handleWalletSignIn()">
+            👻 Connect Phantom / Solflare Wallet
           </button>
           <button class="btn-demo-wallet" onclick="handleDemoSignIn()">
-            🚀 1-Click Devnet Demo Keypair (No Extension Needed)
+            🚀 1-Click Devnet Demo Keypair (Instant Guest Mode)
           </button>
         </div>
       </div>
