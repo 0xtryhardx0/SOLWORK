@@ -769,16 +769,23 @@ function selectPayoutOption(opt) {
   state.selectedPayoutOption = opt;
   const optFree = document.getElementById('payout-opt-free');
   const optInst = document.getElementById('payout-opt-instant');
+  const optMhop = document.getElementById('payout-opt-multihopper');
   const calc = document.getElementById('withdrawal-calculator');
+  const visualizer = document.getElementById('multihopper-solwork-visualizer');
+  
+  if (optFree) optFree.classList.toggle('selected', opt === 'free');
+  if (optInst) optInst.classList.toggle('selected', opt === 'instant');
+  if (optMhop) optMhop.classList.toggle('selected', opt === 'multihopper');
   
   if (opt === 'free') {
-    optFree.classList.add('selected');
-    optInst.classList.remove('selected');
-    calc.style.display = 'none';
-  } else {
-    optFree.classList.remove('selected');
-    optInst.classList.add('selected');
-    calc.style.display = 'flex';
+    if (calc) calc.style.display = 'none';
+    if (visualizer) visualizer.style.display = 'none';
+  } else if (opt === 'instant') {
+    if (calc) calc.style.display = 'flex';
+    if (visualizer) visualizer.style.display = 'none';
+  } else if (opt === 'multihopper') {
+    if (calc) calc.style.display = 'flex';
+    if (visualizer) visualizer.style.display = 'block';
   }
   
   updateWithdrawalFeeMath();
@@ -789,20 +796,29 @@ function updateWithdrawalFeeMath() {
   const amount = parseFloat(slider.value) || 0.00;
   state.withdrawalAmount = amount;
   
-  document.getElementById('calc-withdraw-label').innerText = `${amount.toFixed(2)} USDC`;
+  const withdrawLabel = document.getElementById('calc-withdraw-label');
+  if (withdrawLabel) withdrawLabel.innerText = `${amount.toFixed(2)} USDC`;
   
+  const feeLabel = document.getElementById('calc-fee-label');
+  const netLabel = document.getElementById('calc-net-receive');
+
   if (state.selectedPayoutOption === 'free') {
-    document.getElementById('calc-fee-label').innerText = '$0.00';
-    document.getElementById('calc-net-receive').innerText = `$${amount.toFixed(2)}`;
-  } else {
+    if (feeLabel) feeLabel.innerText = '$0.00';
+    if (netLabel) netLabel.innerText = `$${amount.toFixed(2)}`;
+  } else if (state.selectedPayoutOption === 'instant') {
     const fee = 0.05 + (amount * 0.015);
     const net = Math.max(0, amount - fee);
-    document.getElementById('calc-fee-label').innerText = `$${fee.toFixed(2)}`;
-    document.getElementById('calc-net-receive').innerText = `$${net.toFixed(2)}`;
+    if (feeLabel) feeLabel.innerText = `$${fee.toFixed(2)}`;
+    if (netLabel) netLabel.innerText = `$${net.toFixed(2)}`;
+  } else if (state.selectedPayoutOption === 'multihopper') {
+    const fee = amount * 0.005; // 0.5% (0.25% SolWork share, 0.25% MultiHopper pool)
+    const net = Math.max(0, amount - fee);
+    if (feeLabel) feeLabel.innerText = `$${fee.toFixed(3)} (0.5% MultiHopper Token-2022)`;
+    if (netLabel) netLabel.innerText = `$${net.toFixed(2)}`;
   }
 }
 
-function processCashout() {
+async function processCashout() {
   const opt = state.selectedPayoutOption;
   const amount = state.withdrawalAmount;
   
@@ -811,25 +827,93 @@ function processCashout() {
     return;
   }
   
-  const recipient = state.walletAddress || '7Q9N...Vh';
+  const recipient = state.walletAddress || '7Q9NkMhop...Token2022';
   const dummyTx = Array.from({length: 44}, () => "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"[Math.floor(Math.random()*58)]).join('');
+  const confirmBtn = document.getElementById('btn-solwork-cashout-confirm');
   
   if (opt === 'free') {
     state.withdrawableBalance = Math.max(0, state.withdrawableBalance - amount);
     logToTerminalStream(`[Anchor 0.29] Scheduled Batch Escrow: $${amount.toFixed(2)} USDC earmarked for ${recipient}`);
     showHoneypotToast(true, `📅 Auto-Batch Scheduled! $${amount.toFixed(2)} USDC queued for release.`);
-  } else {
+    if (typeof playSfx === 'function') playSfx('success');
+    closeCashoutModal();
+    updateUI();
+  } else if (opt === 'instant') {
     const fee = 0.05 + (amount * 0.015);
     const net = Math.max(0, amount - fee);
     state.withdrawableBalance = Math.max(0, state.withdrawableBalance - amount);
     logToTerminalStream(`[Anchor 0.29] CPI release_payout confirmed: $${net.toFixed(2)} USDC -> ${recipient}`);
     logToTerminalStream(`[Devnet Explorer] Tx Sig: ${dummyTx.slice(0, 24)}... (Status: Finalized)`);
     showHoneypotToast(true, `⚡ Instant Escrow Payout: $${net.toFixed(2)} USDC released to ${recipient}!`);
+    if (typeof playSfx === 'function') playSfx('success');
+    closeCashoutModal();
+    updateUI();
+  } else if (opt === 'multihopper') {
+    if (!window.multiHopper) {
+      showHoneypotToast(false, 'MultiHopper client engine initializing...');
+      return;
+    }
+
+    try {
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.innerText = 'Creating MultiHopper Route...';
+      }
+
+      const visualizer = document.getElementById('multihopper-solwork-visualizer');
+      if (visualizer) visualizer.style.display = 'block';
+
+      logToTerminalStream(`[MultiHopper Protocol] Initializing Token-2022 Permanent Delegate Route ($${amount.toFixed(2)} USDC)`);
+
+      const route = await window.multiHopper.createRoute({
+        origin: 'SolWork_Task_Milestone_PDA',
+        destination: recipient,
+        amount,
+        asset: 'USDC',
+        hopCount: 3,
+        delaySeconds: 5,
+        memo: 'SolWork Task Payout via MultiHopper'
+      });
+
+      window.multiHopper.renderVisualizer(route, visualizer);
+
+      logToTerminalStream(`[TRM Labs Screening] Inspecting destination ${recipient.substring(0, 10)}...`);
+      if (confirmBtn) confirmBtn.innerText = 'TRM Labs Compliance Screening...';
+      
+      await window.multiHopper.prepareRoute(route.routeId);
+      window.multiHopper.renderVisualizer(route, visualizer);
+      logToTerminalStream(`[TRM Labs Sanction Guard] Destination verified: Risk Score ${route.trmRiskScore}/100 (STATUS: CLEAN)`);
+
+      if (confirmBtn) confirmBtn.innerText = 'Routing Ephemeral Token-2022 Hops...';
+
+      await window.multiHopper.executeRoute(route.routeId, (r, hopIdx, hopStatus) => {
+        window.multiHopper.renderVisualizer(r, visualizer);
+        logToTerminalStream(`[MultiHopper Core] Hop ${hopIdx + 1}/${r.hopsList.length} (${r.hopsList[hopIdx].nodeLabel}): ${hopStatus}`);
+      });
+
+      state.withdrawableBalance = Math.max(0, state.withdrawableBalance - amount);
+      logToTerminalStream(`[MultiHopper Protocol] Route Finalized! Tx Sig: ${route.txSignature}`);
+      showHoneypotToast(true, `🔀 MultiHopper Route Delivered! $${route.netDispersal.toFixed(2)} USDC sent to ${recipient}!`);
+
+      if (typeof playSfx === 'function') playSfx('success');
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = 'Route Completed ✓';
+      }
+      setTimeout(() => {
+        closeCashoutModal();
+        updateUI();
+      }, 1500);
+    } catch (err) {
+      console.error('[MultiHopper SolWork] Cashout error:', err);
+      logToTerminalStream(`[MultiHopper Error] ${err.message}`);
+      showHoneypotToast(false, `MultiHopper Error: ${err.message}`);
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = 'Confirm & Release Escrow';
+      }
+    }
   }
-  
-  if (typeof playSfx === 'function') playSfx('success');
-  closeCashoutModal();
-  updateUI();
 }
 
 // 12. EMPLOYER CAMPAIGN CREATION HANDLERS

@@ -1118,7 +1118,19 @@
           </div>
           <span class="option-desc">Funds released in 400ms. Includes sub-penny network gas + 1.5% processing fee.</span>
         </div>
+
+        <!-- Option C: MultiHopper Routed (Compliant Dispersal) -->
+        <div id="payout-opt-multihopper" class="cashout-option" onclick="selectPayoutOption('multihopper')">
+          <div class="option-row">
+            <span class="option-title">MultiHopper Routed</span>
+            <span class="option-badge" style="background: rgba(20, 184, 166, 0.2); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.4);">Token-2022</span>
+          </div>
+          <span class="option-desc">Autonomous multi-hop routing with TRM Labs AML screening, Token-2022 Permanent Delegate wrapping, and ongoing 0.25% revenue attribution.</span>
+        </div>
       </div>
+
+      <!-- MultiHopper Visualizer Container in Cashout Modal -->
+      <div id="multihopper-solwork-visualizer" style="display: none; margin-top: 14px;"></div>
 
       <!-- Calculator widget -->
       <div id="withdrawal-calculator" class="withdrawal-calculator" style="display: none;">
@@ -1138,7 +1150,7 @@
         </div>
       </div>
 
-      <button class="btn-confirm-cashout" onclick="processCashout()">
+      <button class="btn-confirm-cashout" id="btn-solwork-cashout-confirm" onclick="processCashout()">
         Confirm & Release Escrow
       </button>
     </div>
@@ -1209,6 +1221,16 @@
           <div class="calc-row" style="border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 6px;">
             <span style="font-weight: 600;">Total USDC Required:</span>
             <span id="camp-total-budget" style="font-size: 1.15rem; font-weight: 700; color: #22c55e;">$5.00 USDC</span>
+          </div>
+        <!-- MultiHopper Autonomous Treasury Dispersal Option -->
+        <div style="background: rgba(20, 184, 166, 0.08); border: 1px solid rgba(20, 184, 166, 0.3); border-radius: 10px; padding: 12px; margin-top: 12px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #fff;">
+            <input type="checkbox" id="camp-enable-multihopper" checked style="accent-color: #2dd4bf; width: 16px; height: 16px;">
+            <span>Enable MultiHopper Treasury Dispersal Engine</span>
+            <span style="font-size: 0.7rem; background: rgba(20, 184, 166, 0.2); color: #2dd4bf; padding: 2px 6px; border-radius: 4px; font-mono">Token-2022</span>
+          </label>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; margin-left: 24px;">
+            Routes contributor micro-payments via MultiHopper compliant multi-send batches with TRM Labs pre-screening.
           </div>
         </div>
 
@@ -1408,6 +1430,7 @@
   </footer>
 
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+  <script src="multihopper_client.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
