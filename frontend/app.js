@@ -1155,6 +1155,95 @@ function closeInvestorModal() {
   if (modal) modal.classList.add('hidden');
 }
 
+// 10B. INSTANT AI LAB PILOT MODAL & DISPATCH
+function openPilotModal() {
+  if (typeof playSfx === 'function') playSfx('click');
+  const modal = document.getElementById('pilot-modal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    const form = document.getElementById('pilot-request-form');
+    const banner = document.getElementById('pilot-success-banner');
+    if (form) form.style.display = 'block';
+    if (banner) banner.classList.add('hidden');
+    const orgInput = document.getElementById('pilot-org-input');
+    if (orgInput) orgInput.focus();
+  }
+}
+
+function closePilotModal() {
+  if (typeof playSfx === 'function') playSfx('click');
+  const modal = document.getElementById('pilot-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function handlePilotSubmit(e) {
+  if (e) e.preventDefault();
+  const org = document.getElementById('pilot-org-input')?.value.trim() || 'AI Research Lab';
+  const contact = document.getElementById('pilot-contact-input')?.value.trim() || '';
+  const batchSize = document.getElementById('pilot-batch-size')?.value || '50';
+  const timeline = document.getElementById('pilot-timeline')?.value || '24h';
+  const notes = document.getElementById('pilot-notes-input')?.value.trim() || '';
+  const modalityEl = document.querySelector('input[name="pilot-modality"]:checked');
+  const modality = modalityEl ? modalityEl.value : 'code';
+
+  const pilotInquiry = {
+    org,
+    contact,
+    batchSize,
+    timeline,
+    notes,
+    modality,
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    const existing = JSON.parse(localStorage.getItem('solwork_pilot_inquiries') || '[]');
+    existing.push(pilotInquiry);
+    localStorage.setItem('solwork_pilot_inquiries', JSON.stringify(existing));
+  } catch(err) {
+    console.warn('Storage failed:', err);
+  }
+
+  if (typeof triggerConfetti === 'function') triggerConfetti();
+  if (typeof playSfx === 'function') playSfx('success');
+
+  const form = document.getElementById('pilot-request-form');
+  const banner = document.getElementById('pilot-success-banner');
+  if (form) form.style.display = 'none';
+  if (banner) banner.classList.remove('hidden');
+
+  triggerHoneypotToast(true, `Pilot Logged: ${batchSize} tasks for ${org}!`);
+}
+
+// Global Productivity Hotkeys
+window.addEventListener('keydown', (e) => {
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      if (typeof submitTask === 'function') submitTask();
+    }
+    return;
+  }
+
+  if (e.key.toLowerCase() === 'p' && (e.metaKey || e.ctrlKey)) {
+    e.preventDefault();
+    openPilotModal();
+    return;
+  }
+
+  if (state.currentView === 'workspace' && state.activeTask) {
+    if (['1', '2', '3', '4', '5'].includes(e.key)) {
+      const radio = document.querySelector(`input[name="rlhf-rating"][value="${e.key}"]`);
+      if (radio) {
+        radio.checked = true;
+        if (typeof playSfx === 'function') playSfx('click');
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (typeof submitTask === 'function') submitTask();
+    }
+  }
+});
+
 // 11. WEB3 AUTHENTICATION & ROLE SELECTION MODAL
 function openAuthModal() {
   if (typeof playSfx === 'function') playSfx('click');

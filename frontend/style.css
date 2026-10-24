@@ -3616,6 +3616,191 @@ body {
   color: #cbd5e1;
 }
 
+/* ==========================================================================
+   SOLWORK NEW ENTERPRISE & PRODUCTIVITY DESIGN SYSTEM EXTENSIONS
+   ========================================================================== */
+
+/* Navbar & Hero Pilot Action Buttons */
+.nav-pilot-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(20, 241, 149, 0.2), rgba(153, 69, 255, 0.25));
+  border: 1px solid rgba(20, 241, 149, 0.4);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 0 15px rgba(20, 241, 149, 0.15);
+}
+.nav-pilot-btn:hover {
+  background: linear-gradient(135deg, rgba(20, 241, 149, 0.35), rgba(153, 69, 255, 0.4));
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(20, 241, 149, 0.3);
+}
+
+.btn-hero-pilot {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #14f195 0%, #10b981 100%);
+  color: #050811;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 10px 25px -5px rgba(20, 241, 149, 0.4);
+}
+.btn-hero-pilot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -5px rgba(20, 241, 149, 0.6);
+  filter: brightness(1.05);
+}
+
+/* Protocol Performance Telemetry Strip */
+.protocol-telemetry-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 36px auto 16px;
+  padding: 16px 28px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  max-width: 960px;
+  width: 90%;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  flex-wrap: wrap;
+}
+.telemetry-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.telemetry-val {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.text-cyan { color: #38bdf8; text-shadow: 0 0 12px rgba(56, 189, 248, 0.3); }
+.text-green { color: #10b981; text-shadow: 0 0 12px rgba(16, 185, 129, 0.3); }
+.text-purple { color: #c084fc; text-shadow: 0 0 12px rgba(192, 132, 252, 0.3); }
+.text-gold { color: #fbbf24; text-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
+.telemetry-lbl {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.telemetry-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Worker Productivity & Hotkeys Bar */
+.worker-productivity-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 0 0;
+  padding: 10px 18px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+.prod-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.8rem;
+}
+.prod-streak-badge {
+  color: #fbbf24;
+}
+.prod-payout-speed {
+  color: var(--text-secondary);
+}
+.prod-payout-speed strong {
+  color: var(--primary);
+  font-family: var(--font-mono);
+}
+.prod-bar-hotkeys {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.hotkey-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.hotkey-hint kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #fff;
+}
+
+/* Pilot Request Modal Styles */
+.pilot-pills-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+.pilot-choice-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+.pilot-choice-pill:hover,
+.pilot-choice-pill:has(input:checked) {
+  background: rgba(20, 241, 149, 0.08);
+  border-color: var(--primary);
+  color: #fff;
+}
+.pilot-choice-pill input {
+  accent-color: var(--primary);
+}
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 640px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+  .protocol-telemetry-strip { gap: 14px; padding: 12px 16px; }
+  .telemetry-divider { display: none; }
+}
+
 
 
 

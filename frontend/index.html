@@ -73,6 +73,9 @@
           <span id="sfx-icon">🔊</span>
         </button>
 
+        <button class="nav-pilot-btn" onclick="openPilotModal()">
+          <span>⚡ Request Pilot</span>
+        </button>
         <button class="nav-deck-btn" onclick="openInvestorModal()">
           <span>📑 Deck</span>
         </button>
@@ -123,12 +126,38 @@
             <span>🛠️ Enter Task Workstation</span>
             <span class="arrow">&rarr;</span>
           </button>
+          <button class="btn-hero-pilot" onclick="openPilotModal()">
+            <span>⚡ Request a 50-Task Pilot</span>
+          </button>
           <button class="btn-hero-secondary" onclick="switchView('client')">
-            <span>🏢 Enter Clients Area</span>
+            <span>🏢 Clients Area</span>
           </button>
           <button class="btn-hero-outline" onclick="openInvestorModal()">
-            <span>📑 View Protocol One-Pager</span>
+            <span>📑 One-Pager</span>
           </button>
+        </div>
+
+        <!-- PROTOCOL PERFORMANCE TELEMETRY STRIP -->
+        <div class="protocol-telemetry-strip">
+          <div class="telemetry-item">
+            <span class="telemetry-val text-cyan">412ms</span>
+            <span class="telemetry-lbl">Avg Escrow Finality</span>
+          </div>
+          <div class="telemetry-divider"></div>
+          <div class="telemetry-item">
+            <span class="telemetry-val text-green">100%</span>
+            <span class="telemetry-lbl">Non-Custodial Anchor PDA</span>
+          </div>
+          <div class="telemetry-divider"></div>
+          <div class="telemetry-item">
+            <span class="telemetry-val text-purple">0%</span>
+            <span class="telemetry-lbl">Remittance Cut (vs 22% Bank)</span>
+          </div>
+          <div class="telemetry-divider"></div>
+          <div class="telemetry-item">
+            <span class="telemetry-val text-gold">2,400+</span>
+            <span class="telemetry-lbl">STEM & Coder Talent Pool</span>
+          </div>
         </div>
 
         <!-- INTERACTIVE ACETERNITY BENTO SHOWCASE GRID -->
@@ -611,6 +640,21 @@
         <button id="ws-filter-rlhf" class="ws-filter-btn" onclick="filterWorkspaceModality('rlhf')">💻 Code RLHF</button>
         <button id="ws-filter-audio" class="ws-filter-btn" onclick="filterWorkspaceModality('audio')">🎙️ African Audio</button>
         <button id="ws-filter-bbox" class="ws-filter-btn" onclick="filterWorkspaceModality('bbox')">🚗 Vision BBox</button>
+      </div>
+    </div>
+
+    <!-- WORKER PRODUCTIVITY & HOTKEYS BAR -->
+    <div class="worker-productivity-bar">
+      <div class="prod-bar-left">
+        <span class="prod-streak-badge">🔥 Consensus Quality: <strong id="worker-streak-count">100% Honeypot Verified</strong></span>
+        <span class="prod-payout-speed">⚡ Settle Speed: <strong>~390ms SPL USDC</strong></span>
+      </div>
+      <div class="prod-bar-hotkeys">
+        <span class="hotkey-label">Productivity Hotkeys:</span>
+        <span class="hotkey-hint"><kbd>1</kbd>-<kbd>5</kbd> Score</span>
+        <span class="hotkey-hint"><kbd>Space</kbd> Audio</span>
+        <span class="hotkey-hint"><kbd>Enter</kbd> Submit</span>
+        <span class="hotkey-hint"><kbd>⌘K</kbd> Actions</span>
       </div>
     </div>
   </section>
@@ -1311,7 +1355,7 @@
     <div class="modal-card auth-modal-card" style="max-width: 540px;">
       <div class="modal-header">
         <div>
-          <span class="modal-title">🔑 Sign In to SolPlay Protocol</span>
+          <span class="modal-title">🔑 Sign In to SolWork Protocol</span>
           <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Log in via Email (instant embedded Solana wallet) or connect Phantom</div>
         </div>
         <button class="modal-close" onclick="closeAuthModal()">&times;</button>
@@ -1369,6 +1413,98 @@
           <button class="btn-demo-wallet" onclick="handleDemoSignIn()">
             🚀 1-Click Devnet Demo Keypair (Instant Guest Mode)
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTANT AI LAB PILOT REQUEST MODAL -->
+  <div id="pilot-modal" class="modal-overlay hidden">
+    <div class="modal-card pilot-modal-card" style="max-width: 620px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <div>
+          <span class="modal-title">⚡ Request a 50-Task AI Pilot Batch</span>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px;">
+            Test SolWork's sub-second Solana escrow & African talent pool with zero upfront risk.
+          </div>
+        </div>
+        <button class="modal-close" onclick="closePilotModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 16px 0 6px;">
+        <form id="pilot-request-form" onsubmit="handlePilotSubmit(event)">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Organization / Lab Name *</label>
+              <input type="text" id="pilot-org-input" class="form-input" placeholder="e.g. Sahara AI, Masakhane, Allora" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Email or Telegram *</label>
+              <input type="text" id="pilot-contact-input" class="form-input" placeholder="research@lab.ai or @username" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label class="form-label">Target Dataset Modality *</label>
+            <div class="pilot-pills-row">
+              <label class="pilot-choice-pill">
+                <input type="radio" name="pilot-modality" value="code" checked>
+                <span>💻 Code RLHF & Security</span>
+              </label>
+              <label class="pilot-choice-pill">
+                <input type="radio" name="pilot-modality" value="audio">
+                <span>🎙️ African Speech & Dialects</span>
+              </label>
+              <label class="pilot-choice-pill">
+                <input type="radio" name="pilot-modality" value="vision">
+                <span>🚗 Vision & Bounding Box</span>
+              </label>
+              <label class="pilot-choice-pill">
+                <input type="radio" name="pilot-modality" value="adversarial">
+                <span>🛡️ Red-Teaming & Safety</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="margin-top: 14px;">
+            <div class="form-group">
+              <label class="form-label">Pilot Scope / Batch Size</label>
+              <select id="pilot-batch-size" class="form-input">
+                <option value="50">50 Benchmark Microtasks (Free Proof-of-Work)</option>
+                <option value="500">500 Milestone Tasks (~$250 USDC)</option>
+                <option value="2500">2,500 Full Dataset Batch (~$1,250 USDC)</option>
+                <option value="custom">Custom Enterprise Volume</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Turnaround Target</label>
+              <select id="pilot-timeline" class="form-input">
+                <option value="24h">&lt; 24 Hours (Fast Benchmark)</option>
+                <option value="48h">&lt; 48 Hours</option>
+                <option value="flexible">Flexible / Ongoing Stream</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label class="form-label">Dataset Specs & Specific Requirements (Optional)</label>
+            <textarea id="pilot-notes-input" class="form-input" rows="3" placeholder="e.g. Need Yoruba/Hausa speech audio recordings at 16kHz, or Python code evaluation for a fine-tuned 7B model."></textarea>
+          </div>
+
+          <div class="pilot-modal-actions" style="margin-top: 18px; display: flex; gap: 12px; align-items: center;">
+            <button type="submit" id="btn-submit-pilot" class="btn-confirm-cashout" style="flex: 1; padding: 13px 20px; font-size: 0.95rem; font-weight: 700;">
+              🚀 Dispatch Pilot Inquiry to Founder
+            </button>
+            <a href="mailto:xxii.services@gmail.com?subject=SolWork%20AI%20Pilot%20Inquiry" class="btn-deck-git" style="padding: 13px 16px; font-size: 0.85rem; text-decoration: none; white-space: nowrap;">
+              ✉️ Open Direct Email
+            </a>
+          </div>
+        </form>
+        <div id="pilot-success-banner" class="pilot-success-box hidden" style="margin-top: 16px; padding: 14px; background: rgba(20, 241, 149, 0.1); border: 1px solid var(--primary); border-radius: 10px; color: var(--text-primary); text-align: center;">
+          <div style="font-size: 1.15rem; margin-bottom: 4px;">🎉 Pilot Request Logged!</div>
+          <div style="font-size: 0.85rem; color: var(--text-secondary);">
+            Erioluwa Ayodeji (<a href="mailto:xxii.services@gmail.com" style="color: var(--primary);">xxii.services@gmail.com</a>) will reach out within 4 hours to initialize your Anchor test escrow vault.
+          </div>
         </div>
       </div>
     </div>

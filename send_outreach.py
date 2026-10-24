@@ -22,7 +22,7 @@ LEADS = [
     {
         "id": "sahara",
         "name": "Sahara AI",
-        "to": ["partnerships@saharaa.info", "bd@saharalabs.ai"],
+        "to": ["support@saharalabs.ai", "info@saharalabs.ai"],
         "subject": "Solana USDC Microtasking Pipeline for Sahara AI",
         "body": """Hi Sean & Sahara AI Team,
 
@@ -43,7 +43,7 @@ Demo: https://solwork.vercel.app"""
     {
         "id": "allora",
         "name": "Allora Network",
-        "to": ["contact@allora.network", "bd@upshot.xyz"],
+        "to": ["partnerships@allora.network"],
         "subject": "Ground-Truth Human Feedback & Evaluation Feeds for Allora",
         "body": """Hi Nick & Allora Team,
 
@@ -64,7 +64,7 @@ Demo: https://solwork.vercel.app"""
     {
         "id": "bagel",
         "name": "Bagel Network",
-        "to": ["hello@bagel.net"],
+        "to": ["hello@bagel.com", "contact@bagel.com"],
         "subject": "Human Data Crowdsourcing via Solana Escrows for Bagel",
         "body": """Hi Bidhan,
 
@@ -83,53 +83,11 @@ Email: xxii.services@gmail.com
 Demo: https://solwork.vercel.app"""
     },
     {
-        "id": "masa",
-        "name": "Masa Network",
-        "to": ["partnerships@masa.ai"],
-        "subject": "Human RLHF & Annotation Layer for Masa AI / Subnets",
-        "body": """Hi Brendan & Calanthia,
-
-We built SolWork on Solana: a decentralized human workforce layer for AI protocols and Bittensor subnets needing fast RLHF, sentiment calibration, and prompt filtering.
-
-Campaigns are funded via PDA vaults in SPL USDC, paying pre-vetted Nigerian software engineers and annotators in under 1 second per approved task.
-
-We can spin up a pilot task pool for Masa in under 24 hours to benchmark speed and data quality.
-
-Would you be open to a 5-minute call or reviewing a short demo clip?
-
-Warm regards,
-Erioluwa Ayodeji
-Lead Architect, SolWork Protocol
-Email: xxii.services@gmail.com
-Demo: https://solwork.vercel.app"""
-    },
-    {
-        "id": "invisible",
-        "name": "Invisible Technologies",
-        "to": ["procurement@invisible.co", "info@invisible.co"],
-        "subject": "Instant Micro-Payout & Workforce Rails for Invisible in Africa",
-        "body": """Hi Francis & Invisible Ops,
-
-We built SolWork: a decentralized microtasking and payout protocol on Solana that replaces slow international bank wires with sub-second SPL USDC settlements for distributed contractors.
-
-It connects you directly to vetted Nigerian software engineers and STEM annotators for code synthesis, multimodal labeling, and red-teaming with zero remittance overhead.
-
-We’d like to show you how SolWork can cut your international worker payout friction and administrative overhead.
-
-Are you open to a brief 5-minute intro call this week?
-
-Best regards,
-Erioluwa Ayodeji
-Founder, SolWork Protocol
-Email: xxii.services@gmail.com
-Demo: https://solwork.vercel.app"""
-    },
-    {
         "id": "alignerr",
         "name": "Alignerr (Labelbox)",
-        "to": ["enterprise@labelbox.com", "support@alignerr.com"],
+        "to": ["support@alignerr.com", "enterprise@labelbox.com"],
         "subject": "Compensating Elite African Technical Annotators via SolWork",
-        "body": """Hello Alignerr Team,
+        "body": """Hello Alignerr & Labelbox Team,
 
 We built SolWork on Solana: an on-chain milestone escrow protocol that connects AI alignment platforms with vetted Nigerian engineers and STEM graduates for code evaluation and technical RLHF.
 
@@ -148,7 +106,7 @@ Demo: https://solwork.vercel.app"""
     {
         "id": "lelapa",
         "name": "Lelapa AI & Masakhane",
-        "to": ["hello@lelapa.ai", "info@masakhane.io"],
+        "to": ["info@lelapa.ai", "info@masakhane.io", "info@lanfrica.com"],
         "subject": "Zero-Fee Contributor Payout Rails for African Language Datasets",
         "body": """Dear Pelonomi & Masakhane Team,
 
@@ -164,6 +122,39 @@ Respectfully,
 Erioluwa Ayodeji
 Founder, SolWork Protocol
 Email: xxii.services@gmail.com
+Demo: https://solwork.vercel.app"""
+    },
+    {
+        "id": "superteamng",
+        "name": "Superteam Nigeria",
+        "to": ["nzubej@gmail.com"],
+        "subject": "SolWork Protocol: Decentralized AI Microtasking on Solana (Lagos Showcase)",
+        "body": """Hi Nzube & Superteam NG Team,
+
+While meme trading drives on-chain volume, the true transformative promise of Solana in Nigeria is unlocking friction-free global earning for hundreds of thousands of talented digital workers.
+
+We built SolWork (https://solwork.vercel.app) — a decentralized AI microtasking and milestone escrow protocol running on Anchor smart contracts.
+
+The Real Problem in Nigeria:
+Global platforms like Remotasks, Upwork, and Clickworker force Nigerian workers to wait 5–7 business days, face frequent arbitrary account closures, and lose up to 25% in banking remittance spreads.
+
+The SolWork Solution:
+- Global AI and research labs fund task escrows in SPL USDC via PDA vaults.
+- Nigerian developers, students, and linguists complete RLHF, code audits, and dataset labeling.
+- Smart contracts release instant USDC payouts straight to Phantom wallets in 400ms.
+
+Current Status:
+- Anchor smart contract live on Solana Devnet.
+- Fully working responsive worker studio (audio transcription, computer vision bounding box, code RLHF).
+- Integrated with MultiHopper Protocol for compliance-guarded cashouts.
+- Ready for a community bounty pilot to onboard the first 1,000 Nigerian contributors.
+
+Would love to showcase SolWork on an upcoming Superteam NG Community Call or explore an ecosystem spotlight!
+
+Best regards,
+Erioluwa Ayodeji
+Lead Architect, SolWork Protocol
+Lagos, Nigeria
 Demo: https://solwork.vercel.app"""
     }
 ]
