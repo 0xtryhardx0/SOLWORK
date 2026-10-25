@@ -133,4 +133,107 @@ router.post('/tasks/submit', async (req, res) => {
   });
 });
 
+// 4. Enterprise / Research Pilot: Batch Upload Tasks
+router.post('/pilot/batch', (req, res) => {
+  const { campaignId, campaignTitle, tasks } = req.body;
+  if (!campaignId || !tasks || !Array.isArray(tasks) || tasks.length === 0) {
+    return res.status(400).json({ error: 'campaignId and an array of tasks are required' });
+  }
+
+  const insertStmt = db.prepare(`
+    INSERT OR REPLACE INTO tasks (id, campaign_id, instruction, is_honeypot, correct_answers, reward)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `);
+
+  let inserted = 0;
+  for (const t of tasks) {
+    const taskId = t.id || `${campaignId}_${Date.now()}_${inserted + 1}`;
+    const instruction = t.instruction || 'Review and annotate according to guidelines.';
+    const isHoneypot = t.isHoneypot ? 1 : 0;
+    const correctAnswers = JSON.stringify(t.correctAnswers || []);
+    const reward = typeof t.reward === 'number' ? t.reward : 0.20;
+
+    insertStmt.run(taskId, campaignId, instruction, isHoneypot, correctAnswers, reward);
+    inserted++;
+  }
+
+  res.status(200).json({
+    status: 'SUCCESS',
+    campaignId,
+    campaignTitle: campaignTitle || campaignId,
+    tasksIngested: inserted,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 5. Enterprise / Research Pilot: Export Completed Dataset (JSON or CSV)
+router.get('/campaigns/:campaignId/export', (req, res) => {
+  const { campaignId } = req.params;
+  const format = (req.query.format as string) || 'json';
+
+  const submissions = db.prepare(`
+    SELECT id, wallet_address, task_id, campaign_id, answer, verified, payout_earned, submitted_at
+    FROM submissions
+    WHERE campaign_id = ?
+    ORDER BY submitted_at DESC
+  `).all(campaignId) as any[];
+
+  if (format.toLowerCase() === 'csv') {
+    const headers = ['Submission ID', 'Worker Wallet', 'Task ID', 'Campaign ID', 'Answer', 'Verified', 'Payout (USDC)', 'Submitted At'];
+    const rows = submissions.map(s => [
+      s.id,
+      `"${s.wallet_address}"`,
+      `"${s.task_id}"`,
+      `"${s.campaign_id}"`,
+      `"${(s.answer || '').replace(/"/g, '""')}"`,
+      s.verified ? 'YES' : 'NO',
+      s.payout_earned.toFixed(2),
+      `"${s.submitted_at}"`
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="solwork_dataset_${campaignId}_${Date.now()}.csv"`);
+    return res.status(200).send(csvContent);
+  }
+
+  res.status(200).json({
+    campaignId,
+    totalRecords: submissions.length,
+    exportedAt: new Date().toISOString(),
+    dataset: submissions
+  });
+});
+
+// 6. Real-Time Pilot Telemetry & Audit Feed
+router.get('/pilot/telemetry', (req, res) => {
+  const userCount = (db.prepare('SELECT COUNT(*) as count FROM users').get() as any)?.count || 0;
+  const taskCount = (db.prepare('SELECT COUNT(*) as count FROM tasks').get() as any)?.count || 0;
+  const submissionStats = db.prepare(`
+    SELECT COUNT(*) as total, SUM(payout_earned) as totalPayout, AVG(verified) * 100 as avgAccuracy
+    FROM submissions
+  `).get() as any;
+
+  const campaignBreakdown = db.prepare(`
+    SELECT campaign_id, COUNT(*) as submission_count, SUM(payout_earned) as total_usdc
+    FROM submissions
+    GROUP BY campaign_id
+  `).all() as any[];
+
+  res.status(200).json({
+    protocol: 'SolWork AI Microtasking Protocol',
+    status: 'ONLINE',
+    network: 'Solana Devnet / Mainnet-Ready',
+    telemetry: {
+      registeredContributors: userCount,
+      activeTasksInPool: taskCount,
+      totalCompletedSubmissions: submissionStats?.total || 0,
+      totalUsdcSettled: parseFloat((submissionStats?.totalPayout || 0).toFixed(2)),
+      benchmarkAccuracy: parseFloat((submissionStats?.avgAccuracy || 100.0).toFixed(1)),
+      campaigns: campaignBreakdown
+    },
+    generatedAt: new Date().toISOString()
+  });
+});
+
 export default router;
