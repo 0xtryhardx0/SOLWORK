@@ -1694,6 +1694,46 @@ function saveClientJobs() {
   } catch (e) {}
 }
 
+function toggleClientMode(mode) {
+  const stdStats = document.getElementById('client-stats-standard');
+  const aiStats = document.getElementById('client-stats-ailab');
+  const btnStd = document.getElementById('btn-mode-standard');
+  const btnAi = document.getElementById('btn-mode-ailab');
+  const titleText = document.querySelector('.client-dash-title');
+  const subText = document.getElementById('client-dash-subtitle-text');
+  const createLabel = document.getElementById('btn-create-label');
+
+  if (mode === 'ailab') {
+    if (stdStats) stdStats.style.display = 'none';
+    if (aiStats) aiStats.style.display = 'grid';
+    if (btnAi) {
+      btnAi.style.background = '#8b5cf6';
+      btnAi.style.color = '#fff';
+    }
+    if (btnStd) {
+      btnStd.style.background = 'transparent';
+      btnStd.style.color = '#94a3b8';
+    }
+    if (titleText) titleText.innerText = '🏢 AI Lab Command Center';
+    if (subText) subText.innerText = 'Manage non-custodial Anchor escrow vaults & MultiHopper batch micro-payouts';
+    if (createLabel) createLabel.innerText = '+ Launch AI Campaign';
+  } else {
+    if (stdStats) stdStats.style.display = 'grid';
+    if (aiStats) aiStats.style.display = 'none';
+    if (btnStd) {
+      btnStd.style.background = '#8b5cf6';
+      btnStd.style.color = '#fff';
+    }
+    if (btnAi) {
+      btnAi.style.background = 'transparent';
+      btnAi.style.color = '#94a3b8';
+    }
+    if (titleText) titleText.innerText = 'Client Dashboard';
+    if (subText) subText.innerText = 'Manage your projects and find talent';
+    if (createLabel) createLabel.innerText = 'Post a Job';
+  }
+}
+
 function switchClientTab(tabName) {
   state.clientActiveTab = tabName;
   

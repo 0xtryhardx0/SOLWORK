@@ -812,36 +812,76 @@
 </div> <!-- END VIEW 2: WORKSPACE -->
 
 
-<!-- ================= VIEW 3: ENTERPRISE AI LAB COMMAND CENTER ================= -->
+<!-- ================= VIEW 3: CLIENT DASHBOARD (ORIGINAL CLEAN NUMBER 1 DESIGN) ================= -->
 <div id="view-client" class="portal-view" style="display: none;">
 
-  <!-- AI LAB COMMAND HEADER -->
+  <!-- CLIENT DASHBOARD HEADER -->
   <section class="client-dash-header-section">
     <div class="client-container">
       <div class="client-dash-header">
         <div class="space-y-1">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-            <h1 class="client-dash-title" style="margin: 0;">🏢 AI Lab Command Center</h1>
-            <span class="badge-status-escrow" style="background: rgba(139, 92, 246, 0.18); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.35); font-size: 0.75rem;">
-              <span class="live-pulse-dot" style="background: #a855f7;"></span> MultiHopper Batch Dispersal Active
-            </span>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+            <h1 class="client-dash-title" style="margin: 0;">Client Dashboard</h1>
+            <div class="client-mode-toggle" style="display: inline-flex; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 2px;">
+              <button id="btn-mode-standard" class="btn-mode-pill active" onclick="toggleClientMode('standard')" style="padding: 4px 12px; font-size: 0.72rem; border-radius: 999px; border: none; background: #8b5cf6; color: #fff; cursor: pointer; font-weight: 600;">📋 Standard</button>
+              <button id="btn-mode-ailab" class="btn-mode-pill" onclick="toggleClientMode('ailab')" style="padding: 4px 12px; font-size: 0.72rem; border-radius: 999px; border: none; background: transparent; color: #94a3b8; cursor: pointer; font-weight: 600;">⚡ AI Lab Mode</button>
+            </div>
           </div>
-          <p class="client-dash-subtitle">Manage non-custodial Anchor escrow vaults, track real-time annotator consensus, and route sub-second SPL USDC micro-payouts.</p>
+          <p id="client-dash-subtitle-text" class="client-dash-subtitle">Manage your projects and find talent</p>
         </div>
         <button class="btn-primary-pill" onclick="switchClientTab('create')">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-          <span>+ Launch AI Campaign</span>
+          <span id="btn-create-label">Post a Job</span>
         </button>
       </div>
 
-      <!-- 4 AI PIPELINE STAT CARDS -->
-      <div class="client-stats-grid-4">
+      <!-- 4 CLEAN STAT CARDS (DEFAULT STANDARD MODE) -->
+      <div id="client-stats-standard" class="client-stats-grid-4">
+        <div class="stat-clean-card">
+          <div class="stat-clean-top">
+            <span class="stat-clean-label">Active Jobs</span>
+            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
+          </div>
+          <p id="client-stat-active-jobs" class="stat-clean-val">2</p>
+          <p class="stat-clean-sub">In progress</p>
+        </div>
+
+        <div class="stat-clean-card">
+          <div class="stat-clean-top">
+            <span class="stat-clean-label">Total Spent</span>
+            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+          <p id="client-stat-total-escrow" class="stat-clean-val">28.5 SOL</p>
+          <p class="stat-clean-sub">≈ $5,130</p>
+        </div>
+
+        <div class="stat-clean-card">
+          <div class="stat-clean-top">
+            <span class="stat-clean-label">Total Hires</span>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path></svg>
+          </div>
+          <p class="stat-clean-val">18</p>
+          <p class="stat-clean-sub text-green">+3 this month</p>
+        </div>
+
+        <div class="stat-clean-card">
+          <div class="stat-clean-top">
+            <span class="stat-clean-label">Avg Rating</span>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+          <p class="stat-clean-val">4.8 ⭐</p>
+          <p class="stat-clean-sub text-green">Excellent</p>
+        </div>
+      </div>
+
+      <!-- 4 AI STAT CARDS (TOGGLED VIA AI LAB MODE) -->
+      <div id="client-stats-ailab" class="client-stats-grid-4" style="display: none;">
         <div class="stat-clean-card">
           <div class="stat-clean-top">
             <span class="stat-clean-label">Active AI Campaigns</span>
             <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
           </div>
-          <p id="client-stat-active-jobs" class="stat-clean-val">3 Running</p>
+          <p class="stat-clean-val">3 Running</p>
           <p class="stat-clean-sub text-green">Code RLHF • Audio • CV</p>
         </div>
 
@@ -850,7 +890,7 @@
             <span class="stat-clean-label">Anchor Escrow Vault</span>
             <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14f195" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           </div>
-          <p id="client-stat-total-escrow" class="stat-clean-val">$4,850.00 USDC</p>
+          <p class="stat-clean-val">$4,850.00 USDC</p>
           <p class="stat-clean-sub">Locked in PDA: <span style="font-family: monospace; color: #14f195;">D6Ft...SZPy</span></p>
         </div>
 
