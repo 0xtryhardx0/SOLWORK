@@ -1567,105 +1567,106 @@ function updateAuthUI() {
   updateUI();
 }
 
-// 12. ENTERPRISE CLIENT PORTAL LOGIC & SQL USER REGISTRY
-// 12. ENTERPRISE CLIENT PORTAL LOGIC & ESCROW MANAGEMENT (CYBERPUNK HOT PINK)
+// 12. ENTERPRISE AI LAB COMMAND CENTER LOGIC & ANCHOR ESCROW (MULTIHOPPER INTEGRATED)
 let mockClientJobs = [
   {
-    id: 'job-1',
-    title: 'Smart Contract Development for NFT Marketplace',
-    category: 'Smart Contracts & Anchor',
-    budget: 5000,
+    id: 'campaign-1',
+    title: 'Llama-3 8B Instruction Tuning - Python Security & Rust RLHF',
+    category: 'Code RLHF & Unit Tests',
+    budget: 2500,
+    totalTasks: 10000,
+    completedTasks: 8240,
+    ratePerTask: 0.25,
     status: 'In Escrow',
     pda: 'EP2xDvB4sT7q...89NqDevnet',
-    client: '7xKX...9mP4 (You)',
-    freelancer: {
-      name: 'Alex Chen',
-      wallet: '4xKmYQnd87aBvBncDkL9M2N1PqRSTuVwXyZ34aBcDeFg',
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120'
-    },
-    description: 'Build non-custodial Anchor 0.29 contracts for an NFT marketplace with royalty splits, instant settlement, and sub-second milestone escrows.',
+    client: 'Sahara Research / Subnet 4 (You)',
+    annotatorQuorum: '3-of-3 Consensus',
+    honeypotAccuracy: '99.8%',
+    description: 'Human preference feedback (RLHF) and AST unit test verification on 10,000 Python/Rust vulnerability patch pairs for frontier open-weights LLMs.',
     milestones: [
-      { id: 'm1', num: 1, title: 'Contract Architecture & Technical Spec', amount: 1500, status: 'PAID' },
-      { id: 'm2', num: 2, title: 'Core Minting Logic & Fuzzing Unit Tests', amount: 2500, status: 'IN_REVIEW', deliverable: { pr: 24, notes: 'Implemented Anchor contracts with SPL Token-2022 transfer hook & 14 unit tests passing 100% on Devnet.' } },
-      { id: 'm3', num: 3, title: 'Devnet Deployment & Client Integration Docs', amount: 1000, status: 'PENDING' }
+      { id: 'm1', num: 1, title: 'Batch A: 5,000 Python Security Annotations Verified', amount: 1250, status: 'PAID' },
+      { id: 'm2', num: 2, title: 'Batch B: 3,240 Rust Memory-Safety Audits in Review', amount: 810, status: 'IN_REVIEW', deliverable: { pr: 42, notes: 'AST unit tests executed on Solana Devnet worker nodes. 3,240 pairs validated with 99.8% honeypot trap accuracy. Ready for MultiHopper batch release.' } },
+      { id: 'm3', num: 3, title: 'Batch C: 1,760 Frontier Instruction Pairs Pending', amount: 440, status: 'IN_PROGRESS' }
     ]
   },
   {
-    id: 'job-2',
-    title: 'Frontend Development for DeFi Liquidity Dashboard',
-    category: 'Frontend DeFi & Web3',
-    budget: 3500,
+    id: 'campaign-2',
+    title: 'West African Speech Corpus (Yoruba, Igbo, Hausa & Pidgin)',
+    category: 'African Speech Audio',
+    budget: 1000,
+    totalTasks: 5000,
+    completedTasks: 3200,
+    ratePerTask: 0.20,
     status: 'In Escrow',
     pda: '7zVpLk93jW2a...41MvDevnet',
-    client: '7xKX...9mP4 (You)',
-    freelancer: {
-      name: 'Maria Rodriguez',
-      wallet: '9zLpQwerty1234567890abcdefABCDEF1234567890',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120'
-    },
-    description: 'Responsive Next.js 15 dashboard with Phantom wallet adapter, liquidity pool APR monitoring, and real-time transaction telemetry.',
+    client: 'Sahara Research / Subnet 4 (You)',
+    annotatorQuorum: '5-of-5 Consensus',
+    honeypotAccuracy: '99.5%',
+    description: 'Phonetic transcription, accent tagging, and multi-speaker consensus verification of 5,000 West African audio speech samples for multilingual ASR models.',
     milestones: [
-      { id: 'm1', num: 1, title: 'Wallet Adapter & UI Component System', amount: 1500, status: 'PAID' },
-      { id: 'm2', num: 2, title: 'DEX Liquidity Pool & Swap Integration', amount: 2000, status: 'IN_PROGRESS' }
+      { id: 'm1', num: 1, title: 'Batch 1: 2,500 Yoruba & Pidgin Phonetic Alignments', amount: 500, status: 'PAID' },
+      { id: 'm2', num: 2, title: 'Batch 2: 700 Igbo Dialect Audio Audio Samples in Review', amount: 140, status: 'IN_REVIEW', deliverable: { pr: 18, notes: 'Cross-validated against 5 independent native speaker annotators in Lagos and Enugu. Phonetic alignment score: 99.4%.' } },
+      { id: 'm3', num: 3, title: 'Batch 3: 1,800 Hausa Broadcast Clips Pending', amount: 360, status: 'PENDING' }
     ]
   },
   {
-    id: 'job-3',
-    title: 'African Dialect Speech & NLP Corpus Labeling',
-    category: 'AI Dataset & RLHF',
-    budget: 1200,
+    id: 'campaign-3',
+    title: 'Autonomous Driving 3D Bounding Boxes & Scene Segmentation',
+    category: 'Computer Vision Bounding Boxes',
+    budget: 1350,
+    totalTasks: 3000,
+    completedTasks: 2850,
+    ratePerTask: 0.45,
     status: 'In Escrow',
     pda: '3MocK54Sig84...1928Devnet',
-    client: '7xKX...9mP4 (You)',
-    freelancer: {
-      name: 'Kofi Mensah',
-      wallet: '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh',
-      avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=120'
-    },
-    description: 'Phonetic transcription and consensus benchmarking of 1,000 West African audio speech samples for frontier LLM fine-tuning.',
+    client: 'Sahara Research / Subnet 4 (You)',
+    annotatorQuorum: '3-of-3 Consensus',
+    honeypotAccuracy: '99.9%',
+    description: 'LiDAR point-cloud polygon labeling and 3D bounding box annotations for urban African road conditions (pedestrians, minibuses, road defects).',
     milestones: [
-      { id: 'm1', num: 1, title: '1,000 Audio Clips Transcribed & Consensus-Verified', amount: 600, status: 'IN_REVIEW', deliverable: { pr: 12, notes: 'Transcribed 1,000 Nigerian Pidgin audio clips with 99.8% consensus quorum. Ready for client inspection.' } },
-      { id: 'm2', num: 2, title: 'Consensus Quality Proofs & Parquet Export', amount: 600, status: 'PENDING' }
+      { id: 'm1', num: 1, title: 'Batch 1: 1,500 High-Density Urban Street Scenes', amount: 675, status: 'PAID' },
+      { id: 'm2', num: 2, title: 'Batch 2: 1,350 Night & Rain Condition Annotations', amount: 607.5, status: 'IN_PROGRESS' },
+      { id: 'm3', num: 3, title: 'Batch 3: 150 Final Corner-Case Road Traps', amount: 67.5, status: 'PENDING' }
     ]
   }
 ];
 
 const mockTalentProposals = [
   {
-    id: 'prop-1',
-    name: 'Alex Chen',
-    title: 'Senior Solana Smart Contract Engineer',
-    rating: 5.0,
-    projectsDone: 34,
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120',
-    skills: ['Rust', 'Anchor', 'Solana', 'Security Audits'],
-    bid: 2500,
-    timeline: '5 days',
-    note: 'Built multiple production Anchor escrows with 400ms finality. Can deliver contract architecture + automated fuzzing test suite with zero security flaws.'
-  },
-  {
-    id: 'prop-2',
-    name: 'Maria Rodriguez',
-    title: 'Principal Web3 & React Frontend Architect',
-    rating: 4.95,
-    projectsDone: 28,
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120',
-    skills: ['React', 'Next.js', 'Tailwind', 'Web3.js'],
-    bid: 2000,
-    timeline: '4 days',
-    note: 'Expert in high-converting, cyber-aesthetic Web3 applications. Will build the responsive dashboard with smooth glassmorphism and sub-second wallet signatures.'
-  },
-  {
-    id: 'prop-3',
-    name: 'Kofi Mensah',
-    title: 'Lead African NLP Annotator & Linguist',
-    rating: 4.98,
-    projectsDone: 184,
+    id: 'worker-1',
+    name: 'Kofi Mensah (Lagos, Nigeria)',
+    title: 'Lead African NLP & Speech Consensus Node',
+    rating: 4.99,
+    projectsDone: 1840,
     avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=120',
-    skills: ['NLP', 'Yoruba/Pidgin', 'PyTorch', 'Data QA'],
-    bid: 600,
-    timeline: '3 days',
-    note: 'Supervised over 180 speech corpora for Masakhane and African research teams. Guaranteed 99%+ consensus verification.'
+    skills: ['Yoruba/Pidgin', 'Phonetic Alignment', 'Masakhane Corpus', 'PyTorch'],
+    bid: 180,
+    timeline: '32s avg latency',
+    note: 'Supervised 1,840 West African audio corpora with 99.8% honeypot consensus accuracy. MultiHopper SPL USDC address verified.'
+  },
+  {
+    id: 'worker-2',
+    name: 'Alex Chen (Taipei)',
+    title: 'Senior Rust & Python AST Code Reviewer',
+    rating: 5.0,
+    projectsDone: 640,
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120',
+    skills: ['Rust AST', 'Anchor 0.29', 'Python RLHF', 'Fuzzing Harnesses'],
+    bid: 250,
+    timeline: '58s avg latency',
+    note: 'Audited 640 Python/Rust code pairs with 100% unit test verification. Automated honeypot trap accuracy: 100%.'
+  },
+  {
+    id: 'worker-3',
+    name: 'Amina Bello (Kano, Nigeria)',
+    title: 'Computer Vision & 3D Bounding Box Specialist',
+    rating: 4.97,
+    projectsDone: 3120,
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120',
+    skills: ['LiDAR 3D Boxes', 'Polygon Segmentation', 'African Road Traps', 'CVAT'],
+    bid: 310,
+    timeline: '24s avg latency',
+    note: '3,120 urban African driving frames segmented with 99.6% Intersection-over-Union (IoU) accuracy.'
   }
 ];
 
@@ -1746,25 +1747,30 @@ function renderClientJobs() {
     const card = document.createElement('div');
     card.className = 'escrow-job-card';
 
+    const totalTasks = job.totalTasks || 5000;
+    const completedTasks = job.completedTasks || 3500;
+    const pct = Math.round((completedTasks / totalTasks) * 100);
+    const rate = job.ratePerTask || 0.25;
+
     // Build Milestones HTML
     const milestonesHtml = job.milestones.map(m => {
       let statusBadge = '';
       let actionBtn = '';
 
       if (m.status === 'PAID') {
-        statusBadge = '<span class="badge-status-escrow" style="background: rgba(20,241,149,0.15); color: #14f195;">✓ Settled On-Chain</span>';
+        statusBadge = '<span class="badge-status-escrow" style="background: rgba(20,241,149,0.15); color: #14f195;">✓ Settled Via MultiHopper</span>';
       } else if (m.status === 'IN_REVIEW') {
-        statusBadge = '<span class="badge-status-escrow review">● In Review</span>';
+        statusBadge = '<span class="badge-status-escrow review">● Consensus Ready</span>';
         actionBtn = `
           <button class="btn-glass-mint" onclick="openDeliverableModal('${job.id}', '${m.id}')">
-            👁️ Review Deliverable
+            👁️ Inspect Batch QA
           </button>
           <button class="btn-hotpink-sm" onclick="releaseMilestoneEscrow('${job.id}', '${m.id}')">
-            ⚡ Release Escrow ($${m.amount})
+            ⚡ Release Batch ($${m.amount} USDC)
           </button>
         `;
       } else if (m.status === 'IN_PROGRESS') {
-        statusBadge = '<span class="badge-tag-category" style="color: #38bdf8; border-color: rgba(56,189,248,0.3);">⏳ In Progress</span>';
+        statusBadge = '<span class="badge-tag-category" style="color: #38bdf8; border-color: rgba(56,189,248,0.3);">⏳ Live Labeling</span>';
       } else {
         statusBadge = '<span class="badge-tag-category">Pending Escrow</span>';
       }
@@ -1776,8 +1782,8 @@ function renderClientJobs() {
               ${m.status === 'PAID' ? '✓' : m.num}
             </div>
             <div class="milestone-desc-col">
-              <strong>Milestone ${m.num}: ${m.title}</strong>
-              <span>Anchor PDA State: ${m.status.toLowerCase()}</span>
+              <strong>${m.title}</strong>
+              <span>Anchor PDA State: ${m.status.toLowerCase()} • MultiHopper Route Active</span>
             </div>
           </div>
           <div class="milestone-right">
@@ -1801,28 +1807,141 @@ function renderClientJobs() {
               <span class="live-pulse-dot" style="width: 6px; height: 6px; background: #14f195;"></span>
               ${job.status}
             </span>
-            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">PDA: ${job.pda}</span>
+            <span style="font-size: 0.75rem; color: #14f195; font-family: monospace;">PDA: ${job.pda}</span>
+            <span style="font-size: 0.75rem; color: #a855f7; font-weight: 600;">⚡ MultiHopper Payouts</span>
           </div>
         </div>
         <div style="text-align: right;">
           <span class="badge-tag-budget">$${job.budget.toLocaleString()} USDC</span>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Assigned: <strong style="color: #fff;">${job.freelancer ? job.freelancer.name : 'Open Bids'}</strong></div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Rate: <strong style="color: #14f195;">$${rate} / task</strong></div>
         </div>
       </div>
 
       <p class="job-details-text">${job.description}</p>
 
+      <!-- LIVE COMPLETION PROGRESS BAR -->
+      <div style="margin: 16px 0; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.82rem;">
+          <span style="color: #94a3b8;">Pipeline Progress: <strong style="color: #fff;">${completedTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks completed</strong></span>
+          <span style="color: #14f195; font-weight: 700;">${pct}% Complete</span>
+        </div>
+        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden;">
+          <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, #a855f7, #14f195); border-radius: 999px; transition: width 0.4s ease;"></div>
+        </div>
+        <div style="display: flex; gap: 16px; margin-top: 8px; font-size: 0.75rem; color: #94a3b8;">
+          <span>Consensus: <strong style="color: #c084fc;">${job.annotatorQuorum || '3-of-3'}</strong></span>
+          <span>Honeypot QA: <strong style="color: #22c55e;">${job.honeypotAccuracy || '99.5%'}</strong></span>
+          <span>Settle Speed: <strong style="color: #38bdf8;">~400ms</strong></span>
+        </div>
+      </div>
+
       <div class="milestones-container">
         <div class="milestones-header-title">
-          <span>Milestone Deliverables & Escrow Release</span>
+          <span>Batch Tranches & Milestone Dispersals</span>
           <span style="color: #14f195; font-size: 0.75rem;">Anchor 0.29 PDA Controlled</span>
         </div>
         ${milestonesHtml}
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);">
+        <button class="btn-outline-pill" style="font-size: 0.82rem; padding: 8px 16px;" onclick="exportParquetDatasetDemo('${job.title}')">
+          📥 Export Labeled JSONL
+        </button>
+        <button class="btn-hotpink-sm" style="font-size: 0.82rem; padding: 8px 18px;" onclick="triggerBatchMultihopperPayoutDemo('${job.id}')">
+          ⚡ Trigger MultiHopper Batch Dispersal
+        </button>
       </div>
     `;
 
     container.appendChild(card);
   });
+}
+
+function triggerBatchMultihopperPayoutDemo(campaignId) {
+  const job = mockClientJobs.find(j => j.id === campaignId) || mockClientJobs[0];
+  const workers = [
+    { wallet: "7Q9N...PsVh", amount: 12.50, tasks: 50 },
+    { wallet: "4xKm...DeFg", amount: 18.75, tasks: 75 },
+    { wallet: "9zLp...1234", amount: 10.00, tasks: 40 },
+    { wallet: "3mVa...90Pk", amount: 15.00, tasks: 60 }
+  ];
+  const totalPayout = workers.reduce((sum, w) => sum + w.amount, 0);
+
+  const txHash = "5Kn8" + Math.random().toString(36).substring(2, 10) + "4vX19" + Math.random().toString(36).substring(2, 8);
+
+  const modalHtml = `
+    <div id="multihopper-payout-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px;">
+      <div style="background: #151722; border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 16px; max-width: 520px; width: 100%; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.4rem;">⚡</span>
+            <h3 style="margin: 0; color: #fff; font-size: 1.15rem;">MultiHopper Batch Dispersal</h3>
+          </div>
+          <span class="badge-status-escrow" style="background: rgba(20,241,149,0.15); color: #14f195; font-size: 0.75rem;">Sub-Second Settlement</span>
+        </div>
+
+        <p style="font-size: 0.85rem; color: #94a3b8; margin: 0 0 16px 0;">
+          Executing on-chain batch disbursement from Anchor Escrow Vault to 4 active consensus-verified worker nodes.
+        </p>
+
+        <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 12px; margin-bottom: 16px;">
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Batch Routing Destinations:</div>
+          ${workers.map(w => `
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 6px; font-family: monospace;">
+              <span style="color: #38bdf8;">${w.wallet} (${w.tasks} tasks)</span>
+              <strong style="color: #14f195;">+${w.amount.toFixed(2)} USDC</strong>
+            </div>
+          `).join('')}
+          <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 8px; padding-top: 8px; display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 700;">
+            <span style="color: #fff;">Total Dispersed:</span>
+            <span style="color: #14f195;">$${totalPayout.toFixed(2)} USDC</span>
+          </div>
+        </div>
+
+        <div style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 20px;">
+          <span>Transaction Signature: </span>
+          <span style="font-family: monospace; color: #a855f7;">${txHash}</span>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-primary-purple" style="flex: 1; justify-content: center;" onclick="document.getElementById('multihopper-payout-modal').remove()">
+            ✓ Confirm & Close
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function exportParquetDatasetDemo(title) {
+  const sampleRecords = [
+    { id: 1, prompt: "Optimize Python async scraper with semaphore", ground_truth: "asyncio.Semaphore(10)", consensus_score: 0.998, annotator_quorum: 3 },
+    { id: 2, prompt: "Audit reentrancy guard in Anchor 0.29 program", ground_truth: "has_one = authority, constraint = vault.amount >= rate", consensus_score: 1.0, annotator_quorum: 3 }
+  ];
+  const blob = new Blob([JSON.stringify(sampleRecords, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${title.toLowerCase().replace(/[^a-z0-9]/g, '_')}_verified.jsonl`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function updateCampaignTemplateMath() {
+  const countEl = document.getElementById('new-job-task-count');
+  const rateEl = document.getElementById('new-job-rate-unit');
+  const sumEl = document.getElementById('job-builder-milestones-sum');
+  const totalEl = document.getElementById('job-builder-total-escrow');
+
+  const count = parseFloat(countEl ? countEl.value : 1000) || 1000;
+  const rate = parseFloat(rateEl ? rateEl.value : 0.25) || 0.25;
+  const total = (count * rate).toFixed(2);
+
+  if (sumEl) sumEl.innerText = `${count.toLocaleString()} tasks × $${rate.toFixed(2)}`;
+  if (totalEl) totalEl.innerText = `$${total} USDC`;
 }
 
 function openDeliverableModal(jobId, milestoneId) {
@@ -2046,17 +2165,17 @@ function renderClientProposals() {
 
       <div class="candidate-bid-box">
         <div>
-          <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">PROPOSED BID</span>
-          <span class="bid-val">$${p.bid.toLocaleString()} USDC</span>
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">VERIFIED UNITS</span>
+          <span class="bid-val" style="color: #14f195;">${p.projectsDone.toLocaleString()} Tasks</span>
         </div>
         <div>
-          <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">TIMELINE</span>
-          <strong style="color: #fff; font-size: 0.85rem;">${p.timeline}</strong>
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">CONSENSUS LATENCY</span>
+          <strong style="color: #38bdf8; font-size: 0.85rem;">${p.timeline}</strong>
         </div>
       </div>
 
       <button class="btn-hotpink" style="width: 100%; justify-content: center;" onclick="acceptCandidateProposal('${p.id}')">
-        ⚡ Accept Proposal & Fund Escrow
+        ⚡ Prioritize Node in Quorum Consensus
       </button>
     `;
     grid.appendChild(card);
@@ -2067,26 +2186,13 @@ function acceptCandidateProposal(propId) {
   const prop = mockTalentProposals.find(p => p.id === propId);
   if (!prop) return;
 
-  // Assign to first open job or create sample job
-  const job = mockClientJobs[0];
-  if (job) {
-    job.freelancer = {
-      name: prop.name,
-      wallet: 'Sol' + Math.random().toString(36).substring(2, 10),
-      avatar: prop.avatar
-    };
-    saveClientJobs();
-  }
-
   if (typeof playHapticTone === 'function') {
-    playHapticTone(1050, 0.2, 'triangle');
+    playHapticTone(520, 0.08);
   }
   if (typeof createConfettiBurst === 'function') {
     createConfettiBurst();
   }
-
-  showHoneypotToast(true, `🤝 Hired ${prop.name}! Proposal accepted and milestone escrow assigned.`);
-  switchClientTab('jobs');
+  showHoneypotToast(true, `✓ Worker Node ${prop.name} prioritized for MultiHopper batch routing!`);
 }
 
 async function fetchAndRenderSqlUsers() {

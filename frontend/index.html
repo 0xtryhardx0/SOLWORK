@@ -812,59 +812,64 @@
 </div> <!-- END VIEW 2: WORKSPACE -->
 
 
-<!-- ================= VIEW 3: ENTERPRISE CLIENTS AREA ================= -->
+<!-- ================= VIEW 3: ENTERPRISE AI LAB COMMAND CENTER ================= -->
 <div id="view-client" class="portal-view" style="display: none;">
 
-  <!-- CLIENT DASHBOARD (EXACT LAYOUT & SIMPLICITY OF NUMBER 1 DESIGN) -->
+  <!-- AI LAB COMMAND HEADER -->
   <section class="client-dash-header-section">
     <div class="client-container">
       <div class="client-dash-header">
         <div class="space-y-1">
-          <h1 class="client-dash-title">Client Dashboard</h1>
-          <p class="client-dash-subtitle">Manage your projects and find talent</p>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+            <h1 class="client-dash-title" style="margin: 0;">🏢 AI Lab Command Center</h1>
+            <span class="badge-status-escrow" style="background: rgba(139, 92, 246, 0.18); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.35); font-size: 0.75rem;">
+              <span class="live-pulse-dot" style="background: #a855f7;"></span> MultiHopper Batch Dispersal Active
+            </span>
+          </div>
+          <p class="client-dash-subtitle">Manage non-custodial Anchor escrow vaults, track real-time annotator consensus, and route sub-second SPL USDC micro-payouts.</p>
         </div>
         <button class="btn-primary-pill" onclick="switchClientTab('create')">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-          <span>Post a Job</span>
+          <span>+ Launch AI Campaign</span>
         </button>
       </div>
 
-      <!-- 4 CLEAN STAT CARDS EXACTLY LIKE NUMBER 1 DESIGN -->
+      <!-- 4 AI PIPELINE STAT CARDS -->
       <div class="client-stats-grid-4">
         <div class="stat-clean-card">
           <div class="stat-clean-top">
-            <span class="stat-clean-label">Active Jobs</span>
-            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
+            <span class="stat-clean-label">Active AI Campaigns</span>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
           </div>
-          <p id="client-stat-active-jobs" class="stat-clean-val">2</p>
-          <p class="stat-clean-sub">In progress</p>
+          <p id="client-stat-active-jobs" class="stat-clean-val">3 Running</p>
+          <p class="stat-clean-sub text-green">Code RLHF • Audio • CV</p>
         </div>
 
         <div class="stat-clean-card">
           <div class="stat-clean-top">
-            <span class="stat-clean-label">Total Spent</span>
-            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <span class="stat-clean-label">Anchor Escrow Vault</span>
+            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14f195" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           </div>
-          <p id="client-stat-total-escrow" class="stat-clean-val">28.5 SOL</p>
-          <p class="stat-clean-sub">≈ $5,130</p>
+          <p id="client-stat-total-escrow" class="stat-clean-val">$4,850.00 USDC</p>
+          <p class="stat-clean-sub">Locked in PDA: <span style="font-family: monospace; color: #14f195;">D6Ft...SZPy</span></p>
         </div>
 
         <div class="stat-clean-card">
           <div class="stat-clean-top">
-            <span class="stat-clean-label">Total Hires</span>
-            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path></svg>
+            <span class="stat-clean-label">Annotations Verified</span>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
           </div>
-          <p class="stat-clean-val">18</p>
-          <p class="stat-clean-sub text-green">+3 this month</p>
+          <p class="stat-clean-val">14,290 Tasks</p>
+          <p class="stat-clean-sub text-green">99.4% Honeypot Pass Rate</p>
         </div>
 
         <div class="stat-clean-card">
           <div class="stat-clean-top">
-            <span class="stat-clean-label">Avg Rating</span>
-            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <span class="stat-clean-label">MultiHopper Dispersals</span>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
           </div>
-          <p class="stat-clean-val">4.8 ⭐</p>
-          <p class="stat-clean-sub text-green">Excellent</p>
+          <p class="stat-clean-val">48 Batches</p>
+          <p class="stat-clean-sub" style="color: #c084fc;">~400ms Sub-Second Payouts</p>
         </div>
       </div>
 
@@ -872,199 +877,229 @@
       <div class="dashboard-grid-layout">
         <!-- LEFT 2 COLUMNS -->
         <div class="dash-col-main">
-          <!-- MAIN JOBS VIEW -->
+          <!-- MAIN PIPELINES VIEW -->
           <div id="client-tab-jobs-panel" class="client-tab-panel">
             <div class="dash-clean-card">
               <div class="dash-card-header">
-                <h2 class="dash-card-title">Your Posted Jobs</h2>
-                <a class="dash-card-link" onclick="switchClientTab('proposals')">View Talent Proposals (12) →</a>
+                <div>
+                  <h2 class="dash-card-title">Live AI Training Pipelines</h2>
+                  <p class="stat-clean-sub">Active decentralized data campaigns funded by your Anchor PDA vault.</p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn-outline-pill" style="font-size: 0.8rem; padding: 6px 14px;" onclick="triggerBatchMultihopperPayoutDemo()">
+                    ⚡ Execute Batch Payout
+                  </button>
+                  <a class="dash-card-link" onclick="switchClientTab('proposals')">Honeypot Quorum QA →</a>
+                </div>
               </div>
               <div id="client-escrow-jobs-list">
                 <!-- Injected via app.js -->
               </div>
             </div>
 
-            <!-- RECENT ACTIVITY CARD EXACTLY FROM NUMBER 1 DESIGN -->
+            <!-- MULTIHOPPER REAL-TIME TELEMETRY STREAM -->
             <div class="dash-clean-card" style="margin-top: 24px;">
-              <h2 class="dash-card-title" style="margin-bottom: 18px;">Recent Activity</h2>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                  <h2 class="dash-card-title" style="margin: 0;">MultiHopper Routing Telemetry</h2>
+                  <p class="stat-clean-sub" style="margin: 2px 0 0;">Verifiable on-chain batch disbursements to African & global annotator wallets.</p>
+                </div>
+                <span class="badge-status-escrow" style="background: rgba(20,241,149,0.12); color: #14f195; font-size: 0.72rem;">
+                  <span class="live-pulse-dot" style="background: #14f195;"></span> Live RPC Feed
+                </span>
+              </div>
               <div class="activity-stream">
                 <div class="activity-item">
-                  <div class="activity-icon-box green">✓</div>
-                  <div>
-                    <p class="activity-title">Milestone approved & escrow settled</p>
-                    <p class="activity-meta">NFT Marketplace Escrow #1 • 2 hours ago</p>
+                  <div class="activity-icon-box green">⚡</div>
+                  <div style="flex: 1;">
+                    <p class="activity-title">MultiHopper Batch Dispersal: 24 Annotators Settled</p>
+                    <p class="activity-meta">Llama-3 Python RLHF Batch #18 • Tx: <span style="font-family: monospace; color: #38bdf8;">5Kn8...4vX1</span> • 12 mins ago</p>
                   </div>
+                  <span style="font-size: 0.82rem; font-weight: 700; color: #14f195;">+6.00 USDC</span>
                 </div>
                 <div class="activity-item">
-                  <div class="activity-icon-box blue">👥</div>
-                  <div>
-                    <p class="activity-title">New proposal received from Alex Chen</p>
-                    <p class="activity-meta">Smart Contract Development • 5 hours ago</p>
+                  <div class="activity-icon-box purple">🎯</div>
+                  <div style="flex: 1;">
+                    <p class="activity-title">Honeypot Trap Verified: 99.8% Consensus Quorum</p>
+                    <p class="activity-meta">West African Speech Corpus (Yoruba/Pidgin) • 42 mins ago</p>
                   </div>
+                  <span style="font-size: 0.82rem; font-weight: 700; color: #c084fc;">Verified</span>
                 </div>
                 <div class="activity-item">
-                  <div class="activity-icon-box purple">💼</div>
-                  <div>
-                    <p class="activity-title">Job posted successfully to Devnet</p>
-                    <p class="activity-meta">Frontend Development for DeFi Dashboard • 1 day ago</p>
+                  <div class="activity-icon-box blue">🏦</div>
+                  <div style="flex: 1;">
+                    <p class="activity-title">Anchor PDA Vault Deposit Confirmed</p>
+                    <p class="activity-meta">Funded +1,350.00 USDC for Autonomous Driving 3D Bounding Boxes • 2 hours ago</p>
+                  </div>
+                  <span style="font-size: 0.82rem; font-weight: 700; color: #fff;">+1,350 USDC</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: LAUNCH NEW AI CAMPAIGN WITH MULTIHOPPER ESCROW -->
+          <div id="client-tab-create-panel" class="client-tab-panel" style="display: none;">
+            <div class="dash-clean-card">
+              <button class="btn-outline-pill" style="margin-bottom: 16px; width: auto;" onclick="switchClientTab('jobs')">← Back to Command Center</button>
+              <div class="dash-card-header">
+                <div>
+                  <h3 class="dash-card-title">Launch AI Training Campaign & Deploy Anchor Escrow</h3>
+                  <p class="stat-clean-sub">Fund high-throughput microtask batches for Code RLHF, Audio, or Computer Vision with automated MultiHopper payroll.</p>
+                </div>
+                <span class="badge-clean-open">Anchor PDA Vault</span>
+              </div>
+
+              <form id="client-new-job-form" onsubmit="handleCreateClientJob(event)">
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">Model Target & Objective</label>
+                    <input type="text" id="new-job-title" class="form-input" placeholder="e.g. Llama-3 8B Instruction Tuning - Python Security & Rust RLHF" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Task Category & Schema</label>
+                    <select id="new-job-category" class="form-select" onchange="updateCampaignTemplateMath()" required>
+                      <option value="Code RLHF & Unit Tests">Code RLHF & Unit Test Audits (Python/Rust)</option>
+                      <option value="African Speech Audio">African Dialect Speech Transcription (Yoruba, Igbo, Pidgin)</option>
+                      <option value="Computer Vision Bounding Boxes">Computer Vision & Autonomous 3D Bounding Boxes</option>
+                      <option value="LLM Red-Teaming">LLM Red-Teaming & Frontier Safety Alignment</option>
+                    </select>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
 
-      <!-- TAB 2: POST JOB & DEPOSIT ESCROW WITH DYNAMIC MILESTONE BUILDER -->
-      <div id="client-tab-create-panel" class="client-tab-panel" style="display: none;">
-        <div class="dash-clean-card">
-          <button class="btn-outline-pill" style="margin-bottom: 16px; width: auto;" onclick="switchClientTab('jobs')">← Back to Dashboard</button>
-          <div class="dash-card-header">
-            <div>
-              <h3 class="dash-card-title">Post New Job & Deploy Anchor PDA Escrow</h3>
-              <p class="stat-clean-sub">Create milestone deliverables and deposit SPL USDC into a non-custodial Solana Anchor smart contract.</p>
-            </div>
-            <span class="badge-clean-open">Anchor 0.29 PDA</span>
-          </div>
-
-          <form id="client-new-job-form" onsubmit="handleCreateClientJob(event)">
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label class="form-label">Job / Project Title</label>
-                <input type="text" id="new-job-title" class="form-input" placeholder="e.g. Solana Blinks & Actions Protocol Integration" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Category / Domain</label>
-                <select id="new-job-category" class="form-select" required>
-                  <option value="Smart Contracts & Anchor">Smart Contracts & Anchor (Rust)</option>
-                  <option value="Frontend DeFi & Web3">Frontend DeFi & Web3 (React/Next.js)</option>
-                  <option value="AI Dataset & RLHF">AI Dataset & Audio RLHF</option>
-                  <option value="Security Audit & QA">Security Audit & QA</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Project Description & Requirements</label>
-              <textarea id="new-job-desc" class="form-textarea" rows="3" placeholder="Describe the deliverable scope, technical requirements, and target timeline..." required></textarea>
-            </div>
-
-            <!-- DYNAMIC MILESTONE BUILDER -->
-            <div class="milestones-container" style="margin: 18px 0;">
-              <div class="milestones-header-title">
-                <span>🎯 Milestone Deliverables Breakdown</span>
-                <span class="zero-fees-tag">Zero Hidden Fees</span>
-              </div>
-              
-              <div id="milestone-builder-list" class="milestone-builder-list">
-                <!-- Milestone Rows injected here -->
-              </div>
-
-              <button type="button" class="btn-add-milestone" onclick="addMilestoneRow()">
-                <span>+ Add Another Milestone</span>
-              </button>
-            </div>
-
-            <div class="form-row-budget" style="margin-top: 20px;">
-              <div class="form-group" style="flex: 1;">
-                <label class="form-label">Freelancer Expertise Tier</label>
-                <select id="new-job-tier" class="form-select">
-                  <option value="verified">Verified Top 5% Solana Engineers</option>
-                  <option value="general">Open Ecosystem Contributors</option>
-                </select>
-              </div>
-              <div class="client-escrow-summary-box">
-                <div class="escrow-summary-title">Total Escrow Deposit (USDC):</div>
-                <div class="escrow-math-row">
-                  <span>Milestones Total:</span>
-                  <strong id="job-builder-milestones-sum" style="color: #fff;">$0.00 USDC</strong>
+                <div class="form-group">
+                  <label class="form-label">Dataset Annotation Guidelines & Deliverables</label>
+                  <textarea id="new-job-desc" class="form-textarea" rows="3" placeholder="Specify acceptance criteria, golden benchmark unit tests, consensus threshold (e.g. 3 independent annotators per unit), and labeling schema..." required></textarea>
                 </div>
-                <div class="escrow-math-row">
-                  <span>Protocol Remittance Cut:</span>
-                  <span style="color: var(--primary); font-weight: 700;">0.00% ($0.00)</span>
+
+                <div class="form-grid-2" style="margin-top: 16px;">
+                  <div class="form-group">
+                    <label class="form-label">Batch Size (Total Units / Tasks)</label>
+                    <input type="number" id="new-job-task-count" class="form-input" value="1000" min="50" step="50" oninput="updateCampaignTemplateMath()" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Payout Per Validated Task (SPL USDC)</label>
+                    <input type="number" id="new-job-rate-unit" class="form-input" value="0.25" min="0.05" step="0.01" oninput="updateCampaignTemplateMath()" required>
+                  </div>
                 </div>
-                <div class="escrow-math-row highlight">
-                  <span>Anchor Escrow Required:</span>
-                  <strong id="job-builder-total-escrow" class="text-accent-clean" style="font-size: 1.25rem;">$0.00 USDC</strong>
+
+                <!-- DYNAMIC MILESTONE / BATCH BUILDER -->
+                <div class="milestones-container" style="margin: 18px 0;">
+                  <div class="milestones-header-title">
+                    <span>🎯 Milestone Tranches & Automated Honeypot Quorum</span>
+                    <span class="zero-fees-tag">MultiHopper Powered</span>
+                  </div>
+                  
+                  <div id="milestone-builder-list" class="milestone-builder-list">
+                    <!-- Tranches injected here -->
+                  </div>
+
+                  <button type="button" class="btn-add-milestone" onclick="addMilestoneRow()">
+                    <span>+ Add Milestone Batch Tranche</span>
+                  </button>
                 </div>
+
+                <div class="form-row-budget" style="margin-top: 20px;">
+                  <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Contributor Tier & Verification Quorum</label>
+                    <select id="new-job-tier" class="form-select">
+                      <option value="verified">Verified STEM & African Developers (Consensus 3-of-3)</option>
+                      <option value="general">Open Ecosystem Labelers (Consensus 5-of-5 with Honeypot)</option>
+                    </select>
+                  </div>
+                  <div class="client-escrow-summary-box">
+                    <div class="escrow-summary-title">Anchor PDA Escrow Deposit (USDC):</div>
+                    <div class="escrow-math-row">
+                      <span>Batch Calculation:</span>
+                      <strong id="job-builder-milestones-sum" style="color: #fff;">1,000 tasks × $0.25</strong>
+                    </div>
+                    <div class="escrow-math-row">
+                      <span>MultiHopper Routing Take-Rate:</span>
+                      <span style="color: #14f195; font-weight: 700;">0.00% (Sponsored Protocol Fee)</span>
+                    </div>
+                    <div class="escrow-math-row highlight">
+                      <span>Total Deposit Required:</span>
+                      <strong id="job-builder-total-escrow" class="text-accent-clean" style="font-size: 1.25rem;">$250.00 USDC</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-primary-purple" style="width: 100%; justify-content: center; margin-top: 20px; font-size: 1rem; padding: 14px;">
+                  ⚡ Sign with Phantom & Deploy Anchor Vault on Devnet
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- TAB 3: HONEYPOT QUORUM & QA INSPECTOR -->
+          <div id="client-tab-proposals-panel" class="client-tab-panel" style="display: none;">
+            <div class="dash-clean-card">
+              <button class="btn-outline-pill" style="margin-bottom: 16px; width: auto;" onclick="switchClientTab('jobs')">← Back to Command Center</button>
+              <div class="dash-card-header">
+                <div>
+                  <h3 class="dash-card-title">Honeypot Trap Quality & Consensus Quorum</h3>
+                  <p class="stat-clean-sub">Automated consensus checks filter low-effort annotations before Anchor escrow releases payouts.</p>
+                </div>
+                <span class="badge-clean-open">99.4% Quorum Consensus</span>
+              </div>
+
+              <div id="client-proposals-grid" class="proposals-grid" style="margin-top: 18px;">
+                <!-- Injected via app.js -->
               </div>
             </div>
+          </div>
 
-            <button type="submit" class="btn-primary-purple" style="width: 100%; justify-content: center; margin-top: 20px; font-size: 1rem; padding: 14px;">
-              ⚡ Sign with Phantom & Deploy Escrow to Devnet
-            </button>
-          </form>
-        </div>
-      </div>
+        </div> <!-- End dash-col-main -->
 
-      <!-- TAB 3: TALENT PROPOSALS & BIDS -->
-      <div id="client-tab-proposals-panel" class="client-tab-panel" style="display: none;">
-        <div class="dash-clean-card">
-          <button class="btn-outline-pill" style="margin-bottom: 16px; width: auto;" onclick="switchClientTab('jobs')">← Back to Dashboard</button>
-          <div class="dash-card-header">
-            <div>
-              <h3 class="dash-card-title">Received Talent Proposals & Hires</h3>
-              <p class="stat-clean-sub">Pre-vetted developers and engineers ready to execute your milestones.</p>
+        <!-- RIGHT 1 COLUMN (SIDEBAR: LAB IDENTITY & MULTIHOPPER CONTROLS) -->
+        <div class="dash-col-side">
+          <!-- AI Lab Profile Card -->
+          <div class="dash-clean-card">
+            <h3 class="dash-card-title" style="margin-bottom: 16px;">AI Research Lab</h3>
+            <div class="profile-row">
+              <div class="profile-avatar" style="background: linear-gradient(135deg, #a855f7, #38bdf8); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🏢</div>
+              <div class="profile-details">
+                <h4 style="margin: 0; color: #fff; font-size: 0.95rem;">Sahara Research / Subnet 4</h4>
+                <p style="color: #94a3b8; font-size: 0.8rem; margin: 2px 0 0;">Enterprise Tier • Verified</p>
+              </div>
             </div>
-            <span class="badge-clean-open">12 Verified Proposals</span>
+            <div class="profile-stats-grid">
+              <div>
+                <p class="stat-clean-sub">Anchor Program</p>
+                <p style="font-weight: 600; color: #14f195; margin: 2px 0 0; font-family: monospace; font-size: 0.75rem;">D6Ft...SZPy</p>
+              </div>
+              <div>
+                <p class="stat-clean-sub">Consensus SLA</p>
+                <p style="font-weight: 600; color: #22c55e; margin: 2px 0 0;">99.4% Pass ✓</p>
+              </div>
+            </div>
+            <button class="btn-outline-pill" onclick="alert('Anchor Vault Authority: 7xKX...9mP4 connected via Phantom.')">Inspect On-Chain Vault</button>
           </div>
 
-          <div id="client-proposals-grid" class="proposals-grid" style="margin-top: 18px;">
-            <!-- Injected via app.js -->
+          <!-- In Escrow Card -->
+          <div class="card-in-escrow" style="background: linear-gradient(145deg, #181926, #211c38); border: 1px solid rgba(168, 85, 247, 0.35);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h3 style="font-size: 1.05rem; font-weight: 600; color: #fff; margin: 0;">Anchor PDA Vault</h3>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <p style="font-size: 1.9rem; font-weight: 700; color: #14f195; margin: 0 0 4px 0;">$4,850.00 USDC</p>
+            <p class="stat-clean-sub" style="color: #94a3b8;">Locked on Solana Devnet for active microtask milestone dispersals</p>
           </div>
-        </div>
-      </div>
 
-    </div> <!-- End dash-col-main -->
-
-    <!-- RIGHT 1 COLUMN (SIDEBAR EXACTLY FROM NUMBER 1 DESIGN) -->
-    <div class="dash-col-side">
-      <!-- Profile Card -->
-      <div class="dash-clean-card">
-        <h3 class="dash-card-title" style="margin-bottom: 16px;">Your Profile</h3>
-        <div class="profile-row">
-          <div class="profile-avatar"></div>
-          <div class="profile-details">
-            <h4>7xKX...9mP4</h4>
-            <p>Client</p>
+          <!-- Quick Actions Card -->
+          <div class="dash-clean-card">
+            <h3 class="dash-card-title" style="margin-bottom: 14px;">Pipeline Controls</h3>
+            <div class="quick-actions-list">
+              <button class="quick-btn primary" onclick="switchClientTab('create')">+ Launch AI Campaign</button>
+              <button class="quick-btn" onclick="triggerBatchMultihopperPayoutDemo()">⚡ Trigger MultiHopper Dispersal</button>
+              <button class="quick-btn" onclick="exportParquetDatasetDemo()">📥 Export Labeled Parquet / JSONL</button>
+              <button class="quick-btn" onclick="switchClientTab('proposals')">🛡️ Honeypot Quorum Benchmarks</button>
+            </div>
           </div>
-        </div>
-        <div class="profile-stats-grid">
-          <div>
-            <p class="stat-clean-sub">Member Since</p>
-            <p style="font-weight: 600; color: #fff; margin: 2px 0 0;">Jan 2024</p>
-          </div>
-          <div>
-            <p class="stat-clean-sub">Verified</p>
-            <p style="font-weight: 600; color: #22c55e; margin: 2px 0 0;">Yes ✓</p>
-          </div>
-        </div>
-        <button class="btn-outline-pill" onclick="alert('Profile editor: Verified SolWork Client Account.')">Edit Profile</button>
-      </div>
-
-      <!-- In Escrow Card -->
-      <div class="card-in-escrow">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h3 style="font-size: 1.05rem; font-weight: 600; color: #fff; margin: 0;">In Escrow</h3>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-        </div>
-        <p style="font-size: 1.9rem; font-weight: 700; color: #fff; margin: 0 0 4px 0;">8.5 SOL</p>
-        <p class="stat-clean-sub">≈ $1,530 USD &bull; Locked for active milestones</p>
-      </div>
-
-      <!-- Quick Actions Card -->
-      <div class="dash-clean-card">
-        <h3 class="dash-card-title" style="margin-bottom: 14px;">Quick Actions</h3>
-        <div class="quick-actions-list">
-          <button class="quick-btn primary" onclick="switchClientTab('create')">+ Post New Job</button>
-          <button class="quick-btn" onclick="switchClientTab('proposals')">👥 Browse Freelancers</button>
-          <button class="quick-btn" onclick="switchClientTab('jobs')">📋 View Contracts</button>
-          <button class="quick-btn" onclick="alert('Payment History: All 6 on-chain settlements confirmed on Solana.')">💳 Payment History</button>
-        </div>
-      </div>
-    </div> <!-- End dash-col-side -->
-  </div> <!-- End dashboard-grid-layout -->
-</div> <!-- End client-container -->
-</section>
-</div> <!-- END VIEW 3: CLIENT PORTAL -->
+        </div> <!-- End dash-col-side -->
+      </div> <!-- End dashboard-grid-layout -->
+    </div> <!-- End client-container -->
+  </section>
+</div> <!-- END VIEW 3: ENTERPRISE AI LAB COMMAND CENTER -->
 
   <!-- WORKSPACE OVERLAY (DYNAMIC INTERACTIVE TASK MODAL) -->
   <div id="workspace-overlay" class="workspace-overlay hidden">
