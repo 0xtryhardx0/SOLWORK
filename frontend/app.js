@@ -121,15 +121,23 @@ const campaigns = [
 // 3. INITIALIZATION
 // 3. INITIALIZATION & VIEW MANAGEMENT
 document.addEventListener('DOMContentLoaded', () => {
-  // Check hash for direct routing
+  // Check pathname and hash for direct routing (e.g. /dashboard/client or #client)
   const hash = window.location.hash.toLowerCase();
-  if (hash === '#workspace' || hash === '#workstation') {
+  const path = window.location.pathname.toLowerCase();
+  if (hash === '#workspace' || hash === '#workstation' || path.includes('/workspace')) {
     switchView('workspace', false);
-  } else if (hash === '#client' || hash === '#clients') {
+  } else if (hash === '#client' || hash === '#clients' || hash === '#dashboard' || path.includes('/dashboard') || path.includes('/client')) {
     switchView('client', false);
   } else {
     switchView('landing', false);
   }
+
+  window.addEventListener('hashchange', () => {
+    const h = window.location.hash.toLowerCase();
+    if (h === '#workspace' || h === '#workstation') switchView('workspace', false);
+    else if (h === '#client' || h === '#clients' || h === '#dashboard') switchView('client', false);
+    else if (h === '#home' || h === '') switchView('landing', false);
+  });
   
   // Restore persisted session from SQL/localStorage if present
   try {
@@ -1567,67 +1575,33 @@ function updateAuthUI() {
   updateUI();
 }
 
-// 12. ENTERPRISE AI LAB COMMAND CENTER LOGIC & ANCHOR ESCROW (MULTIHOPPER INTEGRATED)
+// 12. ENTERPRISE CLIENT DASHBOARD LOGIC & JOBS
 let mockClientJobs = [
   {
-    id: 'campaign-1',
-    title: 'Llama-3 8B Instruction Tuning - Python Security & Rust RLHF',
-    category: 'Code RLHF & Unit Tests',
-    budget: 2500,
-    totalTasks: 10000,
-    completedTasks: 8240,
-    ratePerTask: 0.25,
-    status: 'In Escrow',
-    pda: 'EP2xDvB4sT7q...89NqDevnet',
-    client: 'Sahara Research / Subnet 4 (You)',
-    annotatorQuorum: '3-of-3 Consensus',
-    honeypotAccuracy: '99.8%',
-    description: 'Human preference feedback (RLHF) and AST unit test verification on 10,000 Python/Rust vulnerability patch pairs for frontier open-weights LLMs.',
+    id: 'job-1',
+    title: 'Smart Contract Development for NFT Marketplace',
+    status: 'open',
+    budget: '5000 SOL',
+    budgetNum: 5000,
+    category: 'Development',
+    description: 'Need an experienced Solana developer to build smart contracts for an NFT marketplace with royalty splits, instant settlement, and sub-second milestone escrows.',
+    proposalsCount: 7,
+    due: '12/30/2025',
     milestones: [
-      { id: 'm1', num: 1, title: 'Batch A: 5,000 Python Security Annotations Verified', amount: 1250, status: 'PAID' },
-      { id: 'm2', num: 2, title: 'Batch B: 3,240 Rust Memory-Safety Audits in Review', amount: 810, status: 'IN_REVIEW', deliverable: { pr: 42, notes: 'AST unit tests executed on Solana Devnet worker nodes. 3,240 pairs validated with 99.8% honeypot trap accuracy. Ready for MultiHopper batch release.' } },
-      { id: 'm3', num: 3, title: 'Batch C: 1,760 Frontier Instruction Pairs Pending', amount: 440, status: 'IN_PROGRESS' }
+      { id: 'm1', num: 1, title: 'NFT Marketplace Escrow #1', amount: 2500, status: 'PAID' }
     ]
   },
   {
-    id: 'campaign-2',
-    title: 'West African Speech Corpus (Yoruba, Igbo, Hausa & Pidgin)',
-    category: 'African Speech Audio',
-    budget: 1000,
-    totalTasks: 5000,
-    completedTasks: 3200,
-    ratePerTask: 0.20,
-    status: 'In Escrow',
-    pda: '7zVpLk93jW2a...41MvDevnet',
-    client: 'Sahara Research / Subnet 4 (You)',
-    annotatorQuorum: '5-of-5 Consensus',
-    honeypotAccuracy: '99.5%',
-    description: 'Phonetic transcription, accent tagging, and multi-speaker consensus verification of 5,000 West African audio speech samples for multilingual ASR models.',
-    milestones: [
-      { id: 'm1', num: 1, title: 'Batch 1: 2,500 Yoruba & Pidgin Phonetic Alignments', amount: 500, status: 'PAID' },
-      { id: 'm2', num: 2, title: 'Batch 2: 700 Igbo Dialect Audio Audio Samples in Review', amount: 140, status: 'IN_REVIEW', deliverable: { pr: 18, notes: 'Cross-validated against 5 independent native speaker annotators in Lagos and Enugu. Phonetic alignment score: 99.4%.' } },
-      { id: 'm3', num: 3, title: 'Batch 3: 1,800 Hausa Broadcast Clips Pending', amount: 360, status: 'PENDING' }
-    ]
-  },
-  {
-    id: 'campaign-3',
-    title: 'Autonomous Driving 3D Bounding Boxes & Scene Segmentation',
-    category: 'Computer Vision Bounding Boxes',
-    budget: 1350,
-    totalTasks: 3000,
-    completedTasks: 2850,
-    ratePerTask: 0.45,
-    status: 'In Escrow',
-    pda: '3MocK54Sig84...1928Devnet',
-    client: 'Sahara Research / Subnet 4 (You)',
-    annotatorQuorum: '3-of-3 Consensus',
-    honeypotAccuracy: '99.9%',
-    description: 'LiDAR point-cloud polygon labeling and 3D bounding box annotations for urban African road conditions (pedestrians, minibuses, road defects).',
-    milestones: [
-      { id: 'm1', num: 1, title: 'Batch 1: 1,500 High-Density Urban Street Scenes', amount: 675, status: 'PAID' },
-      { id: 'm2', num: 2, title: 'Batch 2: 1,350 Night & Rain Condition Annotations', amount: 607.5, status: 'IN_PROGRESS' },
-      { id: 'm3', num: 3, title: 'Batch 3: 150 Final Corner-Case Road Traps', amount: 67.5, status: 'PENDING' }
-    ]
+    id: 'job-2',
+    title: 'Frontend Development for DeFi Dashboard',
+    status: 'open',
+    budget: '3500 SOL',
+    budgetNum: 3500,
+    category: 'Development',
+    description: 'Looking for a React/Next.js developer to build a beautiful, responsive dashboard with Phantom wallet adapter, liquidity pool APR monitoring, and real-time transaction telemetry.',
+    proposalsCount: 12,
+    due: '12/25/2025',
+    milestones: []
   }
 ];
 
@@ -1674,7 +1648,7 @@ let activeModalTarget = { jobId: null, milestoneId: null };
 
 function initClientJobs() {
   try {
-    const saved = localStorage.getItem('solwork_client_jobs');
+    const saved = localStorage.getItem('solwork_client_jobs_v2');
     if (saved) {
       mockClientJobs = JSON.parse(saved);
     }
@@ -1690,7 +1664,7 @@ function initClientJobs() {
 
 function saveClientJobs() {
   try {
-    localStorage.setItem('solwork_client_jobs', JSON.stringify(mockClientJobs));
+    localStorage.setItem('solwork_client_jobs_v2', JSON.stringify(mockClientJobs));
   } catch (e) {}
 }
 
@@ -1760,21 +1734,12 @@ function switchClientTab(tabName) {
 
 function updateClientMetrics() {
   const activeJobs = mockClientJobs.filter(j => j.status !== 'Completed').length;
-  let totalEscrow = 0;
-  mockClientJobs.forEach(j => {
-    j.milestones.forEach(m => {
-      if (m.status !== 'PAID') totalEscrow += (m.amount || 0);
-    });
-  });
-
   const activeJobsEl = document.getElementById('client-stat-active-jobs');
   const totalEscrowEl = document.getElementById('client-stat-total-escrow');
-  const proposalsEl = document.getElementById('client-stat-proposals');
   const jobsCounterBadge = document.getElementById('client-jobs-counter-badge');
 
-  if (activeJobsEl) activeJobsEl.innerText = `${activeJobs} Active`;
-  if (totalEscrowEl) totalEscrowEl.innerText = `$${totalEscrow.toLocaleString()} USDC`;
-  if (proposalsEl) proposalsEl.innerText = `${mockTalentProposals.length * 4} Received`;
+  if (activeJobsEl) activeJobsEl.innerText = `${activeJobs}`;
+  if (totalEscrowEl) totalEscrowEl.innerText = `28.5 SOL`;
   if (jobsCounterBadge) jobsCounterBadge.innerText = `${mockClientJobs.length} Jobs`;
 }
 
@@ -1785,111 +1750,26 @@ function renderClientJobs() {
 
   mockClientJobs.forEach(job => {
     const card = document.createElement('div');
-    card.className = 'escrow-job-card';
+    card.className = 'clean-job-item';
+    card.style.cursor = 'pointer';
 
-    const totalTasks = job.totalTasks || 5000;
-    const completedTasks = job.completedTasks || 3500;
-    const pct = Math.round((completedTasks / totalTasks) * 100);
-    const rate = job.ratePerTask || 0.25;
-
-    // Build Milestones HTML
-    const milestonesHtml = job.milestones.map(m => {
-      let statusBadge = '';
-      let actionBtn = '';
-
-      if (m.status === 'PAID') {
-        statusBadge = '<span class="badge-status-escrow" style="background: rgba(20,241,149,0.15); color: #14f195;">✓ Settled Via MultiHopper</span>';
-      } else if (m.status === 'IN_REVIEW') {
-        statusBadge = '<span class="badge-status-escrow review">● Consensus Ready</span>';
-        actionBtn = `
-          <button class="btn-glass-mint" onclick="openDeliverableModal('${job.id}', '${m.id}')">
-            👁️ Inspect Batch QA
-          </button>
-          <button class="btn-hotpink-sm" onclick="releaseMilestoneEscrow('${job.id}', '${m.id}')">
-            ⚡ Release Batch ($${m.amount} USDC)
-          </button>
-        `;
-      } else if (m.status === 'IN_PROGRESS') {
-        statusBadge = '<span class="badge-tag-category" style="color: #38bdf8; border-color: rgba(56,189,248,0.3);">⏳ Live Labeling</span>';
-      } else {
-        statusBadge = '<span class="badge-tag-category">Pending Escrow</span>';
-      }
-
-      return `
-        <div class="milestone-item-row">
-          <div class="milestone-left">
-            <div class="milestone-num-circle ${m.status === 'PAID' ? 'paid' : (m.status === 'IN_REVIEW' ? 'active' : '')}">
-              ${m.status === 'PAID' ? '✓' : m.num}
-            </div>
-            <div class="milestone-desc-col">
-              <strong>${m.title}</strong>
-              <span>Anchor PDA State: ${m.status.toLowerCase()} • MultiHopper Route Active</span>
-            </div>
-          </div>
-          <div class="milestone-right">
-            <span class="milestone-amount-tag">$${m.amount.toLocaleString()} USDC</span>
-            ${statusBadge}
-            ${actionBtn}
-          </div>
-        </div>
-      `;
-    }).join('');
+    const proposals = job.proposalsCount || 7;
+    const due = job.due || '12/30/2025';
+    const displayBudget = typeof job.budget === 'string' ? job.budget : `${job.budget} SOL`;
 
     card.innerHTML = `
-      <div class="job-card-header">
-        <div>
-          <div class="job-meta-title">
-            <span>${job.title}</span>
-          </div>
-          <div class="job-badges-row">
-            <span class="badge-tag-category">${job.category}</span>
-            <span class="badge-status-escrow ${job.status === 'In Escrow' ? '' : 'review'}">
-              <span class="live-pulse-dot" style="width: 6px; height: 6px; background: #14f195;"></span>
-              ${job.status}
-            </span>
-            <span style="font-size: 0.75rem; color: #14f195; font-family: monospace;">PDA: ${job.pda}</span>
-            <span style="font-size: 0.75rem; color: #a855f7; font-weight: 600;">⚡ MultiHopper Payouts</span>
-          </div>
+      <div class="clean-job-top">
+        <div class="clean-job-title-row">
+          <h4 class="clean-job-title">${job.title}</h4>
+          <span class="badge-clean-open">${job.status || 'open'}</span>
         </div>
-        <div style="text-align: right;">
-          <span class="badge-tag-budget">$${job.budget.toLocaleString()} USDC</span>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Rate: <strong style="color: #14f195;">$${rate} / task</strong></div>
-        </div>
+        <span class="clean-job-price">${displayBudget}</span>
       </div>
-
-      <p class="job-details-text">${job.description}</p>
-
-      <!-- LIVE COMPLETION PROGRESS BAR -->
-      <div style="margin: 16px 0; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.82rem;">
-          <span style="color: #94a3b8;">Pipeline Progress: <strong style="color: #fff;">${completedTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks completed</strong></span>
-          <span style="color: #14f195; font-weight: 700;">${pct}% Complete</span>
-        </div>
-        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden;">
-          <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, #a855f7, #14f195); border-radius: 999px; transition: width 0.4s ease;"></div>
-        </div>
-        <div style="display: flex; gap: 16px; margin-top: 8px; font-size: 0.75rem; color: #94a3b8;">
-          <span>Consensus: <strong style="color: #c084fc;">${job.annotatorQuorum || '3-of-3'}</strong></span>
-          <span>Honeypot QA: <strong style="color: #22c55e;">${job.honeypotAccuracy || '99.5%'}</strong></span>
-          <span>Settle Speed: <strong style="color: #38bdf8;">~400ms</strong></span>
-        </div>
-      </div>
-
-      <div class="milestones-container">
-        <div class="milestones-header-title">
-          <span>Batch Tranches & Milestone Dispersals</span>
-          <span style="color: #14f195; font-size: 0.75rem;">Anchor 0.29 PDA Controlled</span>
-        </div>
-        ${milestonesHtml}
-      </div>
-
-      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);">
-        <button class="btn-outline-pill" style="font-size: 0.82rem; padding: 8px 16px;" onclick="exportParquetDatasetDemo('${job.title}')">
-          📥 Export Labeled JSONL
-        </button>
-        <button class="btn-hotpink-sm" style="font-size: 0.82rem; padding: 8px 18px;" onclick="triggerBatchMultihopperPayoutDemo('${job.id}')">
-          ⚡ Trigger MultiHopper Batch Dispersal
-        </button>
+      <p class="clean-job-desc">${job.description}</p>
+      <div class="clean-job-meta-row">
+        <span>👥 ${proposals} proposals</span>
+        <span>⏱️ Awaiting hire</span>
+        <span>📅 Due ${due}</span>
       </div>
     `;
 

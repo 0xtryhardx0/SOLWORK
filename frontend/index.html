@@ -812,35 +812,29 @@
 </div> <!-- END VIEW 2: WORKSPACE -->
 
 
-<!-- ================= VIEW 3: CLIENT DASHBOARD (ORIGINAL CLEAN NUMBER 1 DESIGN) ================= -->
+<!-- ================= VIEW 3: CLIENT DASHBOARD (EXACT SCREENSHOT LAYOUT) ================= -->
 <div id="view-client" class="portal-view" style="display: none;">
 
   <!-- CLIENT DASHBOARD HEADER -->
-  <section class="client-dash-header-section">
+  <section class="client-dash-header-section" style="padding-top: 110px;">
     <div class="client-container">
       <div class="client-dash-header">
         <div class="space-y-1">
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
-            <h1 class="client-dash-title" style="margin: 0;">Client Dashboard</h1>
-            <div class="client-mode-toggle" style="display: inline-flex; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 2px;">
-              <button id="btn-mode-standard" class="btn-mode-pill active" onclick="toggleClientMode('standard')" style="padding: 4px 12px; font-size: 0.72rem; border-radius: 999px; border: none; background: #8b5cf6; color: #fff; cursor: pointer; font-weight: 600;">📋 Standard</button>
-              <button id="btn-mode-ailab" class="btn-mode-pill" onclick="toggleClientMode('ailab')" style="padding: 4px 12px; font-size: 0.72rem; border-radius: 999px; border: none; background: transparent; color: #94a3b8; cursor: pointer; font-weight: 600;">⚡ AI Lab Mode</button>
-            </div>
-          </div>
-          <p id="client-dash-subtitle-text" class="client-dash-subtitle">Manage your projects and find talent</p>
+          <h1 class="client-dash-title" style="margin: 0;">Client Dashboard</h1>
+          <p class="client-dash-subtitle" style="margin-top: 4px;">Manage your projects and find talent</p>
         </div>
         <button class="btn-primary-pill" onclick="switchClientTab('create')">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-          <span id="btn-create-label">Post a Job</span>
+          <span>Post a Job</span>
         </button>
       </div>
 
-      <!-- 4 CLEAN STAT CARDS (DEFAULT STANDARD MODE) -->
-      <div id="client-stats-standard" class="client-stats-grid-4">
+      <!-- 4 CLEAN STAT CARDS EXACTLY AS IN SCREENSHOT -->
+      <div class="client-stats-grid-4">
         <div class="stat-clean-card">
           <div class="stat-clean-top">
             <span class="stat-clean-label">Active Jobs</span>
-            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
           </div>
           <p id="client-stat-active-jobs" class="stat-clean-val">2</p>
           <p class="stat-clean-sub">In progress</p>
@@ -849,7 +843,7 @@
         <div class="stat-clean-card">
           <div class="stat-clean-top">
             <span class="stat-clean-label">Total Spent</span>
-            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
           </div>
           <p id="client-stat-total-escrow" class="stat-clean-val">28.5 SOL</p>
           <p class="stat-clean-sub">≈ $5,130</p>
@@ -858,7 +852,7 @@
         <div class="stat-clean-card">
           <div class="stat-clean-top">
             <span class="stat-clean-label">Total Hires</span>
-            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path></svg>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path></svg>
           </div>
           <p class="stat-clean-val">18</p>
           <p class="stat-clean-sub text-green">+3 this month</p>
@@ -867,49 +861,10 @@
         <div class="stat-clean-card">
           <div class="stat-clean-top">
             <span class="stat-clean-label">Avg Rating</span>
-            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
           </div>
           <p class="stat-clean-val">4.8 ⭐</p>
           <p class="stat-clean-sub text-green">Excellent</p>
-        </div>
-      </div>
-
-      <!-- 4 AI STAT CARDS (TOGGLED VIA AI LAB MODE) -->
-      <div id="client-stats-ailab" class="client-stats-grid-4" style="display: none;">
-        <div class="stat-clean-card">
-          <div class="stat-clean-top">
-            <span class="stat-clean-label">Active AI Campaigns</span>
-            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-          </div>
-          <p class="stat-clean-val">3 Running</p>
-          <p class="stat-clean-sub text-green">Code RLHF • Audio • CV</p>
-        </div>
-
-        <div class="stat-clean-card">
-          <div class="stat-clean-top">
-            <span class="stat-clean-label">Anchor Escrow Vault</span>
-            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14f195" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          </div>
-          <p class="stat-clean-val">$4,850.00 USDC</p>
-          <p class="stat-clean-sub">Locked in PDA: <span style="font-family: monospace; color: #14f195;">D6Ft...SZPy</span></p>
-        </div>
-
-        <div class="stat-clean-card">
-          <div class="stat-clean-top">
-            <span class="stat-clean-label">Annotations Verified</span>
-            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-          </div>
-          <p class="stat-clean-val">14,290 Tasks</p>
-          <p class="stat-clean-sub text-green">99.4% Honeypot Pass Rate</p>
-        </div>
-
-        <div class="stat-clean-card">
-          <div class="stat-clean-top">
-            <span class="stat-clean-label">MultiHopper Dispersals</span>
-            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
-          </div>
-          <p class="stat-clean-val">48 Batches</p>
-          <p class="stat-clean-sub" style="color: #c084fc;">~400ms Sub-Second Payouts</p>
         </div>
       </div>
 
@@ -917,61 +872,42 @@
       <div class="dashboard-grid-layout">
         <!-- LEFT 2 COLUMNS -->
         <div class="dash-col-main">
-          <!-- MAIN PIPELINES VIEW -->
+          <!-- MAIN JOBS VIEW -->
           <div id="client-tab-jobs-panel" class="client-tab-panel">
             <div class="dash-clean-card">
               <div class="dash-card-header">
-                <div>
-                  <h2 class="dash-card-title">Live AI Training Pipelines</h2>
-                  <p class="stat-clean-sub">Active decentralized data campaigns funded by your Anchor PDA vault.</p>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                  <button class="btn-outline-pill" style="font-size: 0.8rem; padding: 6px 14px;" onclick="triggerBatchMultihopperPayoutDemo()">
-                    ⚡ Execute Batch Payout
-                  </button>
-                  <a class="dash-card-link" onclick="switchClientTab('proposals')">Honeypot Quorum QA →</a>
-                </div>
+                <h2 class="dash-card-title">Your Posted Jobs</h2>
+                <a class="dash-card-link" onclick="switchClientTab('jobs')">View all jobs</a>
               </div>
               <div id="client-escrow-jobs-list">
                 <!-- Injected via app.js -->
               </div>
             </div>
 
-            <!-- MULTIHOPPER REAL-TIME TELEMETRY STREAM -->
+            <!-- RECENT ACTIVITY CARD EXACTLY FROM SCREENSHOT -->
             <div class="dash-clean-card" style="margin-top: 24px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <div>
-                  <h2 class="dash-card-title" style="margin: 0;">MultiHopper Routing Telemetry</h2>
-                  <p class="stat-clean-sub" style="margin: 2px 0 0;">Verifiable on-chain batch disbursements to African & global annotator wallets.</p>
-                </div>
-                <span class="badge-status-escrow" style="background: rgba(20,241,149,0.12); color: #14f195; font-size: 0.72rem;">
-                  <span class="live-pulse-dot" style="background: #14f195;"></span> Live RPC Feed
-                </span>
-              </div>
+              <h2 class="dash-card-title" style="margin-bottom: 18px;">Recent Activity</h2>
               <div class="activity-stream">
                 <div class="activity-item">
-                  <div class="activity-icon-box green">⚡</div>
-                  <div style="flex: 1;">
-                    <p class="activity-title">MultiHopper Batch Dispersal: 24 Annotators Settled</p>
-                    <p class="activity-meta">Llama-3 Python RLHF Batch #18 • Tx: <span style="font-family: monospace; color: #38bdf8;">5Kn8...4vX1</span> • 12 mins ago</p>
+                  <div class="activity-icon-box green">✓</div>
+                  <div>
+                    <p class="activity-title">Milestone approved & escrow settled</p>
+                    <p class="activity-meta">NFT Marketplace Escrow #1 • 2 hours ago</p>
                   </div>
-                  <span style="font-size: 0.82rem; font-weight: 700; color: #14f195;">+6.00 USDC</span>
                 </div>
                 <div class="activity-item">
-                  <div class="activity-icon-box purple">🎯</div>
-                  <div style="flex: 1;">
-                    <p class="activity-title">Honeypot Trap Verified: 99.8% Consensus Quorum</p>
-                    <p class="activity-meta">West African Speech Corpus (Yoruba/Pidgin) • 42 mins ago</p>
+                  <div class="activity-icon-box blue">👥</div>
+                  <div>
+                    <p class="activity-title">New proposal received from Alex Chen</p>
+                    <p class="activity-meta">Smart Contract Development • 5 hours ago</p>
                   </div>
-                  <span style="font-size: 0.82rem; font-weight: 700; color: #c084fc;">Verified</span>
                 </div>
                 <div class="activity-item">
-                  <div class="activity-icon-box blue">🏦</div>
-                  <div style="flex: 1;">
-                    <p class="activity-title">Anchor PDA Vault Deposit Confirmed</p>
-                    <p class="activity-meta">Funded +1,350.00 USDC for Autonomous Driving 3D Bounding Boxes • 2 hours ago</p>
+                  <div class="activity-icon-box purple">💼</div>
+                  <div>
+                    <p class="activity-title">Job posted successfully to Devnet</p>
+                    <p class="activity-meta">Frontend Development for DeFi Dashboard • 1 day ago</p>
                   </div>
-                  <span style="font-size: 0.82rem; font-weight: 700; color: #fff;">+1,350 USDC</span>
                 </div>
               </div>
             </div>
@@ -1090,56 +1026,45 @@
 
         </div> <!-- End dash-col-main -->
 
-        <!-- RIGHT 1 COLUMN (SIDEBAR: LAB IDENTITY & MULTIHOPPER CONTROLS) -->
+        <!-- RIGHT 1 COLUMN (SIDEBAR EXACTLY FROM SCREENSHOT) -->
         <div class="dash-col-side">
-          <!-- AI Lab Profile Card -->
+          <!-- Profile Card -->
           <div class="dash-clean-card">
-            <h3 class="dash-card-title" style="margin-bottom: 16px;">AI Research Lab</h3>
-            <div class="profile-row">
-              <div class="profile-avatar" style="background: linear-gradient(135deg, #a855f7, #38bdf8); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🏢</div>
+            <h3 class="dash-card-title" style="margin-bottom: 16px;">Your Profile</h3>
+            <div class="profile-row" style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px;">
+              <div class="profile-avatar" style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #ec4899 0%, #14b8a6 100%); flex-shrink: 0;"></div>
               <div class="profile-details">
-                <h4 style="margin: 0; color: #fff; font-size: 0.95rem;">Sahara Research / Subnet 4</h4>
-                <p style="color: #94a3b8; font-size: 0.8rem; margin: 2px 0 0;">Enterprise Tier • Verified</p>
+                <h4 style="margin: 0; color: #fff; font-size: 1.05rem; font-weight: 600;">7xKX...9mP4</h4>
+                <p style="margin: 2px 0 0; color: #94a3b8; font-size: 0.85rem;">Client</p>
               </div>
             </div>
-            <div class="profile-stats-grid">
+            <div class="profile-stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);">
               <div>
-                <p class="stat-clean-sub">Anchor Program</p>
-                <p style="font-weight: 600; color: #14f195; margin: 2px 0 0; font-family: monospace; font-size: 0.75rem;">D6Ft...SZPy</p>
+                <p class="stat-clean-sub" style="color: #64748b; font-size: 0.75rem; margin: 0;">Member Since</p>
+                <p style="font-weight: 600; color: #fff; margin: 4px 0 0; font-size: 0.95rem;">Jan 2024</p>
               </div>
               <div>
-                <p class="stat-clean-sub">Consensus SLA</p>
-                <p style="font-weight: 600; color: #22c55e; margin: 2px 0 0;">99.4% Pass ✓</p>
+                <p class="stat-clean-sub" style="color: #64748b; font-size: 0.75rem; margin: 0;">Verified</p>
+                <p style="font-weight: 600; color: #22c55e; margin: 4px 0 0; font-size: 0.95rem;">Yes ✓</p>
               </div>
             </div>
-            <button class="btn-outline-pill" onclick="alert('Anchor Vault Authority: 7xKX...9mP4 connected via Phantom.')">Inspect On-Chain Vault</button>
+            <button class="btn-outline-pill" style="width: 100%; justify-content: center; border-radius: 999px; padding: 10px;" onclick="alert('Profile editor: Verified SolWork Client Account.')">Edit Profile</button>
           </div>
 
           <!-- In Escrow Card -->
-          <div class="card-in-escrow" style="background: linear-gradient(145deg, #181926, #211c38); border: 1px solid rgba(168, 85, 247, 0.35);">
+          <div class="card-in-escrow" style="margin-top: 20px; background: #151722; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h3 style="font-size: 1.05rem; font-weight: 600; color: #fff; margin: 0;">Anchor PDA Vault</h3>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <h3 style="font-size: 1.05rem; font-weight: 600; color: #fff; margin: 0;">In Escrow</h3>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
             </div>
-            <p style="font-size: 1.9rem; font-weight: 700; color: #14f195; margin: 0 0 4px 0;">$4,850.00 USDC</p>
-            <p class="stat-clean-sub" style="color: #94a3b8;">Locked on Solana Devnet for active microtask milestone dispersals</p>
-          </div>
-
-          <!-- Quick Actions Card -->
-          <div class="dash-clean-card">
-            <h3 class="dash-card-title" style="margin-bottom: 14px;">Pipeline Controls</h3>
-            <div class="quick-actions-list">
-              <button class="quick-btn primary" onclick="switchClientTab('create')">+ Launch AI Campaign</button>
-              <button class="quick-btn" onclick="triggerBatchMultihopperPayoutDemo()">⚡ Trigger MultiHopper Dispersal</button>
-              <button class="quick-btn" onclick="exportParquetDatasetDemo()">📥 Export Labeled Parquet / JSONL</button>
-              <button class="quick-btn" onclick="switchClientTab('proposals')">🛡️ Honeypot Quorum Benchmarks</button>
-            </div>
+            <p style="font-size: 2.1rem; font-weight: 700; color: #fff; margin: 0 0 4px 0;">8.5 SOL</p>
+            <p class="stat-clean-sub" style="color: #64748b; font-size: 0.8rem; margin: 0;">≈ $1,530 USD &bull; Locked for active milestones</p>
           </div>
         </div> <!-- End dash-col-side -->
       </div> <!-- End dashboard-grid-layout -->
     </div> <!-- End client-container -->
   </section>
-</div> <!-- END VIEW 3: ENTERPRISE AI LAB COMMAND CENTER -->
+</div> <!-- END VIEW 3: CLIENT DASHBOARD -->
 
   <!-- WORKSPACE OVERLAY (DYNAMIC INTERACTIVE TASK MODAL) -->
   <div id="workspace-overlay" class="workspace-overlay hidden">
