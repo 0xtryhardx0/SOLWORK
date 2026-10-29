@@ -141,12 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch {}
 
   renderCampaigns();
+  initClientJobs();
+  renderLandingPageJobs();
   renderClientMonitorCampaigns();
   updateUI();
   initSubmissionsStream();
 
-  // 6 PILLARS OF ASTONISHING AESTHETICS INITIALIZATION
-  initNeuralCanvas();
+  // 6 PILLARS OF AESTHETICS (Neural Canvas disabled to prevent GPU/CPU freezes)
   initTiltCards();
   initAudioHaptics();
   initCommandPalette();
@@ -190,8 +191,13 @@ function switchView(viewName, updateHash = true) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   
+  if (viewName === 'landing') renderLandingPageJobs();
   if (viewName === 'workspace') renderCampaigns();
-  if (viewName === 'client') renderClientMonitorCampaigns();
+  if (viewName === 'client') {
+    renderClientJobs();
+    updateClientMetrics();
+    renderClientProposals();
+  }
 }
 
 // Workspace Modality Filter
@@ -1562,18 +1568,525 @@ function updateAuthUI() {
 }
 
 // 12. ENTERPRISE CLIENT PORTAL LOGIC & SQL USER REGISTRY
+// 12. ENTERPRISE CLIENT PORTAL LOGIC & ESCROW MANAGEMENT (CYBERPUNK HOT PINK)
+let mockClientJobs = [
+  {
+    id: 'job-1',
+    title: 'Smart Contract Development for NFT Marketplace',
+    category: 'Smart Contracts & Anchor',
+    budget: 5000,
+    status: 'In Escrow',
+    pda: 'EP2xDvB4sT7q...89NqDevnet',
+    client: '7xKX...9mP4 (You)',
+    freelancer: {
+      name: 'Alex Chen',
+      wallet: '4xKmYQnd87aBvBncDkL9M2N1PqRSTuVwXyZ34aBcDeFg',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120'
+    },
+    description: 'Build non-custodial Anchor 0.29 contracts for an NFT marketplace with royalty splits, instant settlement, and sub-second milestone escrows.',
+    milestones: [
+      { id: 'm1', num: 1, title: 'Contract Architecture & Technical Spec', amount: 1500, status: 'PAID' },
+      { id: 'm2', num: 2, title: 'Core Minting Logic & Fuzzing Unit Tests', amount: 2500, status: 'IN_REVIEW', deliverable: { pr: 24, notes: 'Implemented Anchor contracts with SPL Token-2022 transfer hook & 14 unit tests passing 100% on Devnet.' } },
+      { id: 'm3', num: 3, title: 'Devnet Deployment & Client Integration Docs', amount: 1000, status: 'PENDING' }
+    ]
+  },
+  {
+    id: 'job-2',
+    title: 'Frontend Development for DeFi Liquidity Dashboard',
+    category: 'Frontend DeFi & Web3',
+    budget: 3500,
+    status: 'In Escrow',
+    pda: '7zVpLk93jW2a...41MvDevnet',
+    client: '7xKX...9mP4 (You)',
+    freelancer: {
+      name: 'Maria Rodriguez',
+      wallet: '9zLpQwerty1234567890abcdefABCDEF1234567890',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120'
+    },
+    description: 'Responsive Next.js 15 dashboard with Phantom wallet adapter, liquidity pool APR monitoring, and real-time transaction telemetry.',
+    milestones: [
+      { id: 'm1', num: 1, title: 'Wallet Adapter & UI Component System', amount: 1500, status: 'PAID' },
+      { id: 'm2', num: 2, title: 'DEX Liquidity Pool & Swap Integration', amount: 2000, status: 'IN_PROGRESS' }
+    ]
+  },
+  {
+    id: 'job-3',
+    title: 'African Dialect Speech & NLP Corpus Labeling',
+    category: 'AI Dataset & RLHF',
+    budget: 1200,
+    status: 'In Escrow',
+    pda: '3MocK54Sig84...1928Devnet',
+    client: '7xKX...9mP4 (You)',
+    freelancer: {
+      name: 'Kofi Mensah',
+      wallet: '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh',
+      avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=120'
+    },
+    description: 'Phonetic transcription and consensus benchmarking of 1,000 West African audio speech samples for frontier LLM fine-tuning.',
+    milestones: [
+      { id: 'm1', num: 1, title: '1,000 Audio Clips Transcribed & Consensus-Verified', amount: 600, status: 'IN_REVIEW', deliverable: { pr: 12, notes: 'Transcribed 1,000 Nigerian Pidgin audio clips with 99.8% consensus quorum. Ready for client inspection.' } },
+      { id: 'm2', num: 2, title: 'Consensus Quality Proofs & Parquet Export', amount: 600, status: 'PENDING' }
+    ]
+  }
+];
+
+const mockTalentProposals = [
+  {
+    id: 'prop-1',
+    name: 'Alex Chen',
+    title: 'Senior Solana Smart Contract Engineer',
+    rating: 5.0,
+    projectsDone: 34,
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120',
+    skills: ['Rust', 'Anchor', 'Solana', 'Security Audits'],
+    bid: 2500,
+    timeline: '5 days',
+    note: 'Built multiple production Anchor escrows with 400ms finality. Can deliver contract architecture + automated fuzzing test suite with zero security flaws.'
+  },
+  {
+    id: 'prop-2',
+    name: 'Maria Rodriguez',
+    title: 'Principal Web3 & React Frontend Architect',
+    rating: 4.95,
+    projectsDone: 28,
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120',
+    skills: ['React', 'Next.js', 'Tailwind', 'Web3.js'],
+    bid: 2000,
+    timeline: '4 days',
+    note: 'Expert in high-converting, cyber-aesthetic Web3 applications. Will build the responsive dashboard with smooth glassmorphism and sub-second wallet signatures.'
+  },
+  {
+    id: 'prop-3',
+    name: 'Kofi Mensah',
+    title: 'Lead African NLP Annotator & Linguist',
+    rating: 4.98,
+    projectsDone: 184,
+    avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=120',
+    skills: ['NLP', 'Yoruba/Pidgin', 'PyTorch', 'Data QA'],
+    bid: 600,
+    timeline: '3 days',
+    note: 'Supervised over 180 speech corpora for Masakhane and African research teams. Guaranteed 99%+ consensus verification.'
+  }
+];
+
+let activeModalTarget = { jobId: null, milestoneId: null };
+
+function initClientJobs() {
+  try {
+    const saved = localStorage.getItem('solwork_client_jobs');
+    if (saved) {
+      mockClientJobs = JSON.parse(saved);
+    }
+  } catch (e) {
+    console.warn("Failed to load saved client jobs:", e);
+  }
+  initDefaultMilestoneBuilder();
+  renderClientJobs();
+  updateClientMetrics();
+  renderClientProposals();
+  renderLandingPageJobs();
+}
+
+function saveClientJobs() {
+  try {
+    localStorage.setItem('solwork_client_jobs', JSON.stringify(mockClientJobs));
+  } catch (e) {}
+}
+
 function switchClientTab(tabName) {
   state.clientActiveTab = tabName;
   
-  ['create', 'monitor', 'dispatch', 'users'].forEach(t => {
+  const allTabs = ['jobs', 'create', 'proposals', 'monitor', 'dispatch', 'users'];
+  allTabs.forEach(t => {
     const btn = document.getElementById(`client-subtab-${t}`);
     const panel = document.getElementById(`client-tab-${t}-panel`);
-    if (btn) btn.classList.toggle('active', t === tabName);
+    if (btn) {
+      btn.classList.toggle('active', t === tabName);
+    }
     if (panel) panel.style.display = t === tabName ? 'block' : 'none';
   });
   
+  if (tabName === 'jobs') renderClientJobs();
+  if (tabName === 'proposals') renderClientProposals();
   if (tabName === 'monitor') renderClientMonitorCampaigns();
   if (tabName === 'users') fetchAndRenderSqlUsers();
+
+  const targetPanel = document.getElementById(`client-tab-${tabName}-panel`);
+  if (targetPanel) {
+    targetPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function updateClientMetrics() {
+  const activeJobs = mockClientJobs.filter(j => j.status !== 'Completed').length;
+  let totalEscrow = 0;
+  mockClientJobs.forEach(j => {
+    j.milestones.forEach(m => {
+      if (m.status !== 'PAID') totalEscrow += (m.amount || 0);
+    });
+  });
+
+  const activeJobsEl = document.getElementById('client-stat-active-jobs');
+  const totalEscrowEl = document.getElementById('client-stat-total-escrow');
+  const proposalsEl = document.getElementById('client-stat-proposals');
+  const jobsCounterBadge = document.getElementById('client-jobs-counter-badge');
+
+  if (activeJobsEl) activeJobsEl.innerText = `${activeJobs} Active`;
+  if (totalEscrowEl) totalEscrowEl.innerText = `$${totalEscrow.toLocaleString()} USDC`;
+  if (proposalsEl) proposalsEl.innerText = `${mockTalentProposals.length * 4} Received`;
+  if (jobsCounterBadge) jobsCounterBadge.innerText = `${mockClientJobs.length} Jobs`;
+}
+
+function renderClientJobs() {
+  const container = document.getElementById('client-escrow-jobs-list');
+  if (!container) return;
+  container.innerHTML = '';
+
+  mockClientJobs.forEach(job => {
+    const card = document.createElement('div');
+    card.className = 'escrow-job-card';
+
+    // Build Milestones HTML
+    const milestonesHtml = job.milestones.map(m => {
+      let statusBadge = '';
+      let actionBtn = '';
+
+      if (m.status === 'PAID') {
+        statusBadge = '<span class="badge-status-escrow" style="background: rgba(20,241,149,0.15); color: #14f195;">✓ Settled On-Chain</span>';
+      } else if (m.status === 'IN_REVIEW') {
+        statusBadge = '<span class="badge-status-escrow review">● In Review</span>';
+        actionBtn = `
+          <button class="btn-glass-mint" onclick="openDeliverableModal('${job.id}', '${m.id}')">
+            👁️ Review Deliverable
+          </button>
+          <button class="btn-hotpink-sm" onclick="releaseMilestoneEscrow('${job.id}', '${m.id}')">
+            ⚡ Release Escrow ($${m.amount})
+          </button>
+        `;
+      } else if (m.status === 'IN_PROGRESS') {
+        statusBadge = '<span class="badge-tag-category" style="color: #38bdf8; border-color: rgba(56,189,248,0.3);">⏳ In Progress</span>';
+      } else {
+        statusBadge = '<span class="badge-tag-category">Pending Escrow</span>';
+      }
+
+      return `
+        <div class="milestone-item-row">
+          <div class="milestone-left">
+            <div class="milestone-num-circle ${m.status === 'PAID' ? 'paid' : (m.status === 'IN_REVIEW' ? 'active' : '')}">
+              ${m.status === 'PAID' ? '✓' : m.num}
+            </div>
+            <div class="milestone-desc-col">
+              <strong>Milestone ${m.num}: ${m.title}</strong>
+              <span>Anchor PDA State: ${m.status.toLowerCase()}</span>
+            </div>
+          </div>
+          <div class="milestone-right">
+            <span class="milestone-amount-tag">$${m.amount.toLocaleString()} USDC</span>
+            ${statusBadge}
+            ${actionBtn}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="job-card-header">
+        <div>
+          <div class="job-meta-title">
+            <span>${job.title}</span>
+          </div>
+          <div class="job-badges-row">
+            <span class="badge-tag-category">${job.category}</span>
+            <span class="badge-status-escrow ${job.status === 'In Escrow' ? '' : 'review'}">
+              <span class="live-pulse-dot" style="width: 6px; height: 6px; background: #14f195;"></span>
+              ${job.status}
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">PDA: ${job.pda}</span>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge-tag-budget">$${job.budget.toLocaleString()} USDC</span>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Assigned: <strong style="color: #fff;">${job.freelancer ? job.freelancer.name : 'Open Bids'}</strong></div>
+        </div>
+      </div>
+
+      <p class="job-details-text">${job.description}</p>
+
+      <div class="milestones-container">
+        <div class="milestones-header-title">
+          <span>Milestone Deliverables & Escrow Release</span>
+          <span style="color: #14f195; font-size: 0.75rem;">Anchor 0.29 PDA Controlled</span>
+        </div>
+        ${milestonesHtml}
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function openDeliverableModal(jobId, milestoneId) {
+  const job = mockClientJobs.find(j => j.id === jobId);
+  if (!job) return;
+  const milestone = job.milestones.find(m => m.id === milestoneId);
+  if (!milestone) return;
+
+  activeModalTarget = { jobId, milestoneId };
+
+  document.getElementById('modal-dev-name').innerText = job.freelancer.name;
+  document.getElementById('modal-dev-wallet').innerText = `${job.freelancer.wallet.slice(0, 6)}...${job.freelancer.wallet.slice(-6)}`;
+  document.getElementById('modal-milestone-title').innerText = `Milestone ${milestone.num}: ${milestone.title}`;
+  document.getElementById('modal-milestone-amount').innerText = `$${milestone.amount.toLocaleString()} USDC`;
+  document.getElementById('modal-pda-address').innerText = job.pda;
+  
+  if (milestone.deliverable && milestone.deliverable.notes) {
+    document.getElementById('modal-deliverable-notes').innerText = milestone.deliverable.notes;
+  }
+
+  const modal = document.getElementById('deliverable-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeDeliverableModal() {
+  const modal = document.getElementById('deliverable-modal');
+  if (modal) modal.classList.add('hidden');
+  activeModalTarget = { jobId: null, milestoneId: null };
+}
+
+function confirmReleaseFromModal() {
+  if (activeModalTarget.jobId && activeModalTarget.milestoneId) {
+    const { jobId, milestoneId } = activeModalTarget;
+    closeDeliverableModal();
+    releaseMilestoneEscrow(jobId, milestoneId);
+  }
+}
+
+function releaseMilestoneEscrow(jobId, milestoneId) {
+  const job = mockClientJobs.find(j => j.id === jobId);
+  if (!job) return;
+  const milestone = job.milestones.find(m => m.id === milestoneId);
+  if (!milestone) return;
+
+  milestone.status = 'PAID';
+  saveClientJobs();
+
+  // Play audio haptic chime
+  if (typeof playHapticTone === 'function') {
+    playHapticTone(880, 0.15, 'triangle');
+    setTimeout(() => playHapticTone(1320, 0.2, 'triangle'), 120);
+  }
+
+  // Trigger celebration confetti
+  if (typeof createConfettiBurst === 'function') {
+    createConfettiBurst();
+  }
+
+  // Add Terminal Log
+  const simulatedTx = '5K2p' + Math.random().toString(36).substring(2, 12) + 'Devnet';
+  if (typeof logAnchorRpcEvent === 'function') {
+    logAnchorRpcEvent(`Instruction: release_milestone_escrow`, `Released $${milestone.amount} USDC to ${job.freelancer.wallet.slice(0, 8)}... | Tx: ${simulatedTx}`);
+  }
+
+  renderClientJobs();
+  updateClientMetrics();
+
+  showHoneypotToast(true, `⚡ Escrow Released! $${milestone.amount} USDC settled to ${job.freelancer.name} via Anchor PDA.`);
+}
+
+// DYNAMIC MILESTONE BUILDER FOR JOB POSTING
+let milestoneCounter = 0;
+
+function initDefaultMilestoneBuilder() {
+  const list = document.getElementById('milestone-builder-list');
+  if (!list) return;
+  list.innerHTML = '';
+  milestoneCounter = 0;
+  addMilestoneRow('Architecture & Smart Contract Specifications', 1500, 'Deliverable includes technical spec & interface definitions');
+  addMilestoneRow('Implementation & Unit Tests', 2500, 'Deliverable includes functional code with 100% test coverage');
+}
+
+function addMilestoneRow(defaultTitle = '', defaultAmount = 1000, defaultDesc = '') {
+  const list = document.getElementById('milestone-builder-list');
+  if (!list) return;
+  milestoneCounter++;
+
+  const row = document.createElement('div');
+  row.className = 'builder-milestone-row';
+  row.id = `builder-row-${milestoneCounter}`;
+  row.innerHTML = `
+    <div>
+      <input type="text" class="form-input milestone-row-title" placeholder="Milestone ${milestoneCounter} Title" value="${defaultTitle}" required oninput="calculateJobEscrowTotal()">
+    </div>
+    <div>
+      <input type="number" class="form-input milestone-row-amount" placeholder="Amount (USDC)" value="${defaultAmount}" min="10" step="10" required oninput="calculateJobEscrowTotal()">
+    </div>
+    <div>
+      <input type="text" class="form-input milestone-row-desc" placeholder="Deliverable requirements..." value="${defaultDesc}">
+    </div>
+    <div>
+      <button type="button" class="btn-remove-milestone" onclick="removeMilestoneRow(${milestoneCounter})" title="Remove Milestone">&times;</button>
+    </div>
+  `;
+  list.appendChild(row);
+  calculateJobEscrowTotal();
+}
+
+function removeMilestoneRow(id) {
+  const row = document.getElementById(`builder-row-${id}`);
+  if (row) row.remove();
+  calculateJobEscrowTotal();
+}
+
+function calculateJobEscrowTotal() {
+  const amountInputs = document.querySelectorAll('.milestone-row-amount');
+  let sum = 0;
+  amountInputs.forEach(inp => {
+    const val = parseFloat(inp.value) || 0;
+    sum += val;
+  });
+
+  const sumEl = document.getElementById('job-builder-milestones-sum');
+  const totalEl = document.getElementById('job-builder-total-escrow');
+
+  if (sumEl) sumEl.innerText = `$${sum.toFixed(2)} USDC`;
+  if (totalEl) totalEl.innerText = `$${sum.toFixed(2)} USDC`;
+}
+
+function handleCreateClientJob(e) {
+  e.preventDefault();
+
+  const title = document.getElementById('new-job-title').value.trim();
+  const category = document.getElementById('new-job-category').value;
+  const desc = document.getElementById('new-job-desc').value.trim();
+
+  const titleInputs = document.querySelectorAll('.milestone-row-title');
+  const amountInputs = document.querySelectorAll('.milestone-row-amount');
+  const descInputs = document.querySelectorAll('.milestone-row-desc');
+
+  const milestones = [];
+  let totalBudget = 0;
+
+  titleInputs.forEach((inp, idx) => {
+    const mTitle = inp.value.trim() || `Milestone ${idx + 1}`;
+    const mAmount = parseFloat(amountInputs[idx]?.value) || 500;
+    const mDesc = descInputs[idx]?.value.trim() || '';
+    totalBudget += mAmount;
+
+    milestones.push({
+      id: `m-${Date.now()}-${idx}`,
+      num: idx + 1,
+      title: mTitle,
+      amount: mAmount,
+      status: 'PENDING',
+      deliverable: { notes: mDesc }
+    });
+  });
+
+  const newJob = {
+    id: `job-${Date.now()}`,
+    title: title,
+    category: category,
+    budget: totalBudget,
+    status: 'In Escrow',
+    pda: 'PDA' + Math.random().toString(36).substring(2, 8).toUpperCase() + '...Devnet',
+    client: '7xKX...9mP4 (You)',
+    freelancer: null,
+    description: desc,
+    milestones: milestones
+  };
+
+  mockClientJobs.unshift(newJob);
+  saveClientJobs();
+
+  // Play haptics + celebrate
+  if (typeof playHapticTone === 'function') {
+    playHapticTone(600, 0.15, 'sine');
+    setTimeout(() => playHapticTone(900, 0.25, 'triangle'), 150);
+  }
+  if (typeof createConfettiBurst === 'function') {
+    createConfettiBurst();
+  }
+
+  showHoneypotToast(true, `⚡ Job Posted! $${totalBudget.toFixed(2)} USDC Escrow locked in Anchor PDA & Live on SolWork Main Page.`);
+  
+  // Reset form, refresh jobs list, and update main page feed
+  document.getElementById('client-new-job-form').reset();
+  initDefaultMilestoneBuilder();
+  switchClientTab('jobs');
+  updateClientMetrics();
+  renderLandingPageJobs();
+}
+
+function renderClientProposals() {
+  const grid = document.getElementById('client-proposals-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  mockTalentProposals.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'proposal-candidate-card';
+    card.innerHTML = `
+      <div class="candidate-top">
+        <img src="${p.avatar}" class="candidate-avatar" alt="${p.name}">
+        <div class="candidate-info">
+          <h4>${p.name}</h4>
+          <div class="candidate-title">${p.title}</div>
+          <div class="candidate-rating-row">
+            <span class="star-rating">★ ${p.rating}</span>
+            <span style="color: var(--text-muted);">&bull; ${p.projectsDone} projects</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        ${p.skills.map(s => `<span class="badge-tag-category">${s}</span>`).join('')}
+      </div>
+
+      <p class="proposal-note">"${p.note}"</p>
+
+      <div class="candidate-bid-box">
+        <div>
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">PROPOSED BID</span>
+          <span class="bid-val">$${p.bid.toLocaleString()} USDC</span>
+        </div>
+        <div>
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">TIMELINE</span>
+          <strong style="color: #fff; font-size: 0.85rem;">${p.timeline}</strong>
+        </div>
+      </div>
+
+      <button class="btn-hotpink" style="width: 100%; justify-content: center;" onclick="acceptCandidateProposal('${p.id}')">
+        ⚡ Accept Proposal & Fund Escrow
+      </button>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function acceptCandidateProposal(propId) {
+  const prop = mockTalentProposals.find(p => p.id === propId);
+  if (!prop) return;
+
+  // Assign to first open job or create sample job
+  const job = mockClientJobs[0];
+  if (job) {
+    job.freelancer = {
+      name: prop.name,
+      wallet: 'Sol' + Math.random().toString(36).substring(2, 10),
+      avatar: prop.avatar
+    };
+    saveClientJobs();
+  }
+
+  if (typeof playHapticTone === 'function') {
+    playHapticTone(1050, 0.2, 'triangle');
+  }
+  if (typeof createConfettiBurst === 'function') {
+    createConfettiBurst();
+  }
+
+  showHoneypotToast(true, `🤝 Hired ${prop.name}! Proposal accepted and milestone escrow assigned.`);
+  switchClientTab('jobs');
 }
 
 async function fetchAndRenderSqlUsers() {
@@ -1597,7 +2110,6 @@ async function fetchAndRenderSqlUsers() {
   }
 
   if (users.length === 0) {
-    // Fallback to local stored registry with demo records
     const localUsers = getLocalUsersRegistry();
     const demoUsers = [
       { id: 1, email: 'demo@solwork.fun', wallet_address: '7Q9NYXodMBXjcAYRhDbxFgDStYRMJBrRCrkVn8iNPsVh', role: 'worker', balance: 15.50, accuracy: 99.2, tasks_completed: 48, last_login: new Date().toISOString() },
@@ -1617,24 +2129,20 @@ async function fetchAndRenderSqlUsers() {
     };
   }
 
-  // Update Summary Metrics
   const totalUsersEl = document.getElementById('sql-total-users');
   const totalTasksEl = document.getElementById('sql-total-tasks');
   const totalBalEl = document.getElementById('sql-total-balance');
   const avgAccEl = document.getElementById('sql-avg-accuracy');
-  const counterBadge = document.getElementById('sql-users-count-badge');
 
   if (totalUsersEl) totalUsersEl.innerText = stats ? stats.totalUsers : users.length;
   if (totalTasksEl) totalTasksEl.innerText = stats ? stats.totalTasksCompleted : '--';
   if (totalBalEl) totalBalEl.innerText = `$${stats ? Number(stats.totalBalance).toFixed(2) : '0.00'} USDC`;
   if (avgAccEl) avgAccEl.innerText = `${stats ? Number(stats.avgAccuracy).toFixed(1) : '100'}%`;
-  if (counterBadge) counterBadge.innerText = `${users.length} Users`;
 
-  // Render Rows
   tableBody.innerHTML = users.map(u => {
     const roleBadge = u.role === 'client' 
-      ? '<span style="background: rgba(168,85,247,0.15); color: #c084fc; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🏢 AI Client</span>'
-      : '<span style="background: rgba(56,189,248,0.15); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🛠️ Contributor</span>';
+      ? '<span style="background: rgba(255,0,127,0.15); color: #ff3399; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🏢 Client</span>'
+      : '<span style="background: rgba(20,241,149,0.15); color: #14f195; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🛠️ Contributor</span>';
     
     const shortWallet = u.wallet_address ? `${u.wallet_address.slice(0, 6)}...${u.wallet_address.slice(-6)}` : 'N/A';
     const timeFormatted = u.last_login ? new Date(u.last_login).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recently';
@@ -1650,13 +2158,13 @@ async function fetchAndRenderSqlUsers() {
         <td style="padding: 14px 16px;">
           ${roleBadge}
         </td>
-        <td style="padding: 14px 16px; font-weight: 600; color: #38bdf8;">
+        <td style="padding: 14px 16px; font-weight: 600; color: #ff3399;">
           ${u.tasks_completed || 0}
         </td>
-        <td style="padding: 14px 16px; font-weight: 600; color: ${u.accuracy >= 95 ? '#10b981' : '#f59e0b'};">
+        <td style="padding: 14px 16px; font-weight: 600; color: ${u.accuracy >= 95 ? '#14f195' : '#f59e0b'};">
           ${Number(u.accuracy || 100).toFixed(1)}%
         </td>
-        <td style="padding: 14px 16px; font-weight: 700; color: #10b981;">
+        <td style="padding: 14px 16px; font-weight: 700; color: #14f195;">
           $${Number(u.balance || 0).toFixed(2)}
         </td>
         <td style="padding: 14px 16px; color: var(--text-muted); font-size: 0.78rem;">
@@ -1665,73 +2173,6 @@ async function fetchAndRenderSqlUsers() {
       </tr>
     `;
   }).join('');
-}
-
-function calculateClientBudget() {
-  const rate = parseFloat(document.getElementById('client-camp-rate').value) || 0.25;
-  const count = parseInt(document.getElementById('client-camp-count').value) || 200;
-  
-  const workerPool = rate * count;
-  const protocolFee = workerPool * 0.025;
-  const total = workerPool + protocolFee;
-  
-  document.getElementById('client-worker-pool').innerText = `$${workerPool.toFixed(2)} USDC`;
-  document.getElementById('client-protocol-fee').innerText = `$${protocolFee.toFixed(2)} USDC`;
-  document.getElementById('client-total-escrow').innerText = `$${total.toFixed(2)} USDC`;
-}
-
-function handleClientCreateCampaign(e) {
-  e.preventDefault();
-  
-  const title = document.getElementById('client-camp-title').value.trim();
-  const org = document.getElementById('client-camp-org').value.trim();
-  const type = document.getElementById('client-camp-type').value;
-  const tier = document.getElementById('client-camp-tier').value;
-  const rate = parseFloat(document.getElementById('client-camp-rate').value) || 0.25;
-  const count = parseInt(document.getElementById('client-camp-count').value) || 200;
-  const honeypot = document.getElementById('client-param-honeypot').value;
-  const quorum = document.getElementById('client-param-quorum').value;
-  const format = document.getElementById('client-param-format').value;
-  const guidelines = document.getElementById('client-param-guidelines').value.trim();
-  
-  const totalBudget = rate * count;
-  
-  const newCampaign = {
-    id: `client-camp-${Date.now()}`,
-    title: title,
-    client: org,
-    totalPool: totalBudget,
-    remainingPool: totalBudget,
-    rate: rate,
-    requiredTier: tier,
-    type: type,
-    honeypotRatio: `${honeypot}%`,
-    quorum: `${quorum}%`,
-    format: format,
-    guidelines: guidelines || 'Standard ground-truth verification.',
-    verifiedCount: 0,
-    totalCount: count,
-    tasks: [
-      {
-        instruction: `Verify submission according to rubric: ${guidelines || 'Deterministic ground truth.'}`,
-        isHoneypot: false
-      }
-    ]
-  };
-  
-  campaigns.unshift(newCampaign);
-  renderCampaigns();
-  
-  // Update campaign counters
-  const counterPill = document.getElementById('client-campaigns-counter');
-  if (counterPill) counterPill.innerText = `${campaigns.length} Active`;
-  
-  // Reset form and switch to monitor tab
-  document.getElementById('client-create-campaign-form').reset();
-  calculateClientBudget();
-  
-  showHoneypotToast(true, `⚡ Escrow Locked! $${totalBudget.toFixed(2)} USDC placed into Anchor PDA for "${title}".`);
-  switchClientTab('monitor');
 }
 
 // Client Campaigns Monitor List
@@ -1868,7 +2309,7 @@ function initSubmissionsStream() {
 }
 
 // ============================================================================
-// 15. PILLAR 1: 60FPS KINETIC NEURAL CONSTELLATION CANVAS
+// 15. PILLAR 1: KINETIC BACKGROUND (DISABLED PER USER REQUEST FOR PERFORMANCE)
 // ============================================================================
 let neuralCanvasState = {
   canvas: null,
@@ -1879,96 +2320,132 @@ let neuralCanvasState = {
 };
 
 function initNeuralCanvas() {
-  neuralCanvasState.canvas = document.getElementById('neural-canvas');
-  if (!neuralCanvasState.canvas) return;
-  neuralCanvasState.ctx = neuralCanvasState.canvas.getContext('2d');
-  
-  function resize() {
-    neuralCanvasState.canvas.width = window.innerWidth;
-    neuralCanvasState.canvas.height = window.innerHeight;
+  // Disabled to eliminate GPU composite overhead and eliminate IDE freezes
+  if (neuralCanvasState.animId) {
+    cancelAnimationFrame(neuralCanvasState.animId);
+    neuralCanvasState.animId = null;
   }
-  resize();
-  window.addEventListener('resize', resize);
+}
+
+// ============================================================================
+// 15B. REAL-TIME LANDING PAGE JOBS FEED (SYNCS WITH CLIENT ESCROW POSTS)
+// ============================================================================
+let landingJobFilter = 'all';
+
+function filterLandingJobs(cat) {
+  landingJobFilter = cat;
+  if (typeof playSfx === 'function') playSfx('click');
+  const buttons = document.querySelectorAll('.landing-filter-btn');
+  buttons.forEach(b => b.classList.remove('active'));
   
-  window.addEventListener('mousemove', (e) => {
-    neuralCanvasState.mouse.x = e.clientX;
-    neuralCanvasState.mouse.y = e.clientY;
-  });
+  const targetBtn = document.getElementById(
+    cat === 'all' ? 'job-filter-all' :
+    cat === 'Smart Contracts & Anchor' ? 'job-filter-smart' :
+    cat === 'Frontend DeFi & Web3' ? 'job-filter-defi' : 'job-filter-ai'
+  );
+  if (targetBtn) targetBtn.classList.add('active');
   
-  window.addEventListener('mouseout', () => {
-    neuralCanvasState.mouse.x = null;
-    neuralCanvasState.mouse.y = null;
-  });
+  renderLandingPageJobs();
+}
+
+function renderLandingPageJobs() {
+  const grid = document.getElementById('landing-jobs-grid');
+  if (!grid) return;
   
-  // Create particles
-  const count = Math.min(Math.floor(window.innerWidth / 22), 65);
-  neuralCanvasState.particles = [];
-  for (let i = 0; i < count; i++) {
-    neuralCanvasState.particles.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * 0.65,
-      vy: (Math.random() - 0.5) * 0.65,
-      radius: Math.random() * 2 + 1.2,
-      color: Math.random() > 0.45 ? 'rgba(20, 241, 149, ' : 'rgba(153, 69, 255, '
+  const countEl = document.getElementById('landing-jobs-count');
+  const escrowValEl = document.getElementById('landing-total-escrow-val');
+  
+  const filtered = landingJobFilter === 'all'
+    ? mockClientJobs
+    : mockClientJobs.filter(j => j.category === landingJobFilter);
+    
+  if (countEl) countEl.innerText = mockClientJobs.length;
+  
+  let totalEscrow = 0;
+  mockClientJobs.forEach(j => {
+    (j.milestones || []).forEach(m => {
+      if (m.status !== 'PAID') totalEscrow += (m.amount || 0);
     });
+  });
+  if (escrowValEl) escrowValEl.innerText = `$${totalEscrow.toLocaleString()} USDC`;
+  
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 48px; background: rgba(13,17,32,0.6); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px;">
+        <p style="color: var(--text-secondary); margin-bottom: 14px; font-size: 0.95rem;">No active client opportunities found in this category.</p>
+        <button class="btn-primary-purple" onclick="switchView('client'); switchClientTab('create');">+ Post the First Job</button>
+      </div>
+    `;
+    return;
   }
   
-  function animate() {
-    const { ctx, canvas, particles, mouse } = neuralCanvasState;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  grid.innerHTML = '';
+  filtered.forEach(job => {
+    const card = document.createElement('div');
+    card.className = 'landing-job-card';
     
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      
-      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-      
-      // Draw node dot
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = p.color + '0.65)';
-      ctx.fill();
-      
-      // Distance to cursor
-      if (mouse.x !== null) {
-        const dx = p.x - mouse.x;
-        const dy = p.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < mouse.radius) {
-          const alpha = (1 - dist / mouse.radius) * 0.5;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = `rgba(20, 241, 149, ${alpha})`;
-          ctx.lineWidth = 1.1;
-          ctx.stroke();
-        }
-      }
-      
-      // Mutual node links
-      for (let j = i + 1; j < particles.length; j++) {
-        const p2 = particles[j];
-        const dx = p.x - p2.x;
-        const dy = p.y - p2.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 110) {
-          const alpha = (1 - dist / 110) * 0.22;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.strokeStyle = `rgba(153, 69, 255, ${alpha})`;
-          ctx.lineWidth = 0.8;
-          ctx.stroke();
-        }
-      }
-    }
+    const milestones = job.milestones || [];
+    const paidCount = milestones.filter(m => m.status === 'PAID').length;
+    const totalMilestones = milestones.length;
+    const progressPct = totalMilestones > 0 ? (paidCount / totalMilestones) * 100 : 0;
     
-    neuralCanvasState.animId = requestAnimationFrame(animate);
-  }
-  animate();
+    const isCompleted = job.status === 'Completed';
+    const statusLabel = isCompleted ? '✓ Completed' : '● In Escrow';
+    const statusClass = isCompleted ? 'settled' : 'in-escrow';
+    
+    card.innerHTML = `
+      <div class="landing-job-top">
+        <div class="landing-job-meta-row">
+          <span class="badge-tag-category">${job.category || 'General Web3'}</span>
+          <span class="landing-job-pda" title="Solana Devnet Anchor PDA">⚓ ${job.pda ? job.pda.substring(0, 14) + '...' : 'Devnet Escrow'}</span>
+        </div>
+        <div class="badge-tag-budget">$${(job.budget || 0).toLocaleString()} USDC</div>
+      </div>
+      
+      <h3 class="landing-job-title">${job.title}</h3>
+      <p class="landing-job-desc">${job.description ? (job.description.length > 140 ? job.description.substring(0, 140) + '...' : job.description) : 'Milestone-based verified escrow opportunity.'}</p>
+      
+      <div class="landing-job-milestones-bar">
+        <div class="landing-job-progress-info">
+          <span>Milestones: ${paidCount}/${totalMilestones} settled</span>
+          <span class="landing-job-status-pill ${statusClass}">${statusLabel}</span>
+        </div>
+        <div class="progress-bar-bg" style="height: 6px; margin-top: 6px;">
+          <div class="progress-bar-fill" style="width: ${progressPct}%; background: var(--primary);"></div>
+        </div>
+      </div>
+      
+      <div class="landing-job-footer">
+        <div class="landing-job-client">
+          <span style="color: var(--text-muted); font-size: 0.76rem;">Client:</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: #fff;">${job.client || 'Verified Client'}</span>
+        </div>
+        <div class="landing-job-actions">
+          <button class="btn-job-details" onclick="openJobInspectionModal('${job.id}')">
+            View Details
+          </button>
+          <button class="btn-job-apply" onclick="handleApplyJob('${job.id}')">
+            Apply &rarr;
+          </button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function openJobInspectionModal(jobId) {
+  if (typeof playSfx === 'function') playSfx('click');
+  switchView('client');
+  switchClientTab('jobs');
+}
+
+function handleApplyJob(jobId) {
+  const job = mockClientJobs.find(j => j.id === jobId);
+  if (typeof playSfx === 'function') playSfx('click');
+  showHoneypotToast(true, `📋 Viewing requirements for "${job ? job.title : 'Job'}".`);
+  switchView('client');
+  switchClientTab('proposals');
 }
 
 // ============================================================================

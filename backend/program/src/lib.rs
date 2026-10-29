@@ -14,6 +14,16 @@ pub mod solwork {
         total_tasks: u32,
         amount: u64,
     ) -> Result<()> {
+        require!(!campaign_id.is_empty() && campaign_id.as_bytes().len() <= 32, SolWorkError::InvalidCampaignIdLength);
+        require!(rate_per_task > 0, SolWorkError::InvalidRate);
+        require!(total_tasks > 0, SolWorkError::InvalidTotalTasks);
+
+        // Security Guard: Prevent underfunded campaigns
+        let required_funding = (rate_per_task as u128)
+            .checked_mul(total_tasks as u128)
+            .ok_or(SolWorkError::MathOverflow)? as u64;
+        require!(amount >= required_funding, SolWorkError::InsufficientCampaignFunding);
+
         let campaign = &mut ctx.accounts.campaign;
         campaign.creator = ctx.accounts.creator.key();
         campaign.authority = ctx.accounts.authority.key();
@@ -40,7 +50,13 @@ pub mod solwork {
     pub fn release_payout(ctx: Context<ReleasePayout>, amount: u64) -> Result<()> {
         let campaign = &mut ctx.accounts.campaign;
         
-        // Ensure the campaign is not exhausted
+        // Security Guard: Constrain payout amount strictly to rate_per_task
+        require!(
+            amount == campaign.rate_per_task,
+            SolWorkError::InvalidPayoutAmount
+        );
+
+        // Security Guard: Ensure the campaign is not exhausted
         require!(
             campaign.completed_tasks < campaign.total_tasks,
             SolWorkError::CampaignExhausted
@@ -150,7 +166,10 @@ pub struct ReleasePayout<'info> {
     pub campaign: Account<'info, Campaign>,
     #[account(mut)]
     pub vault: Account<'info, TokenAccount>,
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = worker_token_account.mint == vault.mint @ SolWorkError::MintMismatch
+    )]
     pub worker_token_account: Account<'info, TokenAccount>,
     pub authority: Signer<'info>,
     pub token_program: Program<'info, Token>,
@@ -190,4 +209,18 @@ pub struct Campaign {
 pub enum SolWorkError {
     #[msg("This campaign has already completed all of its allocated tasks.")]
     CampaignExhausted,
+    #[msg("Payout amount must exactly equal the campaign rate per task.")]
+    InvalidPayoutAmount,
+    #[msg("Initial campaign funding is insufficient to cover all allocated tasks.")]
+    InsufficientCampaignFunding,
+    #[msg("Rate per task must be greater than zero.")]
+    InvalidRate,
+    #[msg("Total tasks must be greater than zero.")]
+    InvalidTotalTasks,
+    #[msg("Campaign ID must be between 1 and 32 characters.")]
+    InvalidCampaignIdLength,
+    #[msg("Arithmetic overflow occurred during calculation.")]
+    MathOverflow,
+    #[msg("Worker token account mint does not match campaign vault mint.")]
+    MintMismatch,
 }

@@ -12,12 +12,9 @@
 </head>
 <body>
 
-  <!-- KINETIC NEURAL CANVAS, CONFETTI ENGINE & ACETERNITY AURORA GLOWS -->
-  <canvas id="neural-canvas" class="bg-neural-canvas"></canvas>
+  <!-- CONFETTI ENGINE (One-shot milestone celebration only) -->
   <canvas id="confetti-canvas" class="bg-confetti-canvas"></canvas>
-  <div class="aurora-glow-1"></div>
-  <div class="aurora-glow-2"></div>
-  <div class="retro-grid-mesh"></div>
+  <div class="subtle-ambient-glow"></div>
 
   <!-- TOP PROTOCOL TICKER -->
   <div class="top-announcement-bar">
@@ -44,20 +41,20 @@
       </div>
 
       <!-- PORTAL VIEW SWITCHER TABS -->
-      <nav class="portal-nav-switcher">
-        <button id="nav-tab-landing" class="portal-tab-btn active" onclick="switchView('landing')">
+      <nav class="portal-nav-switcher" role="tablist" aria-label="Portal Navigation">
+        <button id="nav-tab-landing" class="portal-tab-btn active" onclick="switchView('landing')" role="tab" aria-selected="true">
           <span class="tab-icon">🌐</span>
           <span>Overview</span>
         </button>
-        <button id="nav-tab-workspace" class="portal-tab-btn" onclick="switchView('workspace')">
-          <span class="tab-icon">🛠️</span>
+        <button id="nav-tab-workspace" class="portal-tab-btn" onclick="switchView('workspace')" role="tab" aria-selected="false">
+          <span class="tab-icon">⚡</span>
           <span>Task Workstation</span>
           <span class="nav-pill-badge">Earn</span>
         </button>
-        <button id="nav-tab-client" class="portal-tab-btn" onclick="switchView('client')">
+        <button id="nav-tab-client" class="portal-tab-btn" onclick="switchView('client')" role="tab" aria-selected="false">
           <span class="tab-icon">🏢</span>
           <span>Clients Area</span>
-          <span class="nav-pill-badge enterprise">AI Labs</span>
+          <span class="nav-pill-badge enterprise">Hire & Escrow</span>
         </button>
       </nav>
 
@@ -83,9 +80,9 @@
           <span class="status-dot online"></span>
           <span class="network-name">Solana Devnet</span>
         </div>
-        <button id="connect-wallet-btn" class="wallet-btn" onclick="openAuthModal()">
+        <button id="connect-wallet-btn" class="wallet-btn btn-wallet-nav" onclick="openAuthModal()">
           <span class="wallet-dot"></span>
-          <span id="wallet-text">Connect Phantom</span>
+          <span id="wallet-text">Select Wallet</span>
         </button>
       </div>
     </div>
@@ -122,18 +119,18 @@
         </p>
 
         <div class="hero-cta-group">
-          <button class="btn-hero-primary" onclick="switchView('workspace')">
-            <span>🛠️ Enter Task Workstation</span>
+          <button class="btn-hero-client" onclick="switchView('client')">
+            <span>🏢 Enter Clients Area & Escrow</span>
             <span class="arrow">&rarr;</span>
           </button>
-          <button class="btn-hero-pilot" onclick="openPilotModal()">
-            <span>⚡ Request a 50-Task Pilot</span>
+          <button class="btn-hero-primary" onclick="switchView('workspace')">
+            <span>🛠️ Task Workstation</span>
           </button>
-          <button class="btn-hero-secondary" onclick="switchView('client')">
-            <span>🏢 Clients Area</span>
+          <button class="btn-hero-pilot" onclick="openPilotModal()">
+            <span>⚡ Request Pilot</span>
           </button>
           <button class="btn-hero-outline" onclick="openInvestorModal()">
-            <span>📑 One-Pager</span>
+            <span>📑 Executive Brief</span>
           </button>
         </div>
 
@@ -574,6 +571,47 @@
         </div>
       </div>
     </div>
+  <!-- ================= FEATURED LIVE ESCROW JOBS & BOUNTIES (SYNCED WITH CLIENT AREA) ================= -->
+  <section class="landing-jobs-section" id="landing-jobs-section">
+    <div class="landing-jobs-container">
+      <div class="section-header-row">
+        <div>
+          <div class="landing-jobs-tag">
+            <span class="live-pulse-dot"></span>
+            <span>LIVE ANCHOR DEVNET ESCROWS</span>
+          </div>
+          <h2 class="landing-jobs-title">Featured Client Jobs & Milestone Bounties</h2>
+          <p class="landing-jobs-subtitle">Real-time developer & annotator opportunities. Funds deposited into non-custodial Anchor PDAs.</p>
+        </div>
+        <div class="landing-jobs-header-actions">
+          <button class="btn-primary-purple" onclick="switchView('client'); switchClientTab('create');">
+            <span>+ Post a Job</span>
+          </button>
+          <button class="btn-outline-pill" onclick="switchView('client')">
+            <span>Client Dashboard &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- FILTER & ESCROW METRICS TOOLBAR -->
+      <div class="landing-jobs-toolbar">
+        <div class="landing-filter-group">
+          <button id="job-filter-all" class="landing-filter-btn active" onclick="filterLandingJobs('all')">All Jobs (<span id="landing-jobs-count">3</span>)</button>
+          <button id="job-filter-smart" class="landing-filter-btn" onclick="filterLandingJobs('Smart Contracts & Anchor')">Smart Contracts</button>
+          <button id="job-filter-defi" class="landing-filter-btn" onclick="filterLandingJobs('Frontend DeFi & Web3')">Frontend DeFi</button>
+          <button id="job-filter-ai" class="landing-filter-btn" onclick="filterLandingJobs('AI Dataset & RLHF')">AI Datasets</button>
+        </div>
+        <div class="landing-jobs-metric-chip">
+          <span class="metric-chip-label">Active Escrow Locked:</span>
+          <span id="landing-total-escrow-val" class="metric-chip-val">$9,700 USDC</span>
+        </div>
+      </div>
+
+      <!-- JOBS GRID (DYNAMICALLY RENDERED FROM mockClientJobs) -->
+      <div id="landing-jobs-grid" class="landing-jobs-grid">
+        <!-- Injected dynamically via renderLandingPageJobs() -->
+      </div>
+    </div>
   </section>
 
   <!-- DUAL-PORTAL ACCESS GATEWAY SECTION -->
@@ -777,323 +815,255 @@
 <!-- ================= VIEW 3: ENTERPRISE CLIENTS AREA ================= -->
 <div id="view-client" class="portal-view" style="display: none;">
 
-  <!-- CLIENT PORTAL HEADER & METRICS -->
-  <section class="client-portal-header">
-    <div class="client-header-container">
-      <div class="client-title-box">
-        <div class="portal-sub-tag enterprise">ENTERPRISE CLIENT SUITE &bull; ANCHOR PROTOCOL</div>
-        <h2>🏢 Enterprise AI Labs & Clients Portal</h2>
-        <p>Deposit non-custodial SPL USDC escrows, set deterministic honeypot parameters, monitor annotation completion in real time, and extract verified training datasets.</p>
-      </div>
-
-      <div class="client-top-metrics">
-        <div class="client-stat-pill">
-          <span class="pill-label">Total Escrow Vaults</span>
-          <span class="pill-val">$19,500 USDC</span>
-        </div>
-        <div class="client-stat-pill">
-          <span class="pill-label">Tasks Consensus-Verified</span>
-          <span class="pill-val">2,842</span>
-        </div>
-        <div class="client-stat-pill">
-          <span class="pill-label">Honeypot Quality Consensus</span>
-          <span class="pill-val text-success">99.4%</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="client-portal-content">
+  <!-- CLIENT DASHBOARD (EXACT LAYOUT & SIMPLICITY OF NUMBER 1 DESIGN) -->
+  <section class="client-dash-header-section">
     <div class="client-container">
-
-      <!-- CLIENT SUBNAV TABS -->
-      <div class="client-subnav-bar">
-        <button id="client-subtab-create" class="client-nav-btn active" onclick="switchClientTab('create')">
-          <span>🚀 Launch & Escrow Dataset</span>
-        </button>
-        <button id="client-subtab-monitor" class="client-nav-btn" onclick="switchClientTab('monitor')">
-          <span>📊 Live Campaigns & Progress</span>
-          <span id="client-campaigns-counter" class="counter-badge">3 Active</span>
-        </button>
-        <button id="client-subtab-dispatch" class="client-nav-btn" onclick="switchClientTab('dispatch')">
-          <span>📦 Extract & Dispatch Data</span>
-        </button>
-        <button id="client-subtab-users" class="client-nav-btn" onclick="switchClientTab('users')">
-          <span>👥 Contributor Directory (SQL)</span>
-          <span id="sql-users-count-badge" class="counter-badge" style="background: rgba(16,185,129,0.2); color: #10b981;">Live</span>
+      <div class="client-dash-header">
+        <div class="space-y-1">
+          <h1 class="client-dash-title">Client Dashboard</h1>
+          <p class="client-dash-subtitle">Manage your projects and find talent</p>
+        </div>
+        <button class="btn-primary-pill" onclick="switchClientTab('create')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+          <span>Post a Job</span>
         </button>
       </div>
 
-      <!-- SUBTAB 1: CAMPAIGN CREATOR WITH CUSTOM PARAMETERS -->
-      <div id="client-tab-create-panel" class="client-tab-panel">
-        <div class="client-card">
-          <div class="card-header-row">
-            <div>
-              <h3 class="card-title-lg">Deploy Non-Custodial Dataset Escrow</h3>
-              <p class="card-subtitle-sm">Lock SPL USDC into an Anchor PDA state machine. Funds are released strictly upon ground-truth consensus verification.</p>
+      <!-- 4 CLEAN STAT CARDS EXACTLY LIKE NUMBER 1 DESIGN -->
+      <div class="client-stats-grid-4">
+        <div class="stat-clean-card">
+          <div class="stat-clean-top">
+            <span class="stat-clean-label">Active Jobs</span>
+            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
+          </div>
+          <p id="client-stat-active-jobs" class="stat-clean-val">2</p>
+          <p class="stat-clean-sub">In progress</p>
+        </div>
+
+        <div class="stat-clean-card">
+          <div class="stat-clean-top">
+            <span class="stat-clean-label">Total Spent</span>
+            <svg class="stat-clean-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+          <p id="client-stat-total-escrow" class="stat-clean-val">28.5 SOL</p>
+          <p class="stat-clean-sub">≈ $5,130</p>
+        </div>
+
+        <div class="stat-clean-card">
+          <div class="stat-clean-top">
+            <span class="stat-clean-label">Total Hires</span>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path></svg>
+          </div>
+          <p class="stat-clean-val">18</p>
+          <p class="stat-clean-sub text-green">+3 this month</p>
+        </div>
+
+        <div class="stat-clean-card">
+          <div class="stat-clean-top">
+            <span class="stat-clean-label">Avg Rating</span>
+            <svg class="stat-clean-icon text-accent" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+          <p class="stat-clean-val">4.8 ⭐</p>
+          <p class="stat-clean-sub text-green">Excellent</p>
+        </div>
+      </div>
+
+      <!-- MAIN 2-COLUMN DASHBOARD GRID -->
+      <div class="dashboard-grid-layout">
+        <!-- LEFT 2 COLUMNS -->
+        <div class="dash-col-main">
+          <!-- MAIN JOBS VIEW -->
+          <div id="client-tab-jobs-panel" class="client-tab-panel">
+            <div class="dash-clean-card">
+              <div class="dash-card-header">
+                <h2 class="dash-card-title">Your Posted Jobs</h2>
+                <a class="dash-card-link" onclick="switchClientTab('proposals')">View Talent Proposals (12) →</a>
+              </div>
+              <div id="client-escrow-jobs-list">
+                <!-- Injected via app.js -->
+              </div>
             </div>
-            <span class="pda-badge">Anchor 0.29 PDA Vault</span>
+
+            <!-- RECENT ACTIVITY CARD EXACTLY FROM NUMBER 1 DESIGN -->
+            <div class="dash-clean-card" style="margin-top: 24px;">
+              <h2 class="dash-card-title" style="margin-bottom: 18px;">Recent Activity</h2>
+              <div class="activity-stream">
+                <div class="activity-item">
+                  <div class="activity-icon-box green">✓</div>
+                  <div>
+                    <p class="activity-title">Milestone approved & escrow settled</p>
+                    <p class="activity-meta">NFT Marketplace Escrow #1 • 2 hours ago</p>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon-box blue">👥</div>
+                  <div>
+                    <p class="activity-title">New proposal received from Alex Chen</p>
+                    <p class="activity-meta">Smart Contract Development • 5 hours ago</p>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon-box purple">💼</div>
+                  <div>
+                    <p class="activity-title">Job posted successfully to Devnet</p>
+                    <p class="activity-meta">Frontend Development for DeFi Dashboard • 1 day ago</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <form id="client-create-campaign-form" onsubmit="handleClientCreateCampaign(event)">
+      <!-- TAB 2: POST JOB & DEPOSIT ESCROW WITH DYNAMIC MILESTONE BUILDER -->
+      <div id="client-tab-create-panel" class="client-tab-panel" style="display: none;">
+        <div class="dash-clean-card">
+          <button class="btn-outline-pill" style="margin-bottom: 16px; width: auto;" onclick="switchClientTab('jobs')">← Back to Dashboard</button>
+          <div class="dash-card-header">
+            <div>
+              <h3 class="dash-card-title">Post New Job & Deploy Anchor PDA Escrow</h3>
+              <p class="stat-clean-sub">Create milestone deliverables and deposit SPL USDC into a non-custodial Solana Anchor smart contract.</p>
+            </div>
+            <span class="badge-clean-open">Anchor 0.29 PDA</span>
+          </div>
+
+          <form id="client-new-job-form" onsubmit="handleCreateClientJob(event)">
             <div class="form-grid-2">
               <div class="form-group">
-                <label class="form-label">Dataset / Campaign Title</label>
-                <input type="text" id="client-camp-title" class="form-input" placeholder="e.g. African Dialect Audio Speech Corpus" required>
+                <label class="form-label">Job / Project Title</label>
+                <input type="text" id="new-job-title" class="form-input" placeholder="e.g. Solana Blinks & Actions Protocol Integration" required>
               </div>
               <div class="form-group">
-                <label class="form-label">AI Organization / Research Lab</label>
-                <input type="text" id="client-camp-org" class="form-input" placeholder="e.g. Sahara Subnet 4 / Masakhane NLP" required>
-              </div>
-            </div>
-
-            <div class="form-grid-3">
-              <div class="form-group">
-                <label class="form-label">Modality</label>
-                <select id="client-camp-type" class="form-select" required>
-                  <option value="rlhf">Code / LLM RLHF Evaluation</option>
-                  <option value="audio">African Audio & Speech Transcription</option>
-                  <option value="bbox">Computer Vision Bounding Box</option>
+                <label class="form-label">Category / Domain</label>
+                <select id="new-job-category" class="form-select" required>
+                  <option value="Smart Contracts & Anchor">Smart Contracts & Anchor (Rust)</option>
+                  <option value="Frontend DeFi & Web3">Frontend DeFi & Web3 (React/Next.js)</option>
+                  <option value="AI Dataset & RLHF">AI Dataset & Audio RLHF</option>
+                  <option value="Security Audit & QA">Security Audit & QA</option>
                 </select>
               </div>
-              <div class="form-group">
-                <label class="form-label">Min. Contributor Tier</label>
-                <select id="client-camp-tier" class="form-select" required>
-                  <option value="bronze">Bronze (General Tasks)</option>
-                  <option value="silver" selected>Silver (Verified Accuracy &gt; 95%)</option>
-                  <option value="gold">Gold (Elite Coders / STEM Degrees)</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Rate Per Task (USDC)</label>
-                <input type="number" id="client-camp-rate" class="form-input" step="0.01" min="0.01" max="10.00" value="0.25" oninput="calculateClientBudget()" required>
-              </div>
             </div>
 
-            <!-- CUSTOM QUALITY & EVALUATION PARAMETERS (AS REQUESTED) -->
-            <div class="custom-parameters-section">
-              <div class="param-section-title">
-                <span>⚙️ Quality Control & Consensus Parameters</span>
-                <span class="param-badge">Enforced On-Chain</span>
-              </div>
-              <div class="form-grid-3">
-                <div class="form-group">
-                  <label class="form-label">Deterministic Honeypot Ratio</label>
-                  <select id="client-param-honeypot" class="form-select">
-                    <option value="10">10% Random Verification Audits</option>
-                    <option value="15" selected>15% High-Precision Audits</option>
-                    <option value="20">20% Frontier Research Audits</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Consensus Quorum Threshold</label>
-                  <select id="client-param-quorum" class="form-select">
-                    <option value="90">90% Majority Agreement</option>
-                    <option value="95" selected>95% High-Confidence Quorum</option>
-                    <option value="99">99% Unanimous Slashing Quorum</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Target Delivery Format</label>
-                  <select id="client-param-format" class="form-select">
-                    <option value="jsonl">JSONL (OpenAI / Anthropic Fine-tuning)</option>
-                    <option value="parquet">Apache Parquet (PyTorch / HuggingFace)</option>
-                    <option value="csv">Standard CSV with WAV URLs</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Custom Annotation Constraints / Rubric Prompt</label>
-                <textarea id="client-param-guidelines" class="form-textarea" rows="2" placeholder="e.g. Reject audio clips with clipping > -1dB. Transcribe Nigerian Pidgin phonetically without Anglophone normalization."></textarea>
-              </div>
+            <div class="form-group">
+              <label class="form-label">Project Description & Requirements</label>
+              <textarea id="new-job-desc" class="form-textarea" rows="3" placeholder="Describe the deliverable scope, technical requirements, and target timeline..." required></textarea>
             </div>
 
-            <div class="form-row-budget">
+            <!-- DYNAMIC MILESTONE BUILDER -->
+            <div class="milestones-container" style="margin: 18px 0;">
+              <div class="milestones-header-title">
+                <span>🎯 Milestone Deliverables Breakdown</span>
+                <span class="zero-fees-tag">Zero Hidden Fees</span>
+              </div>
+              
+              <div id="milestone-builder-list" class="milestone-builder-list">
+                <!-- Milestone Rows injected here -->
+              </div>
+
+              <button type="button" class="btn-add-milestone" onclick="addMilestoneRow()">
+                <span>+ Add Another Milestone</span>
+              </button>
+            </div>
+
+            <div class="form-row-budget" style="margin-top: 20px;">
               <div class="form-group" style="flex: 1;">
-                <label class="form-label">Task Volume (Total Tasks)</label>
-                <input type="number" id="client-camp-count" class="form-input" min="10" max="100000" value="200" oninput="calculateClientBudget()" required>
+                <label class="form-label">Freelancer Expertise Tier</label>
+                <select id="new-job-tier" class="form-select">
+                  <option value="verified">Verified Top 5% Solana Engineers</option>
+                  <option value="general">Open Ecosystem Contributors</option>
+                </select>
               </div>
               <div class="client-escrow-summary-box">
-                <div class="escrow-summary-title">Anchor PDA Escrow Deposit Required:</div>
+                <div class="escrow-summary-title">Total Escrow Deposit (USDC):</div>
                 <div class="escrow-math-row">
-                  <span>Worker Payout Pool:</span>
-                  <strong id="client-worker-pool">$50.00 USDC</strong>
+                  <span>Milestones Total:</span>
+                  <strong id="job-builder-milestones-sum" style="color: #fff;">$0.00 USDC</strong>
                 </div>
                 <div class="escrow-math-row">
-                  <span>Protocol Take-Rate (2.5%):</span>
-                  <span id="client-protocol-fee">$1.25 USDC</span>
+                  <span>Protocol Remittance Cut:</span>
+                  <span style="color: var(--primary); font-weight: 700;">0.00% ($0.00)</span>
                 </div>
                 <div class="escrow-math-row highlight">
-                  <span>Total Escrow Deposit:</span>
-                  <strong id="client-total-escrow" class="text-success">$51.25 USDC</strong>
+                  <span>Anchor Escrow Required:</span>
+                  <strong id="job-builder-total-escrow" class="text-accent-clean" style="font-size: 1.25rem;">$0.00 USDC</strong>
                 </div>
               </div>
             </div>
 
-            <button type="submit" id="btn-client-deploy-escrow" class="btn-confirm-cashout" style="margin-top: 20px;">
-              ⚡ Sign Solana Transaction & Deposit Escrow
+            <button type="submit" class="btn-primary-purple" style="width: 100%; justify-content: center; margin-top: 20px; font-size: 1rem; padding: 14px;">
+              ⚡ Sign with Phantom & Deploy Escrow to Devnet
             </button>
           </form>
         </div>
       </div>
 
-      <!-- SUBTAB 2: CAMPAIGN PROGRESS MONITOR & SUBMISSION STREAM -->
-      <div id="client-tab-monitor-panel" class="client-tab-panel" style="display: none;">
-        <div class="client-card">
-          <div class="card-header-row">
+      <!-- TAB 3: TALENT PROPOSALS & BIDS -->
+      <div id="client-tab-proposals-panel" class="client-tab-panel" style="display: none;">
+        <div class="dash-clean-card">
+          <button class="btn-outline-pill" style="margin-bottom: 16px; width: auto;" onclick="switchClientTab('jobs')">← Back to Dashboard</button>
+          <div class="dash-card-header">
             <div>
-              <h3 class="card-title-lg">Active Escrow Campaigns & Real-Time Progress</h3>
-              <p class="card-subtitle-sm">Track milestone completion, remaining PDA escrow vaults, and quality consensus in real time.</p>
+              <h3 class="dash-card-title">Received Talent Proposals & Hires</h3>
+              <p class="stat-clean-sub">Pre-vetted developers and engineers ready to execute your milestones.</p>
             </div>
-            <button class="btn-refresh-data" onclick="renderClientMonitorCampaigns()">🔄 Refresh On-Chain State</button>
+            <span class="badge-clean-open">12 Verified Proposals</span>
           </div>
 
-          <!-- Dynamic Active Campaigns List -->
-          <div id="client-active-campaigns-list" class="client-campaigns-list">
+          <div id="client-proposals-grid" class="proposals-grid" style="margin-top: 18px;">
             <!-- Injected via app.js -->
           </div>
-
-          <!-- Real-Time Verified Submissions Audit Log -->
-          <div class="audit-log-section">
-            <div class="audit-log-title">
-              <span>⚡ Live Consensus Submissions Stream (Lagos &bull; Nairobi &bull; Kigali)</span>
-              <span class="pulse-indicator">● LIVE</span>
-            </div>
-            <div id="client-submissions-stream" class="audit-stream-list">
-              <!-- Injected via app.js -->
-            </div>
-          </div>
         </div>
       </div>
 
-      <!-- SUBTAB 3: DATA EXTRACTION & DISPATCH -->
-      <div id="client-tab-dispatch-panel" class="client-tab-panel" style="display: none;">
-        <div class="client-card">
-          <div class="card-header-row">
-            <div>
-              <h3 class="card-title-lg">Verified Ground-Truth Dataset Extraction & Dispatch</h3>
-              <p class="card-subtitle-sm">Request our data engineering team to cryptographically package and transmit your consensus-verified training dataset directly to your engineering team.</p>
-            </div>
-            <span class="pda-badge verified">Zero Noise Guarantee</span>
-          </div>
+    </div> <!-- End dash-col-main -->
 
-          <div class="dispatch-grid-2">
-            <!-- Option A: Request Official Team Dispatch -->
-            <div class="dispatch-box">
-              <div class="dispatch-icon">📬</div>
-              <h4>Request Verified Dataset Dispatch</h4>
-              <p>Because mission-critical AI training requires audited data integrity, our team extracts the Anchor-verified submissions, runs cryptographic deduplication, and securely dispatches the final dataset package.</p>
-              
-              <form id="dispatch-request-form" onsubmit="handleRequestDataDispatch(event)" style="margin-top: 14px;">
-                <div class="form-group">
-                  <label class="form-label">Recipient Lab Email / Webhook</label>
-                  <input type="email" id="dispatch-email" class="form-input" placeholder="e.g. data-lead@sahara.ai or engineering@masakhane.io" required>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Select Campaign to Extract</label>
-                  <select id="dispatch-campaign-select" class="form-select" required>
-                    <option value="audio-transcribe">English Accents Speech Labeling (1,480 / 2,000 Verified)</option>
-                    <option value="rlhf-coding">Coding LLM Assistant Response Rating (1,150 / 1,500 Verified)</option>
-                    <option value="bbox-bounding">Autonomous Vehicle Obstacle Boxing (212 / 500 Verified)</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Target Format</label>
-                  <select id="dispatch-format-select" class="form-select">
-                    <option value="jsonl">Cleaned JSONL (Prompt / Completion)</option>
-                    <option value="parquet">Apache Parquet Format</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn-confirm-cashout" style="margin-top: 10px;">
-                  🚀 Request Dataset Dispatch via xxii.services@gmail.com
-                </button>
-              </form>
-            </div>
-
-            <!-- Option B: Instant Offline Inspection Sample -->
-            <div class="dispatch-box">
-              <div class="dispatch-icon">💾</div>
-              <h4>Instant Sample Download (JSONL)</h4>
-              <p>Download an immediate offline sample batch of verified contributor submissions formatted for direct input into PyTorch / Hugging Face tokenizers.</p>
-              
-              <div class="sample-preview-box">
-                <span class="code-label">JSONL Schema Preview</span>
-                <code>{"id": "task-781", "modality": "audio", "transcript": "Solana settles transactions in 400 milliseconds", "consensus_accuracy": 1.0, "pda_tx": "5k2p...w9Yq"}</code>
-              </div>
-
-              <button class="btn-hero-outline" style="width: 100%; justify-content: center; margin-top: 20px;" onclick="downloadSampleJsonl()">
-                ⬇️ Download Verified Sample (JSONL)
-              </button>
-              
-              <div class="dispatch-security-note">
-                🔒 Cryptographically signed by SolWork Anchor Escrow PDA Program Authority.
-              </div>
-        </div>
-      </div>
-
-      <!-- SUBTAB 4: LIVE SQL USER & CONTRIBUTOR DIRECTORY -->
-      <div id="client-tab-users-panel" class="client-tab-panel" style="display: none;">
-        <div class="client-card">
-          <div class="card-header-row" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
-            <div>
-              <h3 class="card-title-lg">🗄️ Live SQL User & Contributor Registry</h3>
-              <p class="card-subtitle-sm">Real-time individual profiles from backend SQLite database. Every email login, embedded Solana wallet, completed task, and balance is tracked individually.</p>
-            </div>
-            <div style="display: flex; gap: 10px;">
-              <button class="btn-hero-outline" style="padding: 8px 16px; font-size: 0.82rem;" onclick="fetchAndRenderSqlUsers()">
-                🔄 Refresh SQL Ledger
-              </button>
-            </div>
-          </div>
-
-          <!-- SUMMARY METRICS -->
-          <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px;">
-            <div class="metric-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;">
-              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Registered Testers / Workers</div>
-              <div id="sql-total-users" style="font-size: 1.8rem; font-weight: 700; color: #fff; margin-top: 4px;">--</div>
-            </div>
-            <div class="metric-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;">
-              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Total Tasks Completed</div>
-              <div id="sql-total-tasks" style="font-size: 1.8rem; font-weight: 700; color: #38bdf8; margin-top: 4px;">--</div>
-            </div>
-            <div class="metric-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;">
-              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Total Verified Balance</div>
-              <div id="sql-total-balance" style="font-size: 1.8rem; font-weight: 700; color: #10b981; margin-top: 4px;">-- USDC</div>
-            </div>
-            <div class="metric-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;">
-              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Avg Contributor Accuracy</div>
-              <div id="sql-avg-accuracy" style="font-size: 1.8rem; font-weight: 700; color: #a855f7; margin-top: 4px;">--%</div>
-            </div>
-          </div>
-
-          <!-- USERS TABLE -->
-          <div class="table-responsive" style="overflow-x: auto; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
-            <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
-              <thead>
-                <tr style="background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary);">
-                  <th style="padding: 12px 16px;">User Email / Identity</th>
-                  <th style="padding: 12px 16px;">Embedded Solana Wallet</th>
-                  <th style="padding: 12px 16px;">Role</th>
-                  <th style="padding: 12px 16px;">Tasks Done</th>
-                  <th style="padding: 12px 16px;">Accuracy</th>
-                  <th style="padding: 12px 16px;">Balance (USDC)</th>
-                  <th style="padding: 12px 16px;">Last Active</th>
-                </tr>
-              </thead>
-              <tbody id="sql-users-table-body">
-                <tr>
-                  <td colspan="7" style="padding: 24px; text-align: center; color: var(--text-muted);">Loading SQL records...</td>
-                </tr>
-              </tbody>
-            </table>
+    <!-- RIGHT 1 COLUMN (SIDEBAR EXACTLY FROM NUMBER 1 DESIGN) -->
+    <div class="dash-col-side">
+      <!-- Profile Card -->
+      <div class="dash-clean-card">
+        <h3 class="dash-card-title" style="margin-bottom: 16px;">Your Profile</h3>
+        <div class="profile-row">
+          <div class="profile-avatar"></div>
+          <div class="profile-details">
+            <h4>7xKX...9mP4</h4>
+            <p>Client</p>
           </div>
         </div>
+        <div class="profile-stats-grid">
+          <div>
+            <p class="stat-clean-sub">Member Since</p>
+            <p style="font-weight: 600; color: #fff; margin: 2px 0 0;">Jan 2024</p>
+          </div>
+          <div>
+            <p class="stat-clean-sub">Verified</p>
+            <p style="font-weight: 600; color: #22c55e; margin: 2px 0 0;">Yes ✓</p>
+          </div>
+        </div>
+        <button class="btn-outline-pill" onclick="alert('Profile editor: Verified SolWork Client Account.')">Edit Profile</button>
       </div>
 
-    </div>
-  </div>
+      <!-- In Escrow Card -->
+      <div class="card-in-escrow">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h3 style="font-size: 1.05rem; font-weight: 600; color: #fff; margin: 0;">In Escrow</h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </div>
+        <p style="font-size: 1.9rem; font-weight: 700; color: #fff; margin: 0 0 4px 0;">8.5 SOL</p>
+        <p class="stat-clean-sub">≈ $1,530 USD &bull; Locked for active milestones</p>
+      </div>
 
+      <!-- Quick Actions Card -->
+      <div class="dash-clean-card">
+        <h3 class="dash-card-title" style="margin-bottom: 14px;">Quick Actions</h3>
+        <div class="quick-actions-list">
+          <button class="quick-btn primary" onclick="switchClientTab('create')">+ Post New Job</button>
+          <button class="quick-btn" onclick="switchClientTab('proposals')">👥 Browse Freelancers</button>
+          <button class="quick-btn" onclick="switchClientTab('jobs')">📋 View Contracts</button>
+          <button class="quick-btn" onclick="alert('Payment History: All 6 on-chain settlements confirmed on Solana.')">💳 Payment History</button>
+        </div>
+      </div>
+    </div> <!-- End dash-col-side -->
+  </div> <!-- End dashboard-grid-layout -->
+</div> <!-- End client-container -->
+</section>
 </div> <!-- END VIEW 3: CLIENT PORTAL -->
 
   <!-- WORKSPACE OVERLAY (DYNAMIC INTERACTIVE TASK MODAL) -->
@@ -1505,6 +1475,74 @@
           <div style="font-size: 0.85rem; color: var(--text-secondary);">
             Erioluwa Ayodeji (<a href="mailto:xxii.services@gmail.com" style="color: var(--primary);">xxii.services@gmail.com</a>) will reach out within 4 hours to initialize your Anchor test escrow vault.
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FREELANCER DELIVERABLE REVIEW MODAL (CYBERPUNK HOT PINK) -->
+  <div id="deliverable-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width: 680px; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255, 0, 127, 0.4); box-shadow: 0 0 35px rgba(255, 0, 127, 0.25);">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.25rem;">🔍</span>
+          <span class="modal-title">Review Freelancer Deliverable</span>
+        </div>
+        <button class="modal-close" onclick="closeDeliverableModal()">&times;</button>
+      </div>
+
+      <div class="deliverable-review-body">
+        <div class="deliverable-meta-grid">
+          <div>
+            <span class="pill-label">Freelancer</span>
+            <strong id="modal-dev-name" style="color: #fff; display: block; margin-top: 2px;">Alex Chen</strong>
+            <span id="modal-dev-wallet" style="font-family: monospace; font-size: 0.75rem; color: #ff3399;">7xKX...9mP4</span>
+          </div>
+          <div>
+            <span class="pill-label">Milestone Target</span>
+            <strong id="modal-milestone-title" style="color: #fff; display: block; margin-top: 2px;">Minting Logic & Tests</strong>
+            <span id="modal-milestone-amount" class="text-mint" style="font-family: monospace; font-weight: 800;">$2,500 USDC</span>
+          </div>
+          <div>
+            <span class="pill-label">Anchor Escrow PDA</span>
+            <span id="modal-pda-address" style="font-family: monospace; font-size: 0.75rem; color: #14f195;">EP2x...9kQ1</span>
+            <span style="display: block; font-size: 0.72rem; color: var(--text-muted);">Verified Non-Custodial</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label">Deliverable Summary & Pull Request</label>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55;">
+            <p id="modal-deliverable-notes">Completed Anchor smart contract program architecture with SPL token transfer validation, deterministic bump seed verification, and automated fuzzing tests.</p>
+            <div style="display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap;">
+              <a id="modal-github-link" href="https://github.com/0xtryhardx0/SOLWORK" target="_blank" class="btn-deck-git" style="padding: 6px 14px; font-size: 0.78rem; text-decoration: none;">
+                🐙 View GitHub PR (#24)
+              </a>
+              <a id="modal-preview-link" href="https://solwork.vercel.app" target="_blank" class="btn-glass-mint" style="padding: 6px 14px; font-size: 0.78rem; text-decoration: none;">
+                🌐 Live Deployment Preview
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label">Automated Test & Consensus Proofs (100% Pass)</label>
+          <div class="diff-preview-box">
+            <span style="color: #14f195; font-weight: 700;">✓ test_initialize_escrow_vault ... ok (42ms)</span><br>
+            <span style="color: #14f195; font-weight: 700;">✓ test_deposit_spl_usdc_pda ... ok (68ms)</span><br>
+            <span style="color: #14f195; font-weight: 700;">✓ test_milestone_validation_quorum ... ok (112ms)</span><br>
+            <span style="color: #14f195; font-weight: 700;">✓ test_settle_release_to_worker ... ok (54ms)</span><br>
+            <span class="diff-line-add">+ 14 Anchor Integration Tests Passed | 0 Failed</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 8px;">
+          <button type="button" class="btn-hero-outline" style="flex: 1;" onclick="closeDeliverableModal()">
+            Keep In Review
+          </button>
+          <button type="button" id="btn-approve-release-modal" class="btn-hotpink" style="flex: 2; justify-content: center;" onclick="confirmReleaseFromModal()">
+            ⚡ Approve & Release Escrow to Freelancer
+          </button>
         </div>
       </div>
     </div>

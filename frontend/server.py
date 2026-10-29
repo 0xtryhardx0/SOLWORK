@@ -7,13 +7,15 @@ PORT = 8081
 class Handler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+        self.send_header('Access-Control-Allow-Origin', '*')
         super().end_headers()
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+class ThreadingServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True
+    allow_reuse_address = True
 
-# Allow port reuse to avoid address already in use errors
-socketserver.TCPServer.allow_reuse_address = True
-
-with socketserver.TCPServer(("", PORT), Handler) as httpd:
-    print(f"Serving SolWork Prototype at http://localhost:{PORT}")
-    httpd.serve_forever()
+if __name__ == '__main__':
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    with ThreadingServer(("", PORT), Handler) as httpd:
+        print(f"Serving SolWork Prototype concurrently at http://localhost:{PORT}")
+        httpd.serve_forever()

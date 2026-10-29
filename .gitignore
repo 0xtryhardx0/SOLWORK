@@ -12,3 +12,5 @@ backend/node_modules/
 backend/dist/
 backend/.env
 backend/program/target/
+backend/*.db
+.vscode/
