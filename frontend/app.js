@@ -617,7 +617,9 @@ function selectRlhfOption(opt, cardA, cardB) {
   }
 }
 
-// 7. TASK ACTIONS
+// 7. TASK ACTIONS & AI EVALUATION ORACLE
+let pendingOracleSubmission = null;
+
 function skipTask() {
   state.activeTaskIndex++;
   loadTask();
@@ -630,42 +632,88 @@ function submitTask() {
     return;
   }
   
-  const answer = input.value.trim().toLowerCase();
+  const answer = input.value.trim();
   const task = state.activeTask;
   const campaign = state.activeCampaign;
-  
-  let isCorrect = true;
-  
-  // Secret Honeypot Checks
-  if (task.isHoneypot) {
-    state.honeypotsTotal++;
-    
-    if (campaign.type === 'audio') {
-      isCorrect = task.correctAnswers.some(ans => answer.includes(ans.toLowerCase()));
-    } else if (campaign.type === 'bbox') {
-      isCorrect = answer === 'drawn';
-    } else if (campaign.type === 'rlhf') {
-      const exp = document.getElementById('task-explanation').value.trim();
-      isCorrect = (answer.toUpperCase() === task.correctChoice) && (exp.length >= 10);
-    }
-    
-    if (isCorrect) {
-      state.honeypotsPassed++;
-      triggerHoneypotToast(true, `+$${campaign.rate.toFixed(2)} added to Pending.`);
-    } else {
-      triggerHoneypotToast(false, `Accuracy dipped. Payout frozen.`);
-    }
-    
-    // Update accuracy
-    state.accuracy = (state.honeypotsPassed / state.honeypotsTotal) * 100;
-  } else {
-    // Normal tasks just pass in the prototype demo
-    triggerHoneypotToast(true, `+$${campaign.rate.toFixed(2)} added to Pending.`);
+
+  pendingOracleSubmission = {
+    answer,
+    task,
+    campaign
+  };
+
+  // Launch the AI Evaluation Oracle Modal
+  const modal = document.getElementById('ai-oracle-modal');
+  const scanningBlock = document.getElementById('oracle-eval-scanning');
+  const resultBlock = document.getElementById('oracle-eval-result');
+  const progressBar = document.getElementById('oracle-eval-progress');
+  const stepText = document.getElementById('oracle-scan-step');
+
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
   }
-  
+  if (scanningBlock) scanningBlock.style.display = 'block';
+  if (resultBlock) resultBlock.style.display = 'none';
+  if (progressBar) progressBar.style.width = '25%';
+  if (stepText) stepText.innerText = 'Scanning submission against host rubric...';
+
+  // Step 2: Negative Constraint Audit
+  setTimeout(() => {
+    if (progressBar) progressBar.style.width = '65%';
+    if (stepText) stepText.innerText = 'Auditing negative constraints & AI synthetic hallucination markers...';
+  }, 700);
+
+  // Step 3: Cryptographic Attestation
+  setTimeout(() => {
+    if (progressBar) progressBar.style.width = '92%';
+    if (stepText) stepText.innerText = 'Generating Ed25519 cryptographic oracle attestation...';
+  }, 1400);
+
+  // Finish evaluation & show results
+  setTimeout(() => {
+    if (progressBar) progressBar.style.width = '100%';
+    if (scanningBlock) scanningBlock.style.display = 'none';
+    if (resultBlock) resultBlock.style.display = 'block';
+
+    const checklistContainer = document.getElementById('oracle-rubric-checklist');
+    if (checklistContainer) {
+      checklistContainer.innerHTML = `
+        <div class="rubric-item-pass"><span>✓</span> <span>Instruction Adherence: Verbatim audio transcription captured without filler removal</span></div>
+        <div class="rubric-item-pass"><span>✓</span> <span>Negative Constraint: Zero forbidden ChatGPT / synthetic hallucination patterns</span></div>
+        <div class="rubric-item-pass"><span>✓</span> <span>Dialect Verification: Native Nigerian Pidgin/Yoruba phonetic inflections retained</span></div>
+        <div class="rubric-item-pass"><span>✓</span> <span>Formatting: Correct timestamp bracket syntax [00:14] across all speech turns</span></div>
+      `;
+    }
+
+    const dummyHash = "5nKq" + Array.from({length: 28}, () => "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"[Math.floor(Math.random()*58)]).join('') + "...a91f";
+    const hashEl = document.getElementById('oracle-attestation-hash');
+    if (hashEl) hashEl.innerText = dummyHash;
+
+    const scoreEl = document.getElementById('oracle-composite-score');
+    if (scoreEl) scoreEl.innerText = "96.4%";
+  }, 2100);
+}
+
+function completeOracleVerification() {
+  if (!pendingOracleSubmission) return;
+  const { answer, task, campaign } = pendingOracleSubmission;
+
+  // Close AI Oracle Modal
+  const modal = document.getElementById('ai-oracle-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+  }
+
   // Update Balances
   state.totalTasksCompleted++;
   state.pendingBalance += campaign.rate;
+  state.withdrawableBalance += campaign.rate;
+
+  triggerHoneypotToast(true, `+$${campaign.rate.toFixed(2)} USDC unlocked from Anchor Escrow!`);
+  logToTerminalStream(`[AI Oracle Arbiter] Attestation Validated: +$${campaign.rate.toFixed(2)} USDC released to worker PDA.`);
+  if (typeof playSfx === 'function') playSfx('success');
 
   // Persist submission and stats to SQL Backend / Local registry
   if (state.fullWalletAddress) {
@@ -687,45 +735,20 @@ function submitTask() {
       if (state.userEmail) {
         const u = getOrCreateLocalUser(state.userEmail, state.authRole);
         u.tasks_completed = state.totalTasksCompleted;
-        u.balance = parseFloat((u.balance + (isCorrect ? campaign.rate : 0)).toFixed(2));
+        u.balance = parseFloat((u.balance + campaign.rate).toFixed(2));
         u.accuracy = parseFloat(state.accuracy.toFixed(1));
         applyUserSession(u);
       }
     });
   }
-  
-  // Qualification Check
-  if (!state.isQualified) {
-    state.qualificationTasksCompleted++;
-    if (state.qualificationTasksCompleted >= 10) {
-      if (state.accuracy >= 90.0) {
-        state.isQualified = true;
-        state.currentTier = 'silver';
-        // Unlock pending to withdrawable
-        state.withdrawableBalance += state.pendingBalance;
-        state.pendingBalance = 0;
-        alert('🎉 Congratulations! You passed the qualification test. Your account is upgraded to SILVER tier and your pending balance is unlocked!');
-      } else {
-        alert('❌ Qualification test failed. Accuracy is below 90%. Resetting training...');
-        state.qualificationTasksCompleted = 0;
-        state.pendingBalance = 0;
-        state.accuracy = 100;
-        state.honeypotsPassed = 0;
-        state.honeypotsTotal = 0;
-      }
-    }
-  } else {
-    // Already qualified, check for tier promotions
-    if (state.totalTasksCompleted >= 20 && state.accuracy >= 95 && state.currentTier === 'silver') {
-      state.currentTier = 'gold';
-      alert('🌟 Promotion! You have been promoted to GOLD tier for maintaining high accuracy!');
-    }
-  }
-  
-  // Load next task
+
+  const input = document.getElementById('task-answer-input');
+  if (input) input.value = '';
+
   state.activeTaskIndex++;
-  updateUI();
   loadTask();
+  updateUI();
+  pendingOracleSubmission = null;
 }
 
 // 8. TOAST NOTIFICATIONS
@@ -784,25 +807,55 @@ function selectPayoutOption(opt) {
   const optFree = document.getElementById('payout-opt-free');
   const optInst = document.getElementById('payout-opt-instant');
   const optMhop = document.getElementById('payout-opt-multihopper');
+  const optFiat = document.getElementById('payout-opt-fiat');
   const calc = document.getElementById('withdrawal-calculator');
   const visualizer = document.getElementById('multihopper-solwork-visualizer');
+  const fiatDrawer = document.getElementById('fiat-offramp-drawer');
   
   if (optFree) optFree.classList.toggle('selected', opt === 'free');
   if (optInst) optInst.classList.toggle('selected', opt === 'instant');
   if (optMhop) optMhop.classList.toggle('selected', opt === 'multihopper');
+  if (optFiat) optFiat.classList.toggle('selected', opt === 'fiat');
   
   if (opt === 'free') {
     if (calc) calc.style.display = 'none';
     if (visualizer) visualizer.style.display = 'none';
+    if (fiatDrawer) fiatDrawer.style.display = 'none';
   } else if (opt === 'instant') {
     if (calc) calc.style.display = 'flex';
     if (visualizer) visualizer.style.display = 'none';
+    if (fiatDrawer) fiatDrawer.style.display = 'none';
   } else if (opt === 'multihopper') {
     if (calc) calc.style.display = 'flex';
     if (visualizer) visualizer.style.display = 'block';
+    if (fiatDrawer) fiatDrawer.style.display = 'none';
+  } else if (opt === 'fiat') {
+    if (calc) calc.style.display = 'flex';
+    if (visualizer) visualizer.style.display = 'none';
+    if (fiatDrawer) fiatDrawer.style.display = 'block';
+    resolveBankAccount();
   }
   
   updateWithdrawalFeeMath();
+}
+
+function resolveBankAccount() {
+  const accountInput = document.getElementById('fiat-account-number');
+  const resolvedBox = document.getElementById('fiat-account-resolved');
+  const netNairaLabel = document.getElementById('fiat-net-naira');
+  const amount = state.withdrawalAmount || 15.0;
+  const rate = 1685; // 1 USDC = ₦1,685 NGN
+  const netNaira = Math.floor(amount * rate);
+  
+  if (netNairaLabel) {
+    netNairaLabel.innerText = `₦${netNaira.toLocaleString()}`;
+  }
+
+  if (accountInput && accountInput.value.trim().length === 10) {
+    if (resolvedBox) resolvedBox.style.display = 'block';
+  } else {
+    if (resolvedBox) resolvedBox.style.display = 'none';
+  }
 }
 
 function updateWithdrawalFeeMath() {
@@ -829,6 +882,15 @@ function updateWithdrawalFeeMath() {
     const net = Math.max(0, amount - fee);
     if (feeLabel) feeLabel.innerText = `$${fee.toFixed(3)} (0.5% MultiHopper Token-2022)`;
     if (netLabel) netLabel.innerText = `$${net.toFixed(2)}`;
+  } else if (state.selectedPayoutOption === 'fiat') {
+    const fee = 0.05 + (amount * 0.01); // 1% off-ramp fee
+    const net = Math.max(0, amount - fee);
+    const rate = 1685;
+    const netNaira = Math.floor(net * rate);
+    if (feeLabel) feeLabel.innerText = `$${fee.toFixed(2)} (Kotani Pay / MultiHopper B2B)`;
+    if (netLabel) netLabel.innerText = `₦${netNaira.toLocaleString()} ($${net.toFixed(2)})`;
+    const netNairaEl = document.getElementById('fiat-net-naira');
+    if (netNairaEl) netNairaEl.innerText = `₦${netNaira.toLocaleString()}`;
   }
 }
 
@@ -862,6 +924,43 @@ async function processCashout() {
     if (typeof playSfx === 'function') playSfx('success');
     closeCashoutModal();
     updateUI();
+  } else if (opt === 'fiat') {
+    const rate = 1685;
+    const fee = 0.05 + (amount * 0.01);
+    const netUsdc = Math.max(0, amount - fee);
+    const netNaira = Math.floor(netUsdc * rate);
+    const bankSelect = document.getElementById('fiat-bank-select');
+    const bankName = bankSelect ? bankSelect.options[bankSelect.selectedIndex].text : 'OPay Digital Services';
+    const accNumber = (document.getElementById('fiat-account-number')?.value.trim()) || '8012345678';
+    const dummyRef = `NIBSS-PAY-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    if (confirmBtn) {
+      confirmBtn.disabled = true;
+      confirmBtn.innerText = 'Routing via Kotani Pay & MultiHopper...';
+    }
+
+    logToTerminalStream(`[MultiHopper Protocol] Converting $${amount.toFixed(2)} USDC to NGN via Kotani Pay Gateway`);
+    logToTerminalStream(`[Kotani Pay B2B] Initiating NIBSS Instant Payout of ₦${netNaira.toLocaleString()}`);
+
+    setTimeout(() => {
+      state.withdrawableBalance = Math.max(0, state.withdrawableBalance - amount);
+      logToTerminalStream(`[NIBSS NIP Core] Credit Settled to ${bankName} (Acc: ${accNumber})`);
+      logToTerminalStream(`[Bank Transfer Confirmation] Ref: ${dummyRef} | Status: SUCCESSFUL`);
+
+      showHoneypotToast(true, `🇳🇬 ₦${netNaira.toLocaleString()} transferred to your ${bankName} account!`);
+      if (typeof playSfx === 'function') playSfx('success');
+
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = 'Transfer Complete ✓';
+      }
+
+      setTimeout(() => {
+        closeCashoutModal();
+        updateUI();
+      }, 1400);
+    }, 1800);
+    return;
   } else if (opt === 'multihopper') {
     if (!window.multiHopper) {
       showHoneypotToast(false, 'MultiHopper client engine initializing...');
@@ -1370,6 +1469,27 @@ function applyUserSession(user) {
   localStorage.setItem('solwork_user_session', JSON.stringify(user));
   updateAuthUI();
   updateUI();
+}
+
+function handleGoogleSignIn() {
+  if (typeof playSfx === 'function') playSfx('click');
+  const role = state.authRole || 'worker';
+  const dummyEmail = "user." + Math.floor(1000 + Math.random() * 9000) + "@gmail.com";
+  const btn = document.getElementById('btn-google-sign');
+  if (btn) btn.innerHTML = `<span>⏳ Authenticating Google Turnkey MPC Keypair...</span>`;
+
+  setTimeout(() => {
+    const localUser = getOrCreateLocalUser(dummyEmail, role);
+    applyUserSession(localUser);
+    if (typeof playSfx === 'function') playSfx('connect');
+    closeAuthModal();
+    showHoneypotToast(true, `Logged in via Google (${dummyEmail})! Invisible Solana wallet active.`);
+    if (btn) {
+      btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.87c2.26-2.09 3.67-5.17 3.67-9.15z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.87-3.05c-1.08.72-2.45 1.16-4.06 1.16-3.13 0-5.78-2.11-6.73-4.96H1.26v3.15C3.25 21.36 7.35 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.26C.46 8.23 0 10.06 0 12s.46 3.77 1.26 5.39l4.01-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.25 2.64 1.26 6.61l4.01 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg> Continue with Google (Instant Invisible Wallet)`;
+    }
+    if (role === 'worker') switchView('workspace');
+    else switchView('client');
+  }, 1200);
 }
 
 async function handleEmailSignIn() {

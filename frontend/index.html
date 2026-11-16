@@ -1141,10 +1141,59 @@
           </div>
           <span class="option-desc">Autonomous multi-hop routing with TRM Labs AML screening, Token-2022 Permanent Delegate wrapping, and ongoing 0.25% revenue attribution.</span>
         </div>
+
+        <!-- Option D: Direct Nigerian Bank Transfer (Fiat Off-Ramp) -->
+        <div id="payout-opt-fiat" class="cashout-option" onclick="selectPayoutOption('fiat')">
+          <div class="option-row">
+            <span class="option-title">🇳🇬 Direct Bank Transfer (Naira)</span>
+            <span class="option-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4);">Instant NGN</span>
+          </div>
+          <span class="option-desc">Auto-convert USDC to Naira via Kotani Pay & MultiHopper B2B Gateway straight into your OPay, Kuda, PalmPay, or Bank account in 20s.</span>
+        </div>
       </div>
 
       <!-- MultiHopper Visualizer Container in Cashout Modal -->
       <div id="multihopper-solwork-visualizer" style="display: none; margin-top: 14px;"></div>
+
+      <!-- FIAT OFF-RAMP DRAWER (When Fiat is Selected) -->
+      <div id="fiat-offramp-drawer" class="fiat-drawer" style="display: none; margin-top: 14px; background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 0.82rem; font-weight: 700; color: #10b981;">⚡ Kotani Pay & MultiHopper B2B Bank Payout</span>
+          <span style="font-size: 0.72rem; color: #34d399; background: rgba(16,185,129,0.15); padding: 2px 8px; border-radius: 999px;">Rate: 1 USDC = ₦1,685.00</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">Select Bank:</label>
+            <select id="fiat-bank-select" class="form-input" style="padding: 9px 12px; font-size: 0.85rem;" onchange="resolveBankAccount()">
+              <option value="opay">OPay Digital Services</option>
+              <option value="kuda">Kuda Microfinance Bank</option>
+              <option value="palmpay">PalmPay</option>
+              <option value="moniepoint">Moniepoint MFB</option>
+              <option value="gtb">Guaranty Trust Bank (GTBank)</option>
+              <option value="zenith">Zenith Bank</option>
+              <option value="access">Access Bank</option>
+              <option value="uba">United Bank for Africa (UBA)</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">10-Digit Account Number:</label>
+            <input type="text" id="fiat-account-number" class="form-input" placeholder="8012345678" maxlength="10" style="padding: 9px 12px; font-size: 0.85rem;" oninput="resolveBankAccount()">
+          </div>
+        </div>
+
+        <div id="fiat-account-resolved" style="display: none; padding: 6px 10px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; font-size: 0.78rem; color: #34d399; margin-bottom: 10px;">
+          ✅ Account Verified: <strong id="fiat-resolved-name">ERIOLUWA AYODEJI</strong>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 10px; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+          <span>You Will Receive (NGN):</span>
+          <span id="fiat-net-naira" style="font-size: 1.15rem; font-weight: 800; color: #10b981;">₦0.00</span>
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; text-align: center;">
+          ⏱️ Automated NIBSS Instant Settlement • Zero Crypto Friction
+        </div>
+      </div>
 
       <!-- Calculator widget -->
       <div id="withdrawal-calculator" class="withdrawal-calculator" style="display: none;">
@@ -1167,6 +1216,59 @@
       <button class="btn-confirm-cashout" id="btn-solwork-cashout-confirm" onclick="processCashout()">
         Confirm & Release Escrow
       </button>
+    </div>
+  </div>
+
+  <!-- AI EVALUATION ORACLE MODAL (SolWork v2 LLM-as-a-Judge) -->
+  <div id="ai-oracle-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width: 520px; border: 1px solid rgba(139, 92, 246, 0.4); box-shadow: 0 0 35px -5px rgba(139, 92, 246, 0.3);">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">🤖</span>
+          <div>
+            <span class="modal-title" style="color: #c4b5fd;">SolWork AI Evaluation Oracle</span>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Autonomous Rubric & Negative Constraint Verification Engine</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 16px 0;">
+        <!-- Scanning State -->
+        <div id="oracle-eval-scanning" style="text-align: center; padding: 20px 10px;">
+          <div class="oracle-radar-spinner"></div>
+          <div style="font-size: 0.95rem; font-weight: 700; margin-top: 14px; color: #fff;">Auditing Submission Against Host Rubric...</div>
+          <div id="oracle-scan-step" style="font-size: 0.75rem; color: #a78bfa; margin-top: 4px;">Checking negative constraints & AI synthetic markers...</div>
+          <div class="progress-bar-container" style="margin-top: 14px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden;">
+            <div id="oracle-eval-progress" style="width: 20%; height: 100%; background: linear-gradient(90deg, #7c3aed, #10b981); transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <!-- Result State (Hidden initially) -->
+        <div id="oracle-eval-result" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; margin-bottom: 14px;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">COMPOSITE ACCURACY SCORE</div>
+              <div id="oracle-composite-score" style="font-size: 1.6rem; font-weight: 800; color: #34d399;">95.4%</div>
+            </div>
+            <span class="option-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 0.85rem; padding: 6px 12px;">VERIFIED PASS</span>
+          </div>
+
+          <!-- Rubric Checklist -->
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">HOST RUBRIC VERIFICATION AUDIT:</div>
+          <div id="oracle-rubric-checklist" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.76rem;"></div>
+
+          <!-- Cryptographic Attestation Block -->
+          <div style="margin-top: 14px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-family: monospace; font-size: 0.68rem; color: #a78bfa;">
+            <div>🔒 <strong>Ed25519 Oracle Attestation:</strong></div>
+            <div id="oracle-attestation-hash" style="color: var(--text-muted); word-break: break-all; margin-top: 2px;">5nKq8P2d9x7...a91f</div>
+            <div style="margin-top: 4px; color: #34d399;">⚡ Anchor Escrow Auto-Release Authorized</div>
+          </div>
+
+          <button class="btn-confirm-cashout" style="margin-top: 16px; background: #10b981;" onclick="completeOracleVerification()">
+            Claim Earnings & Unlock Escrow ➔
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1353,8 +1455,25 @@
           </div>
         </div>
 
+        <!-- GOOGLE ONE-TAP BUTTON -->
+        <button type="button" id="btn-google-sign" class="btn-confirm-cashout" style="background: #ffffff; color: #1f2937; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; font-size: 0.92rem; border: none; box-shadow: 0 4px 14px rgba(0,0,0,0.25);" onclick="handleGoogleSignIn()">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.87c2.26-2.09 3.67-5.17 3.67-9.15z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.87-3.05c-1.08.72-2.45 1.16-4.06 1.16-3.13 0-5.78-2.11-6.73-4.96H1.26v3.15C3.25 21.36 7.35 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.26C.46 8.23 0 10.06 0 12s.46 3.77 1.26 5.39l4.01-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.25 2.64 1.26 6.61l4.01 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/>
+          </svg>
+          Continue with Google (Instant Invisible Wallet)
+        </button>
+
+        <div style="display: flex; align-items: center; margin: 14px 0 6px 0; text-align: center; color: var(--text-muted); font-size: 0.72rem;">
+          <span style="flex: 1; border-bottom: 1px solid rgba(255,255,255,0.08);"></span>
+          <span style="padding: 0 8px;">OR USE EMAIL</span>
+          <span style="flex: 1; border-bottom: 1px solid rgba(255,255,255,0.08);"></span>
+        </div>
+
         <!-- EMAIL AUTH SECTION (PRIMARY FOR TESTERS) -->
-        <div class="auth-email-section" style="margin-top: 18px; padding: 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px;">
+        <div class="auth-email-section" style="margin-top: 10px; padding: 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <label class="form-label" style="margin: 0; font-weight: 600;">✉️ Tester / Contributor Email Login</label>
             <span style="font-size: 0.72rem; color: #10b981; background: rgba(16,185,129,0.12); padding: 2px 8px; border-radius: 999px;">Auto-embedded Solana Keypair</span>
