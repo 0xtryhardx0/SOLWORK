@@ -1,4 +1,4 @@
-# 🚀 SOLWORK ENTERPRISE & PROTOCOL CLIENT ACQUISITION PLAYBOOK
+i# 🚀 SOLWORK ENTERPRISE & PROTOCOL CLIENT ACQUISITION PLAYBOOK
 **Target Market**: AI Labs, Crypto-AI Protocols, RLHF Evaluators, and African Applied Machine Learning Collectives  
 **Value Proposition**: Sub-second SPL USDC escrow settlement on Solana, zero cross-border remittance fees, and access to a pre-screened pool of high-IQ Nigerian/African talent (coders, STEM graduates, multi-domain annotators).
 
