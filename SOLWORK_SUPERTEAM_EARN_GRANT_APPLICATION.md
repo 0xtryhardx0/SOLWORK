@@ -63,3 +63,4 @@ SolWork abstracts away all crypto friction while maintaining 100% non-custodial 
 ## 7. Submission Checklist & Channels
 * **Portal**: Submit via [earn.superteam.fun](https://earn.superteam.fun) under *Solana Foundation Nigeria Grants*.
 * **Telegram Contact**: Post in Superteam Nigeria Main Chat / DM Community Leads.
+

@@ -68,3 +68,4 @@ Based in Lagos, Nigeria—the ground-zero of African tech talent and developer d
 * **Live Protocol**: https://solwork.vercel.app
 * **GitHub Repository**: https://github.com/0xtryhardx0/SOLWORK
 * **Architecture Specification**: [SOLWORK_V2_AI_ORACLE_AND_FIAT_ROUTER_SPEC.md](https://github.com/0xtryhardx0/SOLWORK/blob/main/SOLWORK_V2_AI_ORACLE_AND_FIAT_ROUTER_SPEC.md)
+
